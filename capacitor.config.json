@@ -1,0 +1,7 @@
+{
+  "appId": "com.hunterquest.app",
+  "appName": "Hunter Quest",
+  "webDir": "www",
+  "backgroundColor": "#13101f",
+  "android": { "backgroundColor": "#13101f" }
+}
