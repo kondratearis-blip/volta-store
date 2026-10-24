@@ -6,6 +6,10 @@
   const P = HQ.points, S = HQ.store, C = HQ.chars, D = HQ.data, IV = HQ.interview;
   const DRAFT = 'hunterquest.interview';
 
+  HQ.views = HQ.views || {};
+  HQ.viewActions = HQ.viewActions || {};
+  HQ.viewForms = HQ.viewForms || {};
+
   const ui = {
     view: 'home', questTab: 'small', confirm: null, modal: null, showJson: false,
     iv: { step: 0, answers: {} },
@@ -36,6 +40,8 @@
     profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/>',
     reroll: '<path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"/><path d="M20 4v5h-5M4 20v-5h5"/>',
     undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',
+    stats: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    plan: '<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h3M8 17h6"/>',
     trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   };
   const icon = (n) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
@@ -244,7 +250,7 @@
       const left = S.diffDays(S.today(), t.due);
       due = `<span class="chip ${left <= 1 ? 'warn' : ''}">${left <= 0 ? 'последний день' : 'ещё ' + days(left)}</span>`;
     }
-    const removable = t.kind === 'once' || t.custom;
+    const removable = t.kind === 'once' || (t.custom && !t.plan); // дела из планёрки — обещание, их не удалить
     return `<div class="task ${sc(t.sphere)}${done ? ' done' : ''}">
       <button class="check" data-act="${done ? 'undo' : 'done'}" data-id="${t.id}" aria-label="${done ? 'Отменить' : 'Выполнено'}">${done ? '✓' : ''}</button>
       <div class="t-body">
@@ -264,7 +270,7 @@
     const list = C.LIST;
     const h = new Date().getHours();
     const id = list[(new Date().getDate() + Math.floor(h / 6)) % list.length];
-    if (!ui.greeting || ui.greeting.id !== id) ui.greeting = { id, text: C.line(id, 'greet') };
+    if (!ui.greeting || (ui.greeting.id !== id && !ui.greeting.sticky)) ui.greeting = { id, text: C.line(id, 'greet') };
     return ui.greeting;
   }
 
@@ -278,6 +284,7 @@
     const g = greetingMentor();
     const spheresDone = ['body', 'mind', 'spirit'].filter((s) => ds.spheres[s] > 0).length;
     return `
+      ${HQ.views.planCard ? HQ.views.planCard() : ''}
       ${mentorBlock(g.id, g.text, g.id === 'killua' ? 'smirk' : 'happy')}
       ${spheresRow()}
       <section class="section">
@@ -521,6 +528,7 @@
           <div class="field"><label for="set-min">Время в день (со следующего дня)</label><select class="input" id="set-min" data-change="dailyMinutes">
             ${[[15, '15 минут'], [30, '30 минут'], [60, 'Около часа'], [120, '2 часа']].map(([v, l]) => `<option value="${v}"${Number(pr.dailyMinutes) === v ? ' selected' : ''}>${l}</option>`).join('')}</select></div>
           <div class="field"><label for="set-name">Имя</label><input class="input" id="set-name" data-change="name" value="${esc(pr.name)}" maxlength="30"></div>
+          ${HQ.views.notifySettings ? HQ.views.notifySettings() : ''}
           <button class="btn ghost" data-act="toggle-json">${ui.showJson ? 'Скрыть резервную копию' : 'Резервная копия'}</button>
           ${ui.showJson ? `<p class="muted" style="font-size:.85rem">Скопируй текст и сохрани в заметках. Чтобы восстановить — вставь сохранённый текст и нажми «Восстановить».</p>
             <textarea class="input" id="json-box" spellcheck="false">${esc(S.exportJson())}</textarea>
@@ -533,7 +541,7 @@
   }
 
   function nav() {
-    const items = [['home', 'Главная'], ['quests', 'Задания'], ['goals', 'Копилка'], ['habits', 'Привычки'], ['profile', 'Профиль']];
+    const items = [['home', 'Главная'], ['quests', 'Задания'], ['stats', 'Прогресс'], ['goals', 'Копилка'], ['habits', 'Привычки'], ['profile', 'Профиль']];
     return `<nav class="nav"><div class="in">${items.map(([k, l]) => `<button class="${ui.view === k ? 'on' : ''}" data-act="nav" data-id="${k}" aria-current="${ui.view === k ? 'page' : 'false'}">${icon(k)}<span>${l}</span></button>`).join('')}</div></nav>`;
   }
 
@@ -547,7 +555,7 @@
       const inp = document.getElementById('iv-input');
       if (inp) inp.focus({ preventScroll: true });
     } else {
-      el.innerHTML = `<div class="app">${topbar()}${VIEWS[ui.view]()}</div>${nav()}`;
+      el.innerHTML = `<div class="app">${topbar()}${(VIEWS[ui.view] || HQ.views[ui.view] || viewHome)()}</div>${nav()}`;
     }
     renderModal();
   }
@@ -582,8 +590,8 @@
     t.className = 'toast';
     t.innerHTML = html;
     box.appendChild(t);
-    while (box.children.length > 3) box.firstChild.remove();
-    setTimeout(() => t.remove(), 3200);
+    while (box.children.length > 2) box.firstChild.remove();
+    setTimeout(() => t.remove(), 2800);
   }
 
   function renderModal() {
@@ -655,7 +663,7 @@
       S.finishInterview(ui.iv.answers);
       store(DRAFT);
       ui.view = 'home';
-      ui.greeting = { id: 'netero', text: 'Лицензия твоя! Вот первые задания. Начни с малого — с одного шага.' };
+      ui.greeting = { sticky: true, id: 'netero', text: 'Лицензия твоя! Вот первые задания. Начни с малого — с одного шага.' };
       after(); window.scrollTo(0, 0);
     },
     nav(d) { ui.view = d.id; ui.confirm = null; render(); window.scrollTo(0, 0); },
@@ -723,9 +731,16 @@
       const f = e.target.closest('form[data-form]');
       if (!f) return;
       e.preventDefault();
-      forms[f.dataset.form](f, e.submitter);
+      (forms[f.dataset.form] || HQ.viewForms[f.dataset.form])(f, e.submitter);
     });
     document.addEventListener('change', (e) => {
+      const set = e.target.closest('[data-setting]');
+      if (set) {
+        S.updateSettings({ [set.dataset.setting]: set.type === 'checkbox' ? set.checked : set.value });
+        if (HQ.notify) HQ.notify.schedule();
+        render();
+        return;
+      }
       const el = e.target.closest('[data-change]');
       if (!el) return;
       const key = el.dataset.change;
@@ -749,10 +764,15 @@
     const draft = load(DRAFT);
     if (draft && draft.answers) ui.iv = draft;
     if (S.state.profile) S.rollover();
+    Object.assign(actions, HQ.viewActions);
     bind();
+    if (HQ.notify) HQ.notify.init();
     render();
     flushFx();
   }
 
-  HQ.ui = { start, render };
+  HQ.ui = {
+    start, render, after, state: ui, toastText,
+    kit: { esc, fmt, money, signed, sc, sphereLabel, plural, days, icon, mentorBlock, taskRow },
+  };
 })(typeof self !== 'undefined' ? self : this);

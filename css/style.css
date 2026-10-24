@@ -14,6 +14,11 @@
   --aura: #ff8d5e;      /* Нэн */
   --danger: #ff5f77;
   --on-accent: #1a1426;
+  /* Цвета серий на графиках: те же оттенки сфер, приглушённые до проверенной яркости */
+  --ch-body: #35a86f;
+  --ch-mind: #7a68e8;
+  --ch-spirit: #b88d2a;
+  --ch-other: #6f6a8f;
   --font-display: 'Unbounded', 'Arial Black', system-ui, sans-serif;
   --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --r: 16px;
@@ -157,6 +162,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn.primary { background: var(--aura); color: var(--on-accent); }
+.btn svg { width: 20px; height: 20px; flex: none; }
 .btn.block { width: 100%; }
 .btn.small { padding: 7px 12px; border-radius: 10px; font-size: 0.85rem; }
 .btn.danger { background: color-mix(in srgb, var(--danger) 18%, transparent); color: var(--danger); }
@@ -182,8 +188,8 @@ textarea.input { min-height: 120px; font-family: ui-monospace, monospace; font-s
   background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid var(--line);
 }
-.nav .in { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
-.nav button { border: 0; background: transparent; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; font-size: 0.68rem; font-weight: 800; }
+.nav .in { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(6, 1fr); }
+.nav button { border: 0; background: transparent; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; font-size: 0.64rem; font-weight: 800; min-width: 0; }
 .nav button svg { width: 24px; height: 24px; }
 .nav button.on { color: var(--aura); }
 
@@ -296,3 +302,35 @@ details.card[open] summary { margin-bottom: 10px; }
   .quick, .ach, .stats { grid-template-columns: 1fr; }
   .mentor .pic { width: 64px; }
 }
+
+/* ——— Планёрка ——— */
+.plan-prompt { border-color: color-mix(in srgb, var(--aura) 45%, var(--line)); }
+.plan-prompt .mentor .bubble { margin-bottom: 8px; }
+.plan-done { width: 100%; text-align: left; color: var(--text); padding: 10px 14px; }
+.plan-today { display: flex; flex-direction: column; gap: 4px; }
+textarea.input.plain { font-family: inherit; font-size: inherit; min-height: 90px; }
+.task .chip[data-act] { border: 0; cursor: pointer; }
+
+/* ——— Прогресс ——— */
+.level-hero { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; }
+.ring.big { width: 96px; height: 96px; }
+.ring.big .lvl { font-size: 1.8rem; }
+.stat .delta { display: block; font-size: 0.75rem; font-weight: 800; color: var(--muted); }
+.delta.up { color: var(--body); } .delta.down { color: var(--danger); }
+.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.chart .ax { fill: var(--muted); font-size: 10px; font-family: var(--font-body); font-weight: 700; }
+.chart .ax.strong { fill: var(--text); font-size: 11px; }
+.chart .gl { stroke: var(--line); stroke-width: 1; }
+.chart .gl.dash { stroke-dasharray: 3 4; }
+.chart .base { stroke: var(--muted); stroke-opacity: .5; stroke-width: 1; }
+.chart .cross { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 0.78rem; color: var(--muted); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.hm { fill: var(--surface-2); background: var(--surface-2); }
+.hm.l1 { fill: color-mix(in srgb, var(--aura) 30%, var(--surface-2)); background: color-mix(in srgb, var(--aura) 30%, var(--surface-2)); }
+.hm.l2 { fill: color-mix(in srgb, var(--aura) 55%, var(--surface-2)); background: color-mix(in srgb, var(--aura) 55%, var(--surface-2)); }
+.hm.l3 { fill: color-mix(in srgb, var(--aura) 78%, var(--surface-2)); background: color-mix(in srgb, var(--aura) 78%, var(--surface-2)); }
+.hm.l4 { fill: var(--aura); background: var(--aura); }
+.detail { padding: 10px 12px; border-radius: 12px; background: var(--surface-2); display: flex; flex-direction: column; gap: 6px; }
+.sphere-row { display: flex; flex-direction: column; gap: 5px; }

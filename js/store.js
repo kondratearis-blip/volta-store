@@ -34,10 +34,13 @@
       customTemplates: [],
       goals: [],
       habits: [],
-      days: {},                    // статистика по дням: done, spheres, bonuses, rerolls, quick
+      days: {},                    // служебное по дням: done, spheres, bonuses, rerolls, quick
+      history: {},                 // статистика по дням для вкладки «Прогресс» (хранится год)
+      plans: {},                   // планёрки: что будет в этот день
+      settings: { remind: true, planTime: '21:00', morningTime: '08:30' },
       lastDay: null,
       lastWeeklyGen: null,
-      stats: { tasksDone: 0, earned: 0, lost: 0, quick: 0 },
+      stats: { tasksDone: 0, earned: 0, lost: 0, quick: 0, plans: 0 },
       achievements: {},
       log: [],
     };
@@ -52,6 +55,8 @@
     try {
       const raw = storage && storage.getItem(KEY);
       state = raw ? Object.assign(defaultState(), JSON.parse(raw)) : defaultState();
+      state.stats = Object.assign(defaultState().stats, state.stats);
+      state.settings = Object.assign(defaultState().settings, state.settings);
     } catch (e) { state = defaultState(); }
     return state;
   }
@@ -70,6 +75,11 @@
     return state.days[k];
   }
 
+  function hist(k = today()) {
+    if (!state.history[k]) state.history[k] = { gain: 0, loss: 0, g: { body: 0, mind: 0, spirit: 0, other: 0 }, done: 0, missed: 0, quick: 0, plan: false };
+    return state.history[k];
+  }
+
   const difficulty = () => (state.profile && state.profile.difficulty) || 'normal';
   const nen = () => state.profile && state.profile.nenType;
 
@@ -84,7 +94,10 @@
     if (sphere && SPH.includes(sphere)) x[sphere] = P.applyWithFloor(x[sphere], amount, state.maxLevel[sphere]);
 
     if (applied > 0) state.stats.earned += applied; else state.stats.lost -= applied;
-    state.log.unshift({ t: Date.now(), day: today(), amount: applied, sphere: sphere || null, reason });
+    const day = opts.day || today();
+    const h = hist(day);
+    if (applied > 0) { h.gain += applied; h.g[SPH.includes(sphere) ? sphere : 'other'] += applied; } else h.loss -= applied;
+    state.log.unshift({ t: Date.now(), day, amount: applied, sphere: sphere || null, reason });
     if (state.log.length > 400) state.log.length = 400;
     if (!opts.silent) fx.push({ type: 'points', amount: applied, sphere, reason, mentor: opts.mentor });
 
@@ -181,6 +194,10 @@
     const t = today();
     if (state.tasks.some((x) => x.kind === 'daily' && x.created === t)) return;
     const plan = dailyPlan((state.profile && state.profile.dailyMinutes) || 30);
+    const own = state.plans[t] ? planTaskDefs(state.plans[t]).length : 0;
+    // Если в планёрке много своих дел, генерируем меньше заданий, но минимум два.
+    const target = Math.max(2, plan.small + plan.medium - own);
+    while (plan.small + plan.medium > target) { if (plan.medium > 0) plan.medium--; else plan.small--; }
     const yesterday = new Set(state.tasks.filter((x) => x.created === addDays(t, -1)).map((x) => x.tpl));
     const used = new Set(yesterday);
     const weights = sphereWeights();
@@ -201,6 +218,7 @@
         size: c.size, xp: P.SIZES[c.size].xp, kind: 'daily', created: t, due: t, status: 'active', custom: true,
       });
     }
+    if (state.plans[t]) applyPlan(t);
   }
 
   function generateWeekly(force) {
@@ -243,7 +261,8 @@
       if ((task.kind === 'daily' || task.kind === 'weekly') && task.due && task.due <= day) {
         task.status = 'missed';
         const pen = P.missPenalty(task, difficulty());
-        if (pen) report.penalty = (report.penalty || 0) - addPoints(-pen, task.sphere, `Пропущено: ${task.title}`, { silent: true });
+        if (pen) report.penalty = (report.penalty || 0) - addPoints(-pen, task.sphere, `Пропущено: ${task.title}`, { silent: true, day });
+        hist(day).missed++;
         report.missed = (report.missed || 0) + 1;
       }
     }
@@ -251,8 +270,8 @@
       const days = diffDays(h.cleanSince, day) + 1;
       if (days <= 0) continue;
       const r = P.cleanDayReward(days, nen());
-      report.clean = (report.clean || 0) + addPoints(r.base, h.sphere, `Чистый день: ${h.title}`, { silent: true });
-      if (r.bonus) report.clean += addPoints(r.bonus, h.sphere, `${days} дней без «${h.title}»`, { silent: true });
+      report.clean = (report.clean || 0) + addPoints(r.base, h.sphere, `Чистый день: ${h.title}`, { silent: true, day });
+      if (r.bonus) report.clean += addPoints(r.bonus, h.sphere, `${days} дней без «${h.title}»`, { silent: true, day });
       h.best = Math.max(h.best || 0, days);
       if (days >= 7) unlock('clean_7');
       if (days >= 30) unlock('clean_30');
@@ -263,6 +282,8 @@
     const t = today();
     state.tasks = state.tasks.filter((x) => x.status === 'active' || diffDays(x.created, t) <= 14);
     for (const k of Object.keys(state.days)) if (diffDays(k, t) > 60) delete state.days[k];
+    for (const k of Object.keys(state.history)) if (diffDays(k, t) > 400) delete state.history[k];
+    for (const k of Object.keys(state.plans)) if (diffDays(k, t) > 60) delete state.plans[k];
   }
 
   // ——— Действия игрока ———
@@ -277,6 +298,8 @@
     const ds = dayStat();
     ds.done++;
     ds.spheres[task.sphere] = (ds.spheres[task.sphere] || 0) + 1;
+    hist().done++;
+    if (task.main) task.reward += addPoints(P.RULES.mainTaskBonus, task.sphere, 'Главное дело дня сделано', { mentor: 'netero' });
     state.stats.tasksDone++;
     const n = state.stats.tasksDone;
     unlock('first_task');
@@ -298,6 +321,7 @@
     ds.done = Math.max(0, ds.done - 1);
     ds.spheres[task.sphere] = Math.max(0, (ds.spheres[task.sphere] || 1) - 1);
     state.stats.tasksDone = Math.max(0, state.stats.tasksDone - 1);
+    hist().done = Math.max(0, hist().done - 1);
     delete task.reward; delete task.doneDay;
     save();
   }
@@ -401,6 +425,7 @@
     ds.quick[id] = used + 1;
     if (q.xp > 0) {
       state.stats.quick++;
+      hist().quick++;
       if (state.stats.quick >= 20) unlock('quick_20');
       addPoints(Math.round(q.xp * P.DIFFICULTY[difficulty()].reward), q.sphere, q.label, { mentor: P.SPHERES[q.sphere].mentor });
     } else {
@@ -463,6 +488,65 @@
   }
   function cleanDays(h) { return Math.max(0, diffDays(h.cleanSince, today())); }
   function removeHabit(id) { state.habits = state.habits.filter((h) => h.id !== id); save(); }
+
+  // ——— Планёрка: что будет в этот день ———
+  const WORK = { work: 'Работа', study: 'Учёба', off: 'Выходной' };
+  const TRAIN = {
+    gym:  { title: 'Тренировка в зале', desc: 'Ты сам запланировал её вчера. Держи слово!' },
+    home: { title: 'Домашняя тренировка', desc: '25–30 минут: приседания, отжимания, выпады, планка.' },
+    run:  { title: 'Пробежка', desc: 'Темп комфортный, главное — выйти.' },
+    rest: null,
+  };
+
+  // Какие задания создаст план. Используется и для превью в интерфейсе.
+  function planTaskDefs(plan) {
+    const defs = [];
+    if (plan.main) defs.push({ title: `Главное дело: ${plan.main}`, desc: 'Самое важное на сегодня. Сделай его первым.', sphere: plan.mainSphere || 'mind', size: 'medium', main: true });
+    if (plan.work === 'work' || plan.work === 'study') {
+      const what = WORK[plan.work];
+      defs.push({ title: plan.workTask ? `${what}: ${plan.workTask}` : `${what}: выполнить запланированное`, desc: 'Отметь, когда закончишь рабочий или учебный день с результатом.', sphere: 'mind', size: 'small' });
+    }
+    const tr = TRAIN[plan.train];
+    if (tr) defs.push({ title: tr.title + (plan.trainTime ? ` в ${plan.trainTime}` : ''), desc: tr.desc, sphere: 'body', size: 'medium' });
+    for (const it of plan.items || []) if (it.title) defs.push({ title: it.title, desc: 'Из твоей планёрки', sphere: it.sphere || 'mind', size: 'small' });
+    return defs;
+  }
+
+  function applyPlan(day) {
+    const plan = state.plans[day];
+    if (!plan || plan.applied) return;
+    for (const d of planTaskDefs(plan)) {
+      state.tasks.push({ id: uid(), tpl: 'plan', title: d.title, desc: d.desc, sphere: d.sphere, size: d.size,
+        xp: P.SIZES[d.size].xp, kind: 'daily', created: day, due: day, status: 'active', custom: true, plan: true, main: !!d.main });
+    }
+    plan.applied = true;
+  }
+
+  function savePlan(day, data) {
+    const prev = state.plans[day];
+    if (prev && prev.applied) return false; // план уже превратился в задания
+    const plan = {
+      work: data.work || 'off', workTask: (data.workTask || '').trim().slice(0, 80),
+      train: data.train || 'rest', trainTime: (data.trainTime || '').trim().slice(0, 10),
+      main: (data.main || '').trim().slice(0, 80), mainSphere: data.mainSphere || 'mind',
+      items: (data.items || []).filter((i) => i.title && i.title.trim()).slice(0, 10)
+        .map((i) => ({ title: i.title.trim().slice(0, 80), sphere: SPH.includes(i.sphere) ? i.sphere : 'mind' })),
+      note: (data.note || '').trim().slice(0, 300),
+      saved: Date.now(), applied: false,
+    };
+    state.plans[day] = plan;
+    if (!prev) {
+      state.stats.plans++;
+      hist().plan = true;
+      addPoints(P.RULES.planBonus, 'mind', day === today() ? 'Планёрка на сегодня' : 'Планёрка на завтра', { mentor: 'killua' });
+      unlock('plan_1');
+      if (state.stats.plans >= 7) unlock('plan_7');
+      if (state.stats.plans >= 30) unlock('plan_30');
+    }
+    if (day === today()) applyPlan(day);
+    save();
+    return true;
+  }
 
   // ——— Итоги интервью ———
   function finishInterview(answers) {
@@ -530,5 +614,7 @@
     startArc, toggleArcStep, abandonArc, quick,
     addGoal, moveMoney, removeGoal, addHabit, relapse, removeHabit,
     finishInterview, updateProfile, generateWeekly, eligible,
+    savePlan, planTaskDefs, hist, WORK, TRAIN,
+    updateSettings(patch) { Object.assign(state.settings, patch); save(); },
   };
 })(typeof self !== 'undefined' ? self : this);

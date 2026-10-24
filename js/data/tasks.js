@@ -189,6 +189,9 @@
     { id: 'clean_7', title: 'Неделя силы', desc: '7 чистых дней по привычке', mentor: 'kurapika' },
     { id: 'clean_30', title: 'Победа над химерой', desc: '30 чистых дней по привычке', mentor: 'kurapika' },
     { id: 'arc_done', title: 'Арка завершена', desc: 'Пройди эпическую арку', mentor: 'netero' },
+    { id: 'plan_1', title: 'Стратег', desc: 'Первая планёрка', mentor: 'killua' },
+    { id: 'plan_7', title: 'Тактик Зольдиков', desc: '7 планёрок', mentor: 'killua' },
+    { id: 'plan_30', title: 'Глава Пауков', desc: '30 планёрок', mentor: 'kurapika' },
     { id: 'quick_20', title: 'Быстрые руки', desc: '20 быстрых действий', mentor: 'killua' },
   ];
 

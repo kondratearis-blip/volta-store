@@ -42,6 +42,8 @@
     allDailiesBonus: 30,       // за все дневные задания
     arcStepXp: 25,             // за шаг эпической арки
     welcomeBonus: 50,          // за прохождение интервью
+    planBonus: 10,             // за планёрку (раз в день)
+    mainTaskBonus: 15,         // сверху за «главное дело дня»
     levelBase: 50,             // xp для уровня L = levelBase * (L-1)^2
   };
 

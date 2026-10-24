@@ -135,3 +135,33 @@ test('у каждой сферы и размера есть задания дл�
     assert.ok(pool.length >= 2, `${s}/${z}`);
   }
 });
+
+test('планёрка: план на завтра превращается в задания, главное дело даёт бонус', () => {
+  S.init(memoryStorage());
+  S.finishInterview({ name: 'P', minutes: 60, nen_water: 'specialist' });
+  const st = S.state;
+  const tomorrow = S.addDays(S.today(), 1);
+  const before = st.xp.mind;
+  S.savePlan(tomorrow, {
+    work: 'work', workTask: 'сдать отчёт', train: 'gym', trainTime: '19:00', main: 'позвонить врачу',
+    items: [{ title: 'Купить продукты', sphere: 'body' }, { title: '' }],
+  });
+  assert.equal(st.xp.mind, before + P.RULES.planBonus);
+  S.savePlan(tomorrow, { work: 'off', train: 'rest', items: [] }); // правка плана не даёт бонус повторно
+  assert.equal(st.xp.mind, before + P.RULES.planBonus);
+  S.savePlan(tomorrow, { work: 'work', train: 'gym', main: 'позвонить врачу', items: [{ title: 'Купить продукты', sphere: 'body' }] });
+  assert.equal(st.stats.plans, 1);
+
+  nextDay();
+  S.rollover();
+  const today = st.tasks.filter((t) => t.created === S.today() && t.kind === 'daily');
+  const planned = today.filter((t) => t.plan);
+  assert.equal(planned.length, 4); // главное, работа, зал, продукты
+  assert.equal(today.length - planned.length, 2, 'сгенерированных заданий меньше, но не меньше двух');
+  const main = planned.find((t) => t.main);
+  const total0 = st.xp.total;
+  S.completeTask(main.id);
+  assert.ok(st.xp.total - total0 >= 25 + P.RULES.mainTaskBonus);
+  assert.equal(st.history[S.today()].done, 1);
+  assert.ok(st.history[S.today()].gain > 0);
+});

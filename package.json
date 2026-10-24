@@ -11,10 +11,11 @@
   },
   "dependencies": {
     "@capacitor/android": "6.2.1",
-    "@capacitor/core": "6.2.1"
+    "@capacitor/core": "6.2.1",
+    "@capacitor/local-notifications": "6.1.2"
   },
   "devDependencies": {
-    "@capacitor/cli": "6.2.1",
-    "@capacitor/assets": "3.0.5"
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "6.2.1"
   }
 }
