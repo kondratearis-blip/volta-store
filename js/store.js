@@ -51,7 +51,9 @@
   const fx = [];                   // эффекты для интерфейса: тосты, уровни, достижения
 
   function init(customStorage) {
-    storage = customStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+    storage = customStorage || null;
+    // В некоторых окнах (встроенные просмотрщики, приватный режим) даже обращение к localStorage бросает ошибку.
+    if (!storage) { try { storage = typeof localStorage !== 'undefined' ? localStorage : null; } catch (e) { storage = null; } }
     try {
       const raw = storage && storage.getItem(KEY);
       state = raw ? Object.assign(defaultState(), JSON.parse(raw)) : defaultState();
@@ -60,7 +62,19 @@
     } catch (e) { state = defaultState(); }
     return state;
   }
-  function save() { try { storage && storage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* хранилище недоступно */ } }
+  const saveListeners = [];
+  function save() {
+    state.savedAt = Date.now();
+    try { storage && storage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* хранилище недоступно */ }
+    for (const fn of saveListeners) fn(state);
+  }
+  // Подменить всё состояние (например, сохранением из облака). Слушателей не будит.
+  function replaceState(data) {
+    state = Object.assign(defaultState(), data);
+    state.stats = Object.assign(defaultState().stats, state.stats);
+    state.settings = Object.assign(defaultState().settings, state.settings);
+    try { storage && storage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* хранилище недоступно */ }
+  }
   function reset() { state = defaultState(); save(); }
   function exportJson() { return JSON.stringify(state, null, 2); }
   function importJson(text) {
@@ -606,7 +620,8 @@
   function updateProfile(patch) { Object.assign(state.profile, patch); save(); }
 
   HQ.store = {
-    init, save, reset, exportJson, importJson,
+    init, save, reset, exportJson, importJson, replaceState,
+    onSave(fn) { saveListeners.push(fn); },
     get state() { return state; },
     fx, today, addDays, diffDays, dayStat, effectiveStreak, cleanDays,
     setClock(fn) { clock = fn; },

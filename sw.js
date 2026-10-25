@@ -1,8 +1,8 @@
 // Офлайн-кэш. При изменении файлов увеличь VERSION, чтобы телефоны получили обновление.
-const VERSION = 'hq-v2';
+const VERSION = 'hq-v3';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
-  'js/points.js', 'js/data/interview.js', 'js/data/tasks.js', 'js/characters.js', 'js/store.js', 'js/ui.js', 'js/plan.js', 'js/stats.js', 'js/app.js',
+  'js/points.js', 'js/data/interview.js', 'js/data/tasks.js', 'js/characters.js', 'js/store.js', 'js/ui.js', 'js/plan.js', 'js/stats.js', 'js/cloud.js', 'js/app.js',
   'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png',
 ];
 

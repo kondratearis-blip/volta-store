@@ -214,7 +214,7 @@
     return st && st.kind === 'q' ? st.q : null;
   }
 
-  function ivSaveDraft() { store(DRAFT, ui.iv); }
+  function ivSaveDraft() { store(DRAFT, ui.iv); if (HQ.cloud) HQ.cloud.saveDraft(ui.iv); }
 
   // ═════════ Основные экраны ═════════
   function topbar() {
@@ -528,6 +528,7 @@
           <div class="field"><label for="set-min">Время в день (со следующего дня)</label><select class="input" id="set-min" data-change="dailyMinutes">
             ${[[15, '15 минут'], [30, '30 минут'], [60, 'Около часа'], [120, '2 часа']].map(([v, l]) => `<option value="${v}"${Number(pr.dailyMinutes) === v ? ' selected' : ''}>${l}</option>`).join('')}</select></div>
           <div class="field"><label for="set-name">Имя</label><input class="input" id="set-name" data-change="name" value="${esc(pr.name)}" maxlength="30"></div>
+          ${HQ.views.cloudStatus ? HQ.views.cloudStatus() : ''}
           ${HQ.views.notifySettings ? HQ.views.notifySettings() : ''}
           <button class="btn ghost" data-act="toggle-json">${ui.showJson ? 'Скрыть резервную копию' : 'Резервная копия'}</button>
           ${ui.showJson ? `<p class="muted" style="font-size:.85rem">Скопируй текст и сохрани в заметках. Чтобы восстановить — вставь сохранённый текст и нажми «Восстановить».</p>
@@ -550,7 +551,10 @@
 
   function render() {
     const el = document.getElementById('app');
-    if (!S.state.profile) {
+    if (!S.state.profile && HQ.cloud && HQ.cloud.status === 'connecting') {
+      el.innerHTML = `<div class="app interview"><div class="stack" style="margin:auto 0;gap:16px">
+        ${mentorBlock('netero', 'Хо-хо, минутку… Ищу твою лицензию Хантера.', 'happy', true)}</div></div>`;
+    } else if (!S.state.profile) {
       el.innerHTML = renderInterview();
       const inp = document.getElementById('iv-input');
       if (inp) inp.focus({ preventScroll: true });
@@ -662,6 +666,7 @@
     'iv-finish'() {
       S.finishInterview(ui.iv.answers);
       store(DRAFT);
+      if (HQ.cloud) HQ.cloud.saveDraft(null);
       ui.view = 'home';
       ui.greeting = { sticky: true, id: 'netero', text: 'Лицензия твоя! Вот первые задания. Начни с малого — с одного шага.' };
       after(); window.scrollTo(0, 0);
@@ -701,7 +706,7 @@
       try { S.importJson(document.getElementById('json-box').value); ui.showJson = false; toastText('Прогресс восстановлен'); render(); }
       catch (e) { toastText('Не получилось: ' + e.message); }
     },
-    reset() { ui.confirm = null; S.reset(); ui.iv = { step: 0, answers: {} }; store(DRAFT); render(); },
+    reset() { ui.confirm = null; S.reset(); ui.iv = { step: 0, answers: {} }; store(DRAFT); if (HQ.cloud) HQ.cloud.saveDraft(null); render(); },
   };
 
   function toastText(text) {
