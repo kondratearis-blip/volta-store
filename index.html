@@ -173,7 +173,7 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .filter{height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--field-border);font-size:14px;transition:.25s}
 .filter:hover{border-color:rgba(14,27,20,.35)}
 .filter.active{background:var(--text);color:#fff;border-color:var(--text)}
-.projects{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
 .project{
   position:relative;border-radius:var(--radius);background:var(--panel);overflow:hidden;display:flex;flex-direction:column;
   transition:transform .4s var(--ease),opacity .4s;
@@ -830,7 +830,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
         <div class="hero-copy" id="heroCopy">
           <span class="eyebrow" id="heroEyebrow">Квартиры от застройщика · Бишкек</span>
           <h1 class="hero-title" id="heroTitle">Элитные дома, в которых <span class="grad-text">хочется жить</span></h1>
-          <p class="lead" id="heroDesc">MK Group строит жилые комплексы бизнес- и премиум-класса.</p>
+          <p class="lead" id="heroDesc">MK Group — застройщик в Бишкеке с 2018 года.</p>
           <div class="hero-meta" id="heroMeta"></div>
           <div class="hero-cta">
             <button class="btn btn-accent" id="heroPick">Выбрать квартиру →</button>
@@ -848,7 +848,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
     <form class="qsearch" id="qsearch">
       <label class="qs-field">Жилой комплекс<select class="select" name="cx" id="qsCx"><option value="">Все комплексы</option></select></label>
       <label class="qs-field">Комнат<select class="select" name="rooms"><option value="">Любое</option><option value="0">Студия</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4+</option></select></label>
-      <label class="qs-field">Бюджет до<select class="select" name="price"><option value="">Любой</option><option value="50000">$50 000</option><option value="80000">$80 000</option><option value="120000">$120 000</option><option value="180000">$180 000</option><option value="300000">$300 000</option></select></label>
+      <label class="qs-field">Бюджет до<select class="select" name="price"><option value="">Любой</option><option value="5000000">5 млн сом</option><option value="7500000">7,5 млн сом</option><option value="10000000">10 млн сом</option><option value="15000000">15 млн сом</option><option value="20000000">20 млн сом</option></select></label>
       <label class="qs-field">Срок сдачи<select class="select" name="ready"><option value="">Любой</option><option value="ready">Сдан</option><option value="build">Строится</option></select></label>
       <button class="btn btn-accent" type="submit" id="qsBtn">Показать квартиры</button>
     </form>
@@ -856,8 +856,8 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   </div>
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span>Монолитно-каркасная технология</span><span>Закрытая охраняемая территория</span><span>Подземный паркинг</span><span>Высота потолков 3,2 м</span><span>Панорамное остекление</span><span>Детские и спортивные площадки</span><span>Видеонаблюдение 24/7</span><span>Лифты бесшумные</span>
-      <span>Монолитно-каркасная технология</span><span>Закрытая охраняемая территория</span><span>Подземный паркинг</span><span>Высота потолков 3,2 м</span><span>Панорамное остекление</span><span>Детские и спортивные площадки</span><span>Видеонаблюдение 24/7</span><span>Лифты бесшумные</span>
+      <span>Квартиры от застройщика</span><span>ЖК «Байхан» — ул. Мичурина, 267</span><span>ЖК «Байхан-2» — пр. Ленина, 328</span><span>Офис продаж — ул. Толомуша Океева, 39/7</span><span>MK Group — с 2018 года</span>
+      <span>Квартиры от застройщика</span><span>ЖК «Байхан» — ул. Мичурина, 267</span><span>ЖК «Байхан-2» — пр. Ленина, 328</span><span>Офис продаж — ул. Толомуша Океева, 39/7</span><span>MK Group — с 2018 года</span>
     </div>
   </div>
 </section>
@@ -897,7 +897,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
       <aside class="cat-filters" id="catFilters">
         <div><h4>Жилой комплекс</h4><select class="select" id="fCx"><option value="">Все комплексы</option></select></div>
         <div><h4>Количество комнат</h4><div class="room-chips" id="fRooms"><button data-r="0">Ст</button><button data-r="1">1</button><button data-r="2">2</button><button data-r="3">3</button><button data-r="4">4+</button></div></div>
-        <div><h4>Цена до</h4><div class="range-out"><span>$30 000</span><b id="fPriceOut">$400 000</b></div><input type="range" id="fPrice" min="30000" max="400000" step="5000" value="400000" aria-label="Цена до"></div>
+        <div><h4>Цена до</h4><div class="range-out"><span>2 млн сом</span><b id="fPriceOut">любая</b></div><input type="range" id="fPrice" min="2000000" max="30000000" step="250000" value="30000000" aria-label="Цена до"></div>
         <div><h4>Площадь от</h4><div class="range-out"><span>м²</span><b id="fAreaOut">30 м²</b></div><input type="range" id="fArea" min="30" max="180" step="2" value="30" aria-label="Площадь от"></div>
         <div><h4>Этаж</h4><select class="select" id="fFloor"><option value="">Любой</option><option value="low">1–5</option><option value="mid">6–12</option><option value="high">13 и выше</option><option value="top">Последний</option></select></div>
         <button class="btn btn-ghost" id="fReset" type="button">Сбросить фильтры</button>
@@ -1128,15 +1128,14 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   <div class="wrap about">
     <div class="about-text reveal">
       <span class="eyebrow">О компании</span>
-      <h2 class="h2" style="margin:0">MK Group — строим дома, которыми гордимся</h2>
-      <p class="lead">Мы проектируем и строим жилые комплексы под ключ: от выбора участка до благоустройства двора и управления домом. Каждый объект проходит независимый технический надзор, а ход строительства мы публикуем ежемесячно.</p>
+      <h2 class="h2" style="margin:0">MK Group — застройщик в Бишкеке с 2018 года</h2>
+      <p class="lead">MK Group (МК Групп) — строительная компания из Бишкека, работает с 2018 года. Компания построила ЖК «Байхан» на улице Мичурина и ведёт проект «Байхан-2» на проспекте Ленина. Офис продаж — ул. Толомуша Океева, 39/7.</p>
       <a class="btn btn-ghost" href="#build" style="align-self:flex-start">Ход строительства →</a>
     </div>
     <div class="about-stats">
-      <div class="stat reveal"><b><span class="count" data-to="12">0</span>+</b><span>лет на рынке</span></div>
-      <div class="stat reveal"><b><span class="count" data-to="18">0</span></b><span>сданных объектов</span></div>
-      <div class="stat reveal"><b><span class="count" data-to="3500">0</span>+</b><span>семей уже живут</span></div>
-      <div class="stat reveal"><b><span class="count" data-to="100">0</span>%</b><span>объектов сданы в срок</span></div>
+      <div class="stat reveal"><b>2018</b><span>год основания</span></div>
+      <div class="stat reveal"><b><span class="count" data-to="2">0</span></b><span>жилых комплекса</span></div>
+      <div class="stat reveal" style="grid-column:1/-1"><b><span class="count" data-to="9">0</span> этажей</b><span>в каждом доме ЖК «Байхан»</span></div>
     </div>
   </div>
 </section>
@@ -1152,7 +1151,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
       <a class="btn btn-ghost" href="#quiz">Подобрать квартиру →</a>
     </div>
     <div class="adv">
-      <div class="adv-card reveal"><div class="adv-ico"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></div><h3>Монолитный каркас</h3><p>Сейсмостойкость 9 баллов, расчёт по актуальным нормам и независимый технадзор.</p></div>
+      <div class="adv-card reveal"><div class="adv-ico"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></div><h3>Монолитный каркас</h3><p>Конструктив рассчитан по действующим сейсмическим нормам Кыргызстана.</p></div>
       <div class="adv-card reveal"><div class="adv-ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Юридическая чистота</h3><p>Все разрешительные документы открыты. Договор проверяет ваш юрист — мы не против.</p></div>
       <div class="adv-card reveal"><div class="adv-ico"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div><h3>Гибкая оплата</h3><p>Рассрочка 0% без банков, ипотека с партнёрами, скидки при 100% оплате и обмен квартиры.</p></div>
       <div class="adv-card reveal"><div class="adv-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Сдача в срок</h3><p>Фиксируем срок сдачи в договоре и публикуем ход строительства каждый месяц.</p></div>
@@ -1226,8 +1225,8 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
     <div class="contacts reveal">
       <div class="contact-card">
         <div class="c-item"><span>Телефон</span><a class="u-link js-phone" href="tel:+996700000000">+996 (700) 00-00-00</a></div>
-        <div class="c-item"><span>Адрес</span><b>г. Бишкек, ул. Примерная, 1</b></div>
-        <div class="c-item"><span>Режим работы</span><b>Пн–Сб, 9:00–19:00</b></div>
+        <div class="c-item"><span>Адрес</span><b>г. Бишкек, ул. Толомуша Океева, 39/7</b></div>
+        <div class="c-item"><span>Режим работы</span><b>уточняйте по телефону</b></div>
         <div class="c-item"><span>Email</span><a class="u-link" href="mailto:info@mkgroup.kg">info@mkgroup.kg</a></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:auto">
           <button class="btn btn-accent js-open-modal" data-title="Записаться на встречу в офисе">Записаться на встречу</button>
@@ -1262,7 +1261,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
     <div class="foot-grid">
       <div class="foot-left">
         <a href="#top" class="logo foot-mark"><svg><use href="#mk-mark"/></svg>MK Group</a>
-        <p>Строительная компания MK Group. Возводим современные жилые комплексы бизнес- и премиум-класса. Квартиры от застройщика, прозрачные условия, рассрочка и ипотека. Помогаем выбрать дом, в котором хочется жить.</p>
+        <p>MK Group (МК Групп) — строительная компания в Бишкеке, работает с 2018 года. ЖК «Байхан» (ул. Мичурина, 267) и ЖК «Байхан-2» (пр. Ленина, 328). Квартиры от застройщика.</p>
         <div class="socials">
           <a href="https://www.instagram.com/mkgroup_kg" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
           <a class="js-wa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.1z"/></svg></a>
@@ -1280,7 +1279,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
         <div class="foot-col">
           <h4>Связаться с нами</h4>
           <a class="u-link js-phone" href="tel:+996700000000" style="color:var(--text);font-weight:600;align-self:flex-start">+996 (700) 00-00-00</a>
-          <span>Офис продаж MK Group,<br>г. Бишкек, ул. Примерная, 1<br>Пн–Сб, 9:00–19:00</span>
+          <span>Офис продаж MK Group,<br>г. Бишкек, ул. Толомуша Океева, 39/7</span>
         </div>
       </div>
     </div>
@@ -1384,17 +1383,15 @@ const PROJECT_MEDIA = {};
 const CONSTRUCTION = {};
 
 /* Координаты офиса для карты */
-const OFFICE = {lat: 42.8746, lon: 74.5698};
+const OFFICE = {address: 'Бишкек, ул. Толомуша Океева, 39/7'};
 
 /* Фото ЖК: положите визуализацию в media/ и укажите img, например img:'media/zhk-a.jpg'.
    Пока файла нет — показывается анимированный дом. */
 const PROJECTS = [
-  {id:'a', img:'media/zhk-a.jpg', desc:'Клубный комплекс в верхней части города: вид на горы, закрытый двор без машин, подземный паркинг и собственная сервисная служба.', name:'ЖК «Ала-Тоо Резиденс»', loc:'Бишкек, верхняя часть города', status:'build', tag:'Строится', hot:true, floors:16, deadline:'IV кв. 2027', priceM2:1150, progress:62, area:'42–180 м²', towers:[{x:40,w:90,f:14},{x:150,w:110,f:18},{x:280,w:80,f:12}]},
-  {id:'b', img:'media/zhk-b.jpg', desc:'Дом у парка для тех, кто ценит тишину и зелень. Панорамные окна, лобби с консьержем, фитнес-зал и детский клуб на территории.', name:'ЖК «Premium Park»',      loc:'Бишкек, рядом с парком',    status:'build', tag:'Старт 2-й очереди', floors:20, deadline:'II кв. 2028', priceM2:1290, progress:28, area:'48–220 м²', towers:[{x:60,w:100,f:20},{x:190,w:100,f:16}]},
-  {id:'c', img:'media/zhk-c.jpg', desc:'Сданный комплекс с готовой инфраструктурой — школа, сад и магазины рядом. Заезжайте сразу после покупки.', name:'ЖК «Asman City»',        loc:'Бишкек, южный район',       status:'ready', tag:'Сдан · есть квартиры', floors:12, deadline:'Сдан', priceM2:1050, progress:100, area:'38–140 м²', towers:[{x:30,w:80,f:10},{x:125,w:120,f:12},{x:265,w:80,f:9}]},
-  {id:'d', img:'media/zhk-d.jpg', desc:'Самая высокая башня проекта в деловом центре: пентхаусы, террасы на крыше и видовые квартиры с потолками 3,3 м.', name:'ЖК «Sky Tower»',         loc:'Бишкек, деловой центр',     status:'soon',  tag:'Старт продаж', hot:true, floors:25, deadline:'IV кв. 2028', priceM2:1400, progress:8, area:'55–320 м²', towers:[{x:125,w:110,f:24}]},
-  {id:'e', img:'media/zhk-e.jpg', desc:'Камерный малоэтажный квартал у подножия гор: чистый воздух, прогулочные зоны и доступные цены.', name:'ЖК «Green Hills»',       loc:'Пригород, у гор',           status:'build', tag:'Строится', floors:9, deadline:'I кв. 2027', priceM2:890, progress:81, area:'36–110 м²', towers:[{x:30,w:90,f:9},{x:135,w:90,f:9},{x:240,w:90,f:9}]},
-  {id:'f', desc:'Премиальный дом в самом центре: всё в шаговой доступности, просторные планировки и дизайнерское лобби.', name:'ЖК «Central Lux»',       loc:'Бишкек, центр',             status:'ready', tag:'Сдан', floors:14, deadline:'Сдан', priceM2:1350, progress:100, area:'60–240 м²', towers:[{x:90,w:180,f:14}]},
+  // Данные из открытых каталогов новостроек (elitka.kg, house.kg). Этажность и срок «Байхан-2»
+  // в источниках не указаны или расходятся — уточните у отдела продаж и впишите сюда.
+  {id:'a', name:'ЖК «Байхан»', desc:'Жилой комплекс из двух 9-этажных домов на улице Мичурина. Комплекс сдан — наличие свободных квартир и цены уточняйте в отделе продаж.', loc:'Бишкек, ул. Мичурина, 267', status:'ready', tag:'Сдан', floors:9, deadline:'Сдан', priceM2:null, progress:100, area:'уточняйте', towers:[{x:60,w:110,f:9},{x:200,w:110,f:9}]},
+  {id:'b', name:'ЖК «Байхан-2»', desc:'Новый проект MK Group на проспекте Ленина. Оставьте заявку — пришлём планировки и актуальные цены.', loc:'Бишкек, пр. Ленина, 328', status:'build', tag:'Продажи открыты', hot:true, floors:12, floorsLabel:'уточняйте', deadline:'уточняйте', priceM2:105108, progress:null, area:'уточняйте', towers:[{x:110,w:150,f:12}]},
 ];
 
 /* ===== helpers ===== */
@@ -1403,6 +1400,10 @@ const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 const NS = 'http://www.w3.org/2000/svg';
 const svgEl = (tag, attrs={}) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
 const fmt = n => '$' + Math.round(n).toLocaleString('ru-RU').replace(/,/g,' ');
+const money = n => n == null ? 'по запросу' : Math.round(n).toLocaleString('ru-RU').replace(/,/g,' ') + ' сом';
+const priceM2Label = p => p.priceM2 ? 'от ' + money(p.priceM2) + '/м²' : 'по запросу';
+const floorsLabel = p => p.floorsLabel || p.floors + ' эт.';
+const ofFloors = p => p.floorsLabel ? '' : ' из ' + p.floors;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function rng(seed){ let s = seed % 2147483647; if (s <= 0) s += 2147483646; return () => (s = s * 16807 % 2147483647) / 2147483647; }
 const waLink = text => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
@@ -1536,7 +1537,7 @@ function drawSkyline(p) {
       const nm = p.name.replace('ЖК ', '').replace(/[«»]/g, '');
       $('#heroTitle').innerHTML = `ЖК <span class="grad-text">${nm}</span>`;
       $('#heroDesc').textContent = p.desc;
-      $('#heroMeta').innerHTML = `<div>Цена от<b>${fmt(p.priceM2)}/м²</b></div><div>Этажность<b>${p.floors} эт.</b></div><div>Сдача<b>${p.deadline}</b></div><div>Площади<b>${p.area}</b></div>`;
+      $('#heroMeta').innerHTML = `<div>Цена за м²<b>${priceM2Label(p)}</b></div><div>Этажность<b>${floorsLabel(p)}</b></div><div>Сдача<b>${p.deadline}</b></div><div>Площади<b>${p.area}</b></div>`;
       copy.classList.remove('out');
       showPhoto(p);
       if (!p.img) drawSkyline(p);
@@ -1585,13 +1586,13 @@ function twinkle(svg) {
       <div class="project-body">
         <div><h3>${p.name}</h3><div class="loc">${p.loc}</div></div>
         <div class="specs">
-          <div>Этажность<b>${p.floors} эт.</b></div>
+          <div>Этажность<b>${floorsLabel(p)}</b></div>
           <div>Площади<b>${p.area}</b></div>
           <div>Сдача<b>${p.deadline}</b></div>
         </div>
-        <div class="progress"><div style="display:flex;justify-content:space-between"><span>Готовность</span><span>${p.progress}%</span></div><div class="progress-bar"><i data-w="${p.progress}"></i></div></div>
+        <div class="progress"><div style="display:flex;justify-content:space-between"><span>Готовность</span><span>${p.progress == null ? 'уточняется' : p.progress + '%'}</span></div><div class="progress-bar"><i data-w="${p.progress || 0}"></i></div></div>
         <div class="project-foot">
-          <div class="price">Цена за м² от<b>${fmt(p.priceM2)}</b></div>
+          <div class="price">Цена за м²<b>${priceM2Label(p)}</b></div>
           <button class="btn btn-accent js-pick" data-id="${p.id}">Выбрать квартиру</button>
         </div>
       </div>`;
@@ -1633,7 +1634,7 @@ function unitsFor(p, floor) {
     const area = +(type.a[0] + r() * (type.a[1] - type.a[0])).toFixed(1);
     const rv = r();
     const status = p.status === 'ready' ? (rv < .55 ? 'sold' : rv < .65 ? 'booked' : 'free') : (rv < .3 ? 'sold' : rv < .45 ? 'booked' : 'free');
-    const price = area * p.priceM2 * (1 + floor * .008) * (floor === p.floors ? 1.15 : 1);
+    const price = p.priceM2 ? area * p.priceM2 * (1 + floor * .008) * (floor === p.floors ? 1.15 : 1) : null;
     return {n: floor * 10 + i + 1, rooms: type.r, t, area, status, price};
   });
 }
@@ -1673,15 +1674,15 @@ function drawTower() {
 
 function renderUnits() {
   const p = current.project, f = current.floor;
-  $('#ppFloor').innerHTML = `${f}<small>этаж из ${p.floors}</small>`;
+  $('#ppFloor').innerHTML = `${f}<small>этаж${ofFloors(p)}</small>`;
   $('#ppComplex').textContent = p.name;
   $$('#tower .tf').forEach(g => g.classList.toggle('sel', +g.dataset.floor === f));
   const label = {free:'Свободна', booked:'Бронь', sold:'Продана'};
   $('#units').innerHTML = unitsFor(p, f).map(u => `
-    <button class="unit" ${u.status === 'sold' ? 'disabled' : ''} data-unit='${JSON.stringify({n:u.n, rooms:u.rooms, t:u.t, area:u.area, price:Math.round(u.price), floor:f, status:u.status})}'>
+    <button class="unit" ${u.status === 'sold' ? 'disabled' : ''} data-unit='${JSON.stringify({n:u.n, rooms:u.rooms, t:u.t, area:u.area, price:u.price == null ? null : Math.round(u.price), floor:f, status:u.status})}'>
       <div class="u-top"><span class="u-rooms">${u.rooms}</span><span class="u-status ${u.status}">${label[u.status]}</span></div>
       <div class="u-plan">${planSVG(u.t)}</div>
-      <div class="u-meta"><span>№ ${u.n} · ${u.area} м²${u.status === 'sold' ? '' : '<br><span class="u-look">Смотреть внутри →</span>'}</span><b>${u.status === 'sold' ? '—' : fmt(u.price)}</b></div>
+      <div class="u-meta"><span>№ ${u.n} · ${u.area} м²${u.status === 'sold' ? '' : '<br><span class="u-look">Смотреть внутри →</span>'}</span><b>${u.status === 'sold' ? '—' : money(u.price)}</b></div>
     </button>`).join('');
 }
 
@@ -1816,7 +1817,7 @@ function openModal(title, unit) {
   $('#modalTitle').textContent = title || 'Оставьте заявку';
   const info = $('#unitInfo');
   if (unit) {
-    info.innerHTML = `<b>${unit.complex}</b><br>${unit.rooms} № ${unit.n} · ${unit.area} м² · ${unit.floor} этаж<br>Цена: <b class="grad-text">${fmt(unit.price)}</b>`;
+    info.innerHTML = `<b>${unit.complex}</b><br>${unit.rooms} № ${unit.n} · ${unit.area} м² · ${unit.floor} этаж<br>Цена: <b class="grad-text">${money(unit.price)}</b>`;
     info.classList.add('show');
     modalCtx = {unit};
   } else if (!modalCtx || !modalCtx.calc) { info.classList.remove('show'); modalCtx = null; }
@@ -1834,7 +1835,7 @@ $('#modalForm').addEventListener('submit', e => {
   if (!name) return invalid(f.name);
   if (phone.replace(/\D/g,'').length < 9) return invalid(f.phone);
   const lead = {source: $('#modalTitle').textContent, name, phone};
-  if (modalCtx?.unit) { const u = modalCtx.unit; lead.unit = `${u.complex}, ${u.rooms} №${u.n}, ${u.area} м², ${u.floor} эт., ${fmt(u.price)}`; }
+  if (modalCtx?.unit) { const u = modalCtx.unit; lead.unit = `${u.complex}, ${u.rooms} №${u.n}, ${u.area} м², ${u.floor} эт., ${money(u.price)}`; }
   if (modalCtx?.calc) lead.calc = modalCtx.calc;
   sendLead(lead, true);
   f.reset(); closeModal();
@@ -1874,10 +1875,10 @@ function renderTour() {
 function openTour(u) {
   tourUnit = u; tourTab = tourMedia(u).photos.length ? 'photo' : 'plan'; tourIdx = 0;
   $('#tourTitle').textContent = `${u.rooms} № ${u.n}`;
-  $('#tourSub').textContent = `${u.complex} · ${u.floor} этаж из ${u.project.floors}`;
-  $('#tourPrice').textContent = fmt(u.price);
-  const ppm = Math.round(u.price / u.area);
-  $('#tourSpecs').innerHTML = [['Площадь', u.area + ' м²'], ['Этаж', u.floor], ['Цена за м²', fmt(ppm)], ['Статус', u.status === 'booked' ? 'Бронь · лист ожидания' : 'Свободна'], ['Сдача дома', u.project.deadline]]
+  $('#tourSub').textContent = `${u.complex} · ${u.floor} этаж${ofFloors(u.project)}`;
+  $('#tourPrice').textContent = money(u.price);
+  const ppm = u.price == null ? null : Math.round(u.price / u.area);
+  $('#tourSpecs').innerHTML = [['Площадь', u.area + ' м²'], ['Этаж', u.floor], ['Цена за м²', money(ppm)], ['Статус', u.status === 'booked' ? 'Бронь · лист ожидания' : 'Свободна'], ['Сдача дома', u.project.deadline]]
     .map(([k, v]) => `<li><span>${k}</span><b>${v}</b></li>`).join('');
   $('#tourWa').href = waLink(`Здравствуйте! Интересует ${u.rooms} № ${u.n}, ${u.area} м², ${u.floor} этаж, ${u.complex}. Можно фото и видео?`);
   renderTour();
@@ -1903,31 +1904,32 @@ $('#tourBook').addEventListener('click', () => { const {project, ...u} = tourUni
    ========================================================== */
 const ALL_UNITS = PROJECTS.flatMap(p => {
   const out = [];
-  for (let f = 2; f <= p.floors; f++) unitsFor(p, f).forEach(u => { if (u.status === 'free') out.push({...u, floor: f, project: p, complex: p.name, price: Math.round(u.price), ppm: Math.round(u.price / u.area)}); });
+  for (let f = 2; f <= p.floors; f++) unitsFor(p, f).forEach(u => { if (u.status === 'free') out.push({...u, floor: f, project: p, complex: p.name, price: u.price == null ? null : Math.round(u.price), ppm: u.price == null ? null : Math.round(u.price / u.area)}); });
   return out;
 });
 const PAGE = matchMedia('(max-width:760px)').matches ? 6 : 12;
-const cat = {cx:'', rooms:new Set(), price:400000, area:30, floor:'', sort:'price', shown:PAGE, ready:''};
+const PRICE_MAX = 30000000;
+const cat = {cx:'', rooms:new Set(), price:PRICE_MAX, area:30, floor:'', sort:'price', shown:PAGE, ready:''};
 function catFiltered() {
   return ALL_UNITS.filter(u =>
     (!cat.cx || u.project.id === cat.cx) &&
     (!cat.ready || u.project.status === cat.ready || (cat.ready === 'build' && u.project.status === 'soon')) &&
     (!cat.rooms.size || cat.rooms.has(Math.min(u.t, 4))) &&
-    u.price <= cat.price && u.area >= cat.area &&
+    (u.price == null ? cat.price >= PRICE_MAX : u.price <= cat.price) && u.area >= cat.area &&
     (!cat.floor || (cat.floor === 'low' ? u.floor <= 5 : cat.floor === 'mid' ? u.floor >= 6 && u.floor <= 12 : cat.floor === 'high' ? u.floor >= 13 : u.floor === u.project.floors))
-  ).sort((a, b) => { const k = cat.sort.replace('-', ''), d = a[k] - b[k]; return cat.sort[0] === '-' ? -d : d; });
+  ).sort((a, b) => { const k = cat.sort.replace('-', ''); if (a[k] == null || b[k] == null) return (a[k] == null) - (b[k] == null); const d = a[k] - b[k]; return cat.sort[0] === '-' ? -d : d; });
 }
 function renderCatalog() {
   const list = catFiltered();
   $('#catCount').textContent = list.length;
-  const best = list.length ? Math.min(...list.map(u => u.ppm)) : 0;
+  const priced = list.filter(u => u.ppm != null), best = priced.length ? Math.min(...priced.map(u => u.ppm)) : -1;
   $('#catGrid').innerHTML = list.length ? list.slice(0, cat.shown).map((u, i) => `
     <button class="flat" data-k="${ALL_UNITS.indexOf(u)}">
       ${u.ppm === best ? '<span class="f-badge">Лучшая цена</span>' : u.floor === u.project.floors ? '<span class="f-badge">Видовая</span>' : ''}
       <div class="f-plan">${planSVG(u.t)}</div>
-      <div class="f-top"><b>${u.rooms}</b><span>${u.area} м² · ${u.floor}/${u.project.floors} эт.</span></div>
+      <div class="f-top"><b>${u.rooms}</b><span>${u.area} м² · ${u.floor}${u.project.floorsLabel ? '' : '/' + u.project.floors} эт.</span></div>
       <div class="f-cx">${u.complex} · № ${u.n}</div>
-      <div class="f-price"><b>${fmt(u.price)}</b><small>${fmt(u.ppm)}/м²</small></div>
+      <div class="f-price"><b>${money(u.price)}</b><small>${u.ppm ? money(u.ppm) + '/м²' : ''}</small></div>
     </button>`).join('') : '<div class="cat-empty">По заданным параметрам квартир нет. Измените фильтры или <a class="grad-text js-open-modal-inline" href="#quiz">оставьте заявку на подбор</a>.</div>';
   $('#catMore').style.display = list.length > cat.shown ? '' : 'none';
   const qs = $('#qsBtn'); if (qs) qs.textContent = `Показать ${list.length} квартир`;
@@ -1935,7 +1937,7 @@ function renderCatalog() {
 function syncFilters() {
   $('#fCx').value = cat.cx;
   $$('#fRooms button').forEach(b => b.classList.toggle('active', cat.rooms.has(+b.dataset.r)));
-  $('#fPrice').value = cat.price; $('#fPriceOut').textContent = fmt(cat.price);
+  $('#fPrice').value = cat.price; $('#fPriceOut').textContent = cat.price >= PRICE_MAX ? 'любая' : money(cat.price);
   $('#fArea').value = cat.area; $('#fAreaOut').textContent = cat.area + ' м²';
   $('#fFloor').value = cat.floor; $('#fSort').value = cat.sort;
 }
@@ -1950,7 +1952,7 @@ function syncFilters() {
   $('#fArea').oninput = e => { cat.area = +e.target.value; upd(); };
   $('#fFloor').onchange = e => { cat.floor = e.target.value; upd(); };
   $('#fSort').onchange = e => { cat.sort = e.target.value; upd(); };
-  $('#fReset').onclick = () => { Object.assign(cat, {cx:'', rooms:new Set(), price:400000, area:30, floor:'', ready:''}); upd(); };
+  $('#fReset').onclick = () => { Object.assign(cat, {cx:'', rooms:new Set(), price:PRICE_MAX, area:30, floor:'', ready:''}); upd(); };
   $('#catMore').onclick = () => { cat.shown += PAGE; renderCatalog(); };
   $('#catToggle').onclick = () => { const o = $('#catFilters').classList.toggle('open'); $('#catToggle').setAttribute('aria-expanded', o); };
   $('#catGrid').addEventListener('click', e => { const b = e.target.closest('.flat'); if (b) openTour(ALL_UNITS[+b.dataset.k]); });
@@ -1958,7 +1960,7 @@ function syncFilters() {
   const qs = $('#qsearch');
   qs.addEventListener('change', () => {
     cat.cx = qs.cx.value; cat.rooms = new Set(qs.rooms.value === '' ? [] : [+qs.rooms.value]);
-    cat.price = +qs.price.value || 400000; cat.ready = qs.ready.value; upd();
+    cat.price = +qs.price.value || PRICE_MAX; cat.ready = qs.ready.value; upd();
   });
   qs.addEventListener('submit', e => { e.preventDefault(); $('#catalog').scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); });
   upd();
@@ -1970,24 +1972,17 @@ function syncFilters() {
   const STAGES = ['Котлован и фундамент','Монолитные работы','Возведение каркаса','Кладка стен и перегородок','Фасадные работы','Инженерные сети','Остекление','Отделка МОП','Благоустройство территории','Ввод в эксплуатацию'];
   function reports(p) {
     if (CONSTRUCTION[p.id]) return CONSTRUCTION[p.id];
-    const now = new Date(), out = [];
-    for (let i = 0; i < 4; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const pr = Math.max(2, p.progress - i * 6);
-      const st = STAGES[Math.min(STAGES.length - 1, Math.floor(pr / 10))];
-      out.push({month: `${MONTHS[d.getMonth()]} ${d.getFullYear()}`, pct: pr, text: p.status === 'ready' ? 'Дом сдан, ведётся заселение и благоустройство двора.' : `${st}. Готовность объекта — ${pr}%.`, photos: []});
-    }
-    return out;
+    return [{month: p.status === 'ready' ? 'Сдан' : 'Скоро', pct: null, text: p.status === 'ready' ? 'Комплекс сдан и введён в эксплуатацию.' : 'Здесь будут ежемесячные фотоотчёты со стройки. Актуальный статус уточняйте в отделе продаж.', photos: []}];
   }
   const tabs = $('#buildTabs');
   tabs.innerHTML = PROJECTS.map(p => `<button class="filter" data-id="${p.id}">${p.name.replace(/ЖК |«|»/g, '')}</button>`).join('');
   function show(id) {
     const p = PROJECTS.find(x => x.id === id);
     $$('.filter', tabs).forEach(b => b.classList.toggle('active', b.dataset.id === id));
-    $('#ringFg').style.strokeDashoffset = 326.7 * (1 - p.progress / 100);
-    $('#ringVal').textContent = p.progress + '%';
+    $('#ringFg').style.strokeDashoffset = 326.7 * (1 - (p.progress || 0) / 100);
+    $('#ringVal').textContent = p.progress == null ? '—' : p.progress + '%';
     $('#buildName').textContent = p.name;
-    $('#buildInfo').textContent = `${p.loc} · ${p.floors} этажей · сдача: ${p.deadline}`;
+    $('#buildInfo').textContent = `${p.loc} · этажность: ${floorsLabel(p)} · сдача: ${p.deadline}`;
     $('#timeline').innerHTML = reports(p).map(r => `
       <div class="tl-item"><div class="tl-m">${r.month}${r.pct ? `<small>${r.pct}%</small>` : ''}</div>
       <div><p>${r.text}</p><div class="tl-photos">${(r.photos && r.photos.length ? r.photos.map(src => `<img src="${src}" alt="Фотоотчёт ${r.month}" loading="lazy">`) : ['<span></span>','<span></span>','<span></span>']).join('')}</div></div></div>`).join('');
@@ -1998,8 +1993,7 @@ function syncFilters() {
 
 /* ===== карта и даты акций ===== */
 (function misc() {
-  const d = .012;
-  $('#mapFrame').src = `https://www.openstreetmap.org/export/embed.html?bbox=${OFFICE.lon - d * 1.6},${OFFICE.lat - d},${OFFICE.lon + d * 1.6},${OFFICE.lat + d}&layer=mapnik`;
+  $('#mapFrame').src = 'https://maps.google.com/maps?q=' + encodeURIComponent(OFFICE.address) + '&z=16&output=embed';
   const end = new Date(); end.setMonth(end.getMonth() + 1, 0);
   $$('.js-month-end').forEach(el => el.textContent = `Акция до ${end.toLocaleDateString('ru-RU', {day:'numeric', month:'long'})}`);
   $$('.js-wa').forEach(a => { if (a.tagName === 'BUTTON') a.onclick = () => window.open(waLink('Здравствуйте! Хочу купить квартиру онлайн.'), '_blank', 'noopener'); });
