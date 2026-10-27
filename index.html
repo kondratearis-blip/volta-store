@@ -101,7 +101,7 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 /* ============ HERO ============ */
 .hero{padding:96px 0 0;min-height:100svh;display:flex;flex-direction:column}
 .hero-card{
-  position:relative;flex:1;min-height:640px;border-radius:var(--radius);overflow:hidden;isolation:isolate;
+  position:relative;flex:1;min-height:640px;border-radius:var(--radius) var(--radius) 0 0;overflow:hidden;isolation:isolate;
   background:#000;
 }
 .frame::before{
@@ -119,7 +119,7 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .smoke-css i:nth-child(3){width:35%;height:40%;right:-5%;top:10%;background:radial-gradient(closest-side,rgba(10,110,60,.7),transparent);animation-duration:27s;animation-delay:-12s}
 @keyframes drift{0%{transform:translate(0,0) scale(1) rotate(0)}50%{transform:translate(-6%,4%) scale(1.12) rotate(20deg)}100%{transform:translate(4%,-5%) scale(.95) rotate(-15deg)}}
 .hero-shade{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.65) 38%,rgba(0,0,0,.1) 70%),linear-gradient(0deg,rgba(0,0,0,.85),transparent 40%)}
-.hero-inner{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr 1fr;gap:20px;padding:clamp(28px,3.4vw,56px) clamp(28px,4vw,64px) clamp(20px,2vw,32px)}
+.hero-inner{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr 1fr;gap:20px;padding:clamp(70px,6vw,100px) clamp(28px,4vw,64px) clamp(20px,2vw,32px)}
 .hero-copy{display:flex;flex-direction:column;justify-content:center;max-width:640px}
 .hero h1{font-size:clamp(38px,5.4vw,82px);line-height:1;font-weight:600;letter-spacing:-.035em;margin:18px 0 20px}
 .hero h1 .line{display:block;overflow:hidden}
@@ -407,6 +407,111 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
 .countdown span{font-size:11px;color:var(--muted)}
 
 
+
+/* ============ HERO SLIDER ============ */
+.hero-copy{transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.hero-copy.out{opacity:0;transform:translateY(12px)}
+.hero-copy .hero-title{font-size:clamp(40px,5.6vw,88px);line-height:.98;font-weight:600;letter-spacing:-.04em;margin:16px 0 18px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:24px}
+.hero-meta div{font-size:13px;color:var(--muted)}
+.hero-meta b{display:block;color:#fff;font-size:20px;font-weight:600;letter-spacing:-.02em}
+.hero-tabs{position:relative;z-index:3;display:grid;grid-template-columns:repeat(var(--n,6),1fr);gap:0;margin:0 clamp(28px,4vw,64px);border-top:1px solid var(--line)}
+.hero-tab{position:relative;text-align:left;padding:18px 14px 22px 0;color:var(--muted);font-size:14px;transition:color .25s}
+.hero-tab small{display:block;font-size:12px;color:#6b6b70;margin-top:2px}
+.hero-tab:hover,.hero-tab.active{color:#fff}
+.hero-tab::before{content:"";position:absolute;top:-1px;left:0;height:2px;width:0;background:var(--accent)}
+.hero-tab.active::before{animation:tabfill var(--slide,7s) linear forwards}
+.hero-paused .hero-tab.active::before{animation-play-state:paused}
+@keyframes tabfill{to{width:100%}}
+.slide-arrows{position:absolute;right:clamp(28px,4vw,64px);top:clamp(28px,3.4vw,56px);z-index:4;display:flex;gap:8px}
+.slide-arrows button{width:46px;height:46px;border-radius:50%;border:1px solid var(--field-border);background:rgba(0,0,0,.45);backdrop-filter:blur(6px);font-size:18px;transition:.2s}
+.slide-arrows button:hover{border-color:var(--accent-1);color:var(--accent-1)}
+.slide-count{position:absolute;left:clamp(28px,4vw,64px);top:clamp(28px,3.4vw,56px);z-index:4;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.slide-count b{color:#fff;font-size:15px}
+
+/* ============ QUICK SEARCH ============ */
+.qsearch{position:relative;z-index:6;width:100%;margin:-1px 0 0;display:grid;grid-template-columns:repeat(4,1fr) auto;gap:10px;padding:14px;border-radius:0 0 var(--radius) var(--radius);background:var(--panel);border:1px solid var(--line-soft);border-top:0}
+.select{appearance:none;-webkit-appearance:none;width:100%;height:52px;border-radius:14px;background:#000 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%234ADE80' stroke-width='1.6'/%3E%3C/svg%3E") right 16px center no-repeat;border:1px solid var(--field-border);padding:0 40px 0 16px;outline:none;cursor:pointer;transition:border-color .2s}
+.select:hover,.select:focus{border-color:rgba(74,222,128,.6)}
+.select option{background:#0b0b0c}
+.qs-field{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}
+.qsearch .btn{height:52px;align-self:end;border-radius:14px;padding:0 26px}
+
+/* ============ CATALOG ============ */
+.catalog{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+.cat-filters{position:sticky;top:90px;border-radius:var(--radius);background:var(--panel);padding:24px;display:flex;flex-direction:column;gap:22px}
+.cat-filters h4{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:10px}
+.room-chips{display:flex;flex-wrap:wrap;gap:6px}
+.room-chips button{min-width:44px;height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--field-border);font-size:14px;transition:.2s}
+.room-chips button.active{background:var(--accent);color:#03170a;border-color:transparent;font-weight:600}
+.range-out{display:flex;justify-content:space-between;font-size:14px;margin-bottom:10px}
+.range-out b{font-weight:600}
+.cat-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.cat-head .found{font-size:15px;color:var(--muted)}
+.cat-head .found b{color:#fff;font-size:20px}
+.cat-head .select{width:auto;height:44px;border-radius:999px}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.flat{position:relative;text-align:left;border-radius:18px;background:var(--panel);border:1px solid var(--line-soft);padding:18px;display:flex;flex-direction:column;gap:12px;transition:border-color .25s,transform .25s}
+.flat:hover{border-color:rgba(74,222,128,.6);transform:translateY(-2px)}
+.flat .f-plan{height:110px;display:grid;place-items:center;border-radius:12px;background:#060607}
+.flat .f-plan svg{height:76px;width:auto}
+.flat .f-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.flat .f-top b{font-size:17px;font-weight:600}
+.flat .f-top span{font-size:12px;color:var(--muted);white-space:nowrap}
+.flat .f-cx{font-size:13px;color:var(--muted)}
+.flat .f-price{display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--line-soft);padding-top:12px}
+.flat .f-price b{font-size:19px;font-weight:600}
+.flat .f-price small{font-size:12px;color:var(--muted)}
+.flat .f-badge{position:absolute;top:28px;left:28px;font-size:11px;padding:4px 10px;border-radius:999px;background:var(--accent);color:#03170a;font-weight:600}
+.cat-more{display:flex;justify-content:center;margin-top:20px}
+.cat-empty{grid-column:1/-1;padding:60px 20px;text-align:center;color:var(--muted);border-radius:18px;border:1px dashed var(--field-border)}
+
+/* ============ PROMOS ============ */
+.promos{display:grid;grid-template-columns:1.4fr 1fr 1fr;grid-auto-rows:minmax(240px,auto);gap:20px}
+.promo{position:relative;overflow:hidden;border-radius:var(--radius);background:var(--panel);padding:30px;display:flex;flex-direction:column;gap:12px;isolation:isolate}
+.promo:first-child{grid-row:span 2;background:radial-gradient(90% 80% at 100% 100%,rgba(22,163,74,.55),transparent 65%),var(--panel)}
+.promo::after{content:"";position:absolute;z-index:-1;width:300px;height:300px;right:-140px;top:-140px;border-radius:50%;background:radial-gradient(closest-side,rgba(74,222,128,.25),transparent)}
+.promo .p-big{font-size:clamp(44px,5vw,84px);font-weight:600;letter-spacing:-.05em;line-height:1}
+.promo h3{font-size:22px;font-weight:600;letter-spacing:-.02em}
+.promo p{font-size:14px;color:var(--muted);max-width:420px}
+.promo .btn{margin-top:auto;align-self:flex-start;height:44px;font-size:14px}
+.promo .p-until{font-size:12px;color:var(--accent-1)}
+
+/* ============ CONSTRUCTION ============ */
+.build-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.build-wrap{display:grid;grid-template-columns:.8fr 1.2fr;gap:20px}
+.build-sum{border-radius:var(--radius);background:var(--panel);padding:30px;display:flex;flex-direction:column;gap:18px}
+.ring{position:relative;width:180px;height:180px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .bg{stroke:#1a1a1d}
+.ring .fg{stroke:url(#mkg);stroke-linecap:round;transition:stroke-dashoffset 1.4s var(--ease)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:40px;font-weight:600;letter-spacing:-.03em}
+.timeline{border-radius:var(--radius);background:var(--panel);padding:30px;display:flex;flex-direction:column}
+.tl-item{display:grid;grid-template-columns:130px 1fr;gap:20px;padding:18px 0;border-bottom:1px solid var(--line-soft)}
+.tl-item:last-child{border-bottom:0}
+.tl-item .tl-m{font-size:14px;font-weight:600}
+.tl-item .tl-m small{display:block;color:var(--accent-1);font-weight:500;font-size:12px}
+.tl-item p{font-size:14px;color:var(--muted)}
+.tl-photos{display:flex;gap:8px;margin-top:10px}
+.tl-photos span,.tl-photos img{width:72px;height:52px;border-radius:8px;object-fit:cover;background:linear-gradient(135deg,#141416,#0b1a10);border:1px solid var(--line-soft)}
+
+/* ============ ABOUT ============ */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.about-text{border-radius:var(--radius);background:var(--panel);padding:clamp(24px,3vw,44px);display:flex;flex-direction:column;gap:18px}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.about-stats .stat{border-radius:var(--radius);background:var(--panel);padding:28px;border:0}
+.about-stats .stat:first-child{padding-left:28px}
+
+/* ============ CONTACTS ============ */
+.contacts{display:grid;grid-template-columns:.8fr 1.2fr;gap:20px}
+.contact-card{border-radius:var(--radius);background:var(--panel);padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;gap:22px}
+.contact-card .c-item span{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.contact-card .c-item b,.contact-card .c-item a{font-size:18px;font-weight:600}
+.map{position:relative;border-radius:var(--radius);overflow:hidden;min-height:420px;background:#0b0b0c}
+.map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:invert(.92) hue-rotate(180deg) saturate(.6) brightness(.9)}
+.map .pin{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-22px 0 0 -11px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--accent);box-shadow:0 0 0 8px rgba(74,222,128,.2);pointer-events:none}
+
 /* ============ APARTMENT TOUR ============ */
 .tour .modal-card{width:min(100%,1040px);max-height:calc(100dvh - 32px);overflow:auto;padding:28px}
 .tour-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;position:relative;z-index:1}
@@ -495,6 +600,32 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   .countdown div{min-width:0;flex:1}
   .units{grid-template-columns:1fr}
 }
+
+@media (max-width:1180px){
+  .catalog{grid-template-columns:1fr}
+  .cat-filters{position:static;display:grid;grid-template-columns:repeat(2,1fr)}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .qsearch{grid-template-columns:repeat(2,1fr)}
+  .qsearch .btn{grid-column:1/-1}
+  .hero-tab small{display:none}
+}
+@media (max-width:980px){
+  .promos,.build-wrap,.about,.contacts{grid-template-columns:1fr}
+  .promo:first-child{grid-row:auto}
+  .hero-tabs{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:760px){
+  .cat-filters{grid-template-columns:1fr}
+  .cat-grid,.qsearch{grid-template-columns:1fr}
+  .hero-tabs{display:flex;overflow-x:auto;gap:18px;scrollbar-width:none}
+  .hero-tab{flex:none}
+  .slide-arrows{top:auto;bottom:86px}
+  .slide-count{display:none}
+  .tl-item{grid-template-columns:1fr;gap:6px}
+  .about-stats{grid-template-columns:1fr 1fr;gap:12px}
+  .about-stats .stat,.about-stats .stat:first-child{padding:20px}
+  .map{min-height:320px}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .smoke-video{display:none}
@@ -535,11 +666,11 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
     <a href="#top" class="logo" aria-label="MK Group — на главную"><svg><use href="#mk-mark"/></svg>MK Group</a>
     <nav class="nav-links" aria-label="Основное меню">
       <a href="#projects">Проекты</a>
-      <a href="#chess">Выбор квартиры</a>
-      <a href="#quiz">Подбор</a>
+      <a href="#catalog">Квартиры</a>
+      <a href="#promo">Акции</a>
       <a href="#calc">Рассрочка</a>
-      <a href="#faq">Вопросы</a>
-      <a href="#contacts">Контакты</a>
+      <a href="#build">Ход строительства</a>
+      <a href="#office">Контакты</a>
     </nav>
     <a class="nav-phone u-link js-phone" href="tel:+996700000000">+996 (700) 00-00-00</a>
     <a class="btn btn-accent" href="#quiz">Подобрать квартиру</a>
@@ -547,11 +678,13 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   </div>
   <div class="mobile-menu">
     <a href="#projects">Проекты</a>
-    <a href="#chess">Выбор квартиры</a>
+    <a href="#catalog">Каталог квартир</a>
+    <a href="#chess">Выбор по этажам</a>
+    <a href="#promo">Акции</a>
     <a href="#quiz">Подбор квартиры</a>
     <a href="#calc">Рассрочка и ипотека</a>
-    <a href="#faq">Вопросы</a>
-    <a href="#contacts">Контакты</a>
+    <a href="#build">Ход строительства</a>
+    <a href="#office">Контакты</a>
     <a class="btn btn-accent" href="tel:+996700000000">Позвонить</a>
   </div>
 </header>
@@ -567,34 +700,31 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
         src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/f6f4ec49-d5dd-4893-8eb4-fa0f932aceaf.mp4"></video>
       <div class="hero-shade"></div>
       <div class="hero-inner">
-        <div class="hero-copy">
-          <span class="eyebrow">Квартиры от застройщика · Бишкек</span>
-          <h1>
-            <span class="line"><span>Элитные дома,</span></span>
-            <span class="line"><span>в которых</span></span>
-            <span class="line"><span class="grad-text">хочется жить</span></span>
-          </h1>
-          <p class="lead">MK Group строит жилые комплексы бизнес- и премиум-класса: монолитный каркас, панорамные окна, закрытые дворы и подземный паркинг. Цены от застройщика без переплат.</p>
+        <div class="hero-copy" id="heroCopy">
+          <span class="eyebrow" id="heroEyebrow">Квартиры от застройщика · Бишкек</span>
+          <h1 class="hero-title" id="heroTitle">Элитные дома, в которых <span class="grad-text">хочется жить</span></h1>
+          <p class="lead" id="heroDesc">MK Group строит жилые комплексы бизнес- и премиум-класса.</p>
+          <div class="hero-meta" id="heroMeta"></div>
           <div class="hero-cta">
-            <a class="btn btn-accent" href="#quiz">Подобрать квартиру за 1 минуту →</a>
-            <button class="btn btn-ghost js-open-modal" data-title="Получить прайс и планировки">Скачать прайс</button>
-          </div>
-          <div class="hero-badges">
-            <span class="chip">Рассрочка <b>0%</b></span>
-            <span class="chip">Первый взнос <b>от 30%</b></span>
-            <span class="chip">Скидка <b>до 5%</b> при 100% оплате</span>
+            <button class="btn btn-accent" id="heroPick">Выбрать квартиру →</button>
+            <button class="btn btn-ghost js-open-modal" data-title="Получить презентацию ЖК">Получить презентацию</button>
           </div>
         </div>
         <div class="skyline-wrap" aria-hidden="true">
           <svg id="skyline" class="bld" viewBox="0 0 560 600" preserveAspectRatio="xMidYMax meet"></svg>
         </div>
       </div>
-      <div class="hero-stats">
-        <div class="stat"><b><span class="count" data-to="12">0</span>+</b><span>лет на рынке</span></div>
-        <div class="stat"><b><span class="count" data-to="18">0</span></b><span>сданных объектов</span></div>
-        <div class="stat"><b><span class="count" data-to="3500">0</span>+</b><span>семей уже живут</span></div>
-        <div class="stat"><b><span class="count" data-to="100">0</span>%</b><span>объектов сданы в срок</span></div>
-      </div>
+      <div class="slide-count" id="slideCount"></div>
+      <div class="slide-arrows"><button id="slidePrev" aria-label="Предыдущий ЖК">←</button><button id="slideNext" aria-label="Следующий ЖК">→</button></div>
+      <div class="hero-tabs" id="heroTabs"></div>
+    </div>
+    <form class="qsearch" id="qsearch">
+      <label class="qs-field">Жилой комплекс<select class="select" name="cx" id="qsCx"><option value="">Все комплексы</option></select></label>
+      <label class="qs-field">Комнат<select class="select" name="rooms"><option value="">Любое</option><option value="0">Студия</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4+</option></select></label>
+      <label class="qs-field">Бюджет до<select class="select" name="price"><option value="">Любой</option><option value="50000">$50 000</option><option value="80000">$80 000</option><option value="120000">$120 000</option><option value="180000">$180 000</option><option value="300000">$300 000</option></select></label>
+      <label class="qs-field">Срок сдачи<select class="select" name="ready"><option value="">Любой</option><option value="ready">Сдан</option><option value="build">Строится</option></select></label>
+      <button class="btn btn-accent" type="submit" id="qsBtn">Показать квартиры</button>
+    </form>
     </div>
   </div>
   <div class="marquee" aria-hidden="true">
@@ -622,6 +752,37 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
       </div>
     </div>
     <div class="projects" id="projectsGrid"></div>
+  </div>
+</section>
+
+<!-- ============ CATALOG ============ -->
+<section id="catalog">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="eyebrow">Каталог квартир</span>
+        <h2 class="h2">Подбор квартиры по параметрам</h2>
+        <p class="lead">Все свободные квартиры во всех комплексах MK Group. Нажмите на карточку — покажем, что внутри.</p>
+      </div>
+    </div>
+    <div class="catalog reveal">
+      <aside class="cat-filters" id="catFilters">
+        <div><h4>Жилой комплекс</h4><select class="select" id="fCx"><option value="">Все комплексы</option></select></div>
+        <div><h4>Количество комнат</h4><div class="room-chips" id="fRooms"><button data-r="0">Ст</button><button data-r="1">1</button><button data-r="2">2</button><button data-r="3">3</button><button data-r="4">4+</button></div></div>
+        <div><h4>Цена до</h4><div class="range-out"><span>$30 000</span><b id="fPriceOut">$400 000</b></div><input type="range" id="fPrice" min="30000" max="400000" step="5000" value="400000" aria-label="Цена до"></div>
+        <div><h4>Площадь от</h4><div class="range-out"><span>м²</span><b id="fAreaOut">30 м²</b></div><input type="range" id="fArea" min="30" max="180" step="2" value="30" aria-label="Площадь от"></div>
+        <div><h4>Этаж</h4><select class="select" id="fFloor"><option value="">Любой</option><option value="low">1–5</option><option value="mid">6–12</option><option value="high">13 и выше</option><option value="top">Последний</option></select></div>
+        <button class="btn btn-ghost" id="fReset" type="button">Сбросить фильтры</button>
+      </aside>
+      <div>
+        <div class="cat-head">
+          <div class="found">Найдено <b id="catCount">0</b> квартир</div>
+          <select class="select" id="fSort" aria-label="Сортировка"><option value="price">Сначала дешевле</option><option value="-price">Сначала дороже</option><option value="area">По площади ↑</option><option value="-area">По площади ↓</option><option value="ppm">По цене за м²</option></select>
+        </div>
+        <div class="cat-grid" id="catGrid"></div>
+        <div class="cat-more"><button class="btn btn-ghost" id="catMore">Показать ещё</button></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -658,6 +819,26 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
         <div class="units" id="units"></div>
         <p class="note">Цены указаны ориентировочно и обновляются отделом продаж. Точную стоимость уточняйте у менеджера.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROMOS ============ -->
+<section id="promo" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="eyebrow">Акции</span>
+        <h2 class="h2">Специальные предложения</h2>
+      </div>
+      <a class="btn btn-ghost" href="#quiz">Подобрать квартиру →</a>
+    </div>
+    <div class="promos">
+      <div class="promo reveal"><span class="p-until js-month-end"></span><div class="p-big grad-text">0%</div><h3>Рассрочка без переплат</h3><p>Первый взнос от 30%, остаток — равными платежами до окончания строительства. Без банков и справок о доходах.</p><button class="btn btn-accent js-open-modal" data-title="Условия рассрочки 0%">Узнать условия</button></div>
+      <div class="promo reveal"><div class="p-big">−5%</div><h3>При 100% оплате</h3><p>Максимальная скидка при единовременной оплате квартиры.</p><button class="btn btn-ghost js-open-modal" data-title="Скидка при 100% оплате">Рассчитать скидку</button></div>
+      <div class="promo reveal"><div class="p-big">Trade‑in</div><h3>Обмен квартиры</h3><p>Зачтём вашу текущую квартиру в счёт оплаты новой.</p><button class="btn btn-ghost js-open-modal" data-title="Оценка квартиры по trade-in">Оценить квартиру</button></div>
+      <div class="promo reveal"><div class="p-big">7 дней</div><h3>Фиксация цены</h3><p>Забронируйте квартиру — цена не изменится, пока вы принимаете решение.</p><button class="btn btn-ghost js-open-modal" data-title="Зафиксировать цену">Зафиксировать</button></div>
+      <div class="promo reveal"><div class="p-big">Онлайн</div><h3>Покупка без визита</h3><p>Видео-показ, договор и оплата дистанционно — удобно, если вы за рубежом.</p><button class="btn btn-ghost js-wa" target="_blank" rel="noopener">Написать в WhatsApp</button></div>
     </div>
   </div>
 </section>
@@ -814,6 +995,24 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   </div>
 </section>
 
+<!-- ============ ABOUT ============ -->
+<section id="about" style="padding-top:0">
+  <div class="wrap about">
+    <div class="about-text reveal">
+      <span class="eyebrow">О компании</span>
+      <h2 class="h2" style="margin:0">MK Group — строим дома, которыми гордимся</h2>
+      <p class="lead">Мы проектируем и строим жилые комплексы под ключ: от выбора участка до благоустройства двора и управления домом. Каждый объект проходит независимый технический надзор, а ход строительства мы публикуем ежемесячно.</p>
+      <a class="btn btn-ghost" href="#build" style="align-self:flex-start">Ход строительства →</a>
+    </div>
+    <div class="about-stats">
+      <div class="stat reveal"><b><span class="count" data-to="12">0</span>+</b><span>лет на рынке</span></div>
+      <div class="stat reveal"><b><span class="count" data-to="18">0</span></b><span>сданных объектов</span></div>
+      <div class="stat reveal"><b><span class="count" data-to="3500">0</span>+</b><span>семей уже живут</span></div>
+      <div class="stat reveal"><b><span class="count" data-to="100">0</span>%</b><span>объектов сданы в срок</span></div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ ADVANTAGES ============ -->
 <section id="why" style="padding-top:0">
   <div class="wrap">
@@ -829,6 +1028,28 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
       <div class="adv-card reveal"><div class="adv-ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Юридическая чистота</h3><p>Все разрешительные документы открыты. Договор проверяет ваш юрист — мы не против.</p></div>
       <div class="adv-card reveal"><div class="adv-ico"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div><h3>Гибкая оплата</h3><p>Рассрочка 0% без банков, ипотека с партнёрами, скидки при 100% оплате и обмен квартиры.</p></div>
       <div class="adv-card reveal"><div class="adv-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Сдача в срок</h3><p>Фиксируем срок сдачи в договоре и публикуем ход строительства каждый месяц.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONSTRUCTION ============ -->
+<section id="build" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="eyebrow">Ход строительства</span>
+        <h2 class="h2">Следите за стройкой онлайн</h2>
+        <p class="lead">Каждый месяц публикуем фотоотчёт и процент готовности по каждому комплексу.</p>
+      </div>
+    </div>
+    <div class="build-tabs reveal" id="buildTabs"></div>
+    <div class="build-wrap reveal">
+      <div class="build-sum">
+        <div class="ring"><svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" id="ringFg" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg><b id="ringVal">0%</b></div>
+        <div><h3 id="buildName" style="font-size:22px;font-weight:600"></h3><p class="lead" id="buildInfo" style="font-size:14px"></p></div>
+        <button class="btn btn-accent js-open-modal" data-title="Записаться на экскурсию по стройке" style="align-self:flex-start">Экскурсия на объект</button>
+      </div>
+      <div class="timeline" id="timeline"></div>
     </div>
   </div>
 </section>
@@ -866,6 +1087,26 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
       <div class="faq-item"><button class="faq-q">Какие документы нужны для покупки?</button><div class="faq-a"><div>Для оформления договора достаточно паспорта. Для ипотеки банк дополнительно попросит справку о доходах.</div></div></div>
       <div class="faq-item"><button class="faq-q">Квартиры сдаются с ремонтом?</button><div class="faq-a"><div>Квартиры сдаются в черновой или предчистовой отделке — зависит от проекта. Есть дизайнерские пакеты ремонта под ключ.</div></div></div>
       <div class="faq-item"><button class="faq-q">Можно ли посмотреть квартиру онлайн?</button><div class="faq-a"><div>Да, менеджер проведёт видео-показ в WhatsApp или Telegram и покажет объект, планировки и вид из окна.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTS ============ -->
+<section id="office" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head reveal"><div><span class="eyebrow">Контакты</span><h2 class="h2">Офис продаж</h2></div></div>
+    <div class="contacts reveal">
+      <div class="contact-card">
+        <div class="c-item"><span>Телефон</span><a class="u-link js-phone" href="tel:+996700000000">+996 (700) 00-00-00</a></div>
+        <div class="c-item"><span>Адрес</span><b>г. Бишкек, ул. Примерная, 1</b></div>
+        <div class="c-item"><span>Режим работы</span><b>Пн–Сб, 9:00–19:00</b></div>
+        <div class="c-item"><span>Email</span><a class="u-link" href="mailto:info@mkgroup.kg">info@mkgroup.kg</a></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:auto">
+          <button class="btn btn-accent js-open-modal" data-title="Записаться на встречу в офисе">Записаться на встречу</button>
+          <a class="btn btn-ghost js-wa" target="_blank" rel="noopener" href="#">WhatsApp</a>
+        </div>
+      </div>
+      <div class="map"><iframe title="Карта: офис продаж" loading="lazy" id="mapFrame"></iframe><span class="pin"></span></div>
     </div>
   </div>
 </section>
@@ -1011,13 +1252,20 @@ const MEDIA = {
 };
 const PROJECT_MEDIA = {};
 
+/* Ход строительства: фото по месяцам, например
+   CONSTRUCTION.a = [{month:'Октябрь 2026', text:'Монолит 14 этажа', photos:['media/a-oct-1.jpg']}] */
+const CONSTRUCTION = {};
+
+/* Координаты офиса для карты */
+const OFFICE = {lat: 42.8746, lon: 74.5698};
+
 const PROJECTS = [
-  {id:'a', name:'ЖК «Ала-Тоо Резиденс»', loc:'Бишкек, верхняя часть города', status:'build', tag:'Строится', hot:true, floors:16, deadline:'IV кв. 2027', priceM2:1150, progress:62, area:'42–180 м²', towers:[{x:40,w:90,f:14},{x:150,w:110,f:18},{x:280,w:80,f:12}]},
-  {id:'b', name:'ЖК «Premium Park»',      loc:'Бишкек, рядом с парком',    status:'build', tag:'Старт 2-й очереди', floors:20, deadline:'II кв. 2028', priceM2:1290, progress:28, area:'48–220 м²', towers:[{x:60,w:100,f:20},{x:190,w:100,f:16}]},
-  {id:'c', name:'ЖК «Asman City»',        loc:'Бишкек, южный район',       status:'ready', tag:'Сдан · есть квартиры', floors:12, deadline:'Сдан', priceM2:1050, progress:100, area:'38–140 м²', towers:[{x:30,w:80,f:10},{x:125,w:120,f:12},{x:265,w:80,f:9}]},
-  {id:'d', name:'ЖК «Sky Tower»',         loc:'Бишкек, деловой центр',     status:'soon',  tag:'Старт продаж', hot:true, floors:25, deadline:'IV кв. 2028', priceM2:1400, progress:8, area:'55–320 м²', towers:[{x:125,w:110,f:24}]},
-  {id:'e', name:'ЖК «Green Hills»',       loc:'Пригород, у гор',           status:'build', tag:'Строится', floors:9, deadline:'I кв. 2027', priceM2:890, progress:81, area:'36–110 м²', towers:[{x:30,w:90,f:9},{x:135,w:90,f:9},{x:240,w:90,f:9}]},
-  {id:'f', name:'ЖК «Central Lux»',       loc:'Бишкек, центр',             status:'ready', tag:'Сдан', floors:14, deadline:'Сдан', priceM2:1350, progress:100, area:'60–240 м²', towers:[{x:90,w:180,f:14}]},
+  {id:'a', desc:'Клубный комплекс в верхней части города: вид на горы, закрытый двор без машин, подземный паркинг и собственная сервисная служба.', name:'ЖК «Ала-Тоо Резиденс»', loc:'Бишкек, верхняя часть города', status:'build', tag:'Строится', hot:true, floors:16, deadline:'IV кв. 2027', priceM2:1150, progress:62, area:'42–180 м²', towers:[{x:40,w:90,f:14},{x:150,w:110,f:18},{x:280,w:80,f:12}]},
+  {id:'b', desc:'Дом у парка для тех, кто ценит тишину и зелень. Панорамные окна, лобби с консьержем, фитнес-зал и детский клуб на территории.', name:'ЖК «Premium Park»',      loc:'Бишкек, рядом с парком',    status:'build', tag:'Старт 2-й очереди', floors:20, deadline:'II кв. 2028', priceM2:1290, progress:28, area:'48–220 м²', towers:[{x:60,w:100,f:20},{x:190,w:100,f:16}]},
+  {id:'c', desc:'Сданный комплекс с готовой инфраструктурой — школа, сад и магазины рядом. Заезжайте сразу после покупки.', name:'ЖК «Asman City»',        loc:'Бишкек, южный район',       status:'ready', tag:'Сдан · есть квартиры', floors:12, deadline:'Сдан', priceM2:1050, progress:100, area:'38–140 м²', towers:[{x:30,w:80,f:10},{x:125,w:120,f:12},{x:265,w:80,f:9}]},
+  {id:'d', desc:'Самая высокая башня проекта в деловом центре: пентхаусы, террасы на крыше и видовые квартиры с потолками 3,3 м.', name:'ЖК «Sky Tower»',         loc:'Бишкек, деловой центр',     status:'soon',  tag:'Старт продаж', hot:true, floors:25, deadline:'IV кв. 2028', priceM2:1400, progress:8, area:'55–320 м²', towers:[{x:125,w:110,f:24}]},
+  {id:'e', desc:'Камерный малоэтажный квартал у подножия гор: чистый воздух, прогулочные зоны и доступные цены.', name:'ЖК «Green Hills»',       loc:'Пригород, у гор',           status:'build', tag:'Строится', floors:9, deadline:'I кв. 2027', priceM2:890, progress:81, area:'36–110 м²', towers:[{x:30,w:90,f:9},{x:135,w:90,f:9},{x:240,w:90,f:9}]},
+  {id:'f', desc:'Премиальный дом в самом центре: всё в шаговой доступности, просторные планировки и дизайнерское лобби.', name:'ЖК «Central Lux»',       loc:'Бишкек, центр',             status:'ready', tag:'Сдан', floors:14, deadline:'Сдан', priceM2:1350, progress:100, area:'60–240 м²', towers:[{x:90,w:180,f:14}]},
 ];
 
 /* ===== helpers ===== */
@@ -1107,25 +1355,59 @@ function buildCrane(svg, baseX, groundY, height) {
   svg.appendChild(g);
 }
 
-/* hero skyline */
-(function hero() {
+/* hero slider: каждый слайд — ЖК, дома перестраиваются этаж за этажом */
+function drawSkyline(p) {
   const svg = $('#skyline');
+  svg.classList.remove('in'); svg.innerHTML = '';
   const ground = 590;
-  // distant silhouettes
   const back = svgEl('g', {opacity:.35});
   [[0,60,230],[70,40,170],[470,50,260],[515,45,190]].forEach(([x,w,h]) => back.appendChild(svgEl('rect', {x, y:ground-h, width:w, height:h, fill:'#141416'})));
   svg.appendChild(back);
-  const g = svgEl('g');
-  svg.appendChild(g);
-  buildTower(g, {x:70,  w:96,  f:17, floorH:20, groundY:ground, delay:300, step:60, seed:3});
-  buildTower(g, {x:330, w:100, f:21, floorH:20, groundY:ground, delay:600, step:55, seed:7});
-  buildTower(g, {x:190, w:118, f:26, floorH:20, groundY:ground, delay:100, step:55, seed:5});
-  buildCrane(svg, 470, ground, 500);
-  // ground line + glow
+  const g = svgEl('g'); svg.appendChild(g);
+  const maxF = Math.max(...p.towers.map(t => t.f));
+  const floorH = Math.min(24, 470 / maxF);
+  const minX = Math.min(...p.towers.map(t => t.x)), maxX = Math.max(...p.towers.map(t => t.x + t.w));
+  const k = Math.min(1.45, 400 / (maxX - minX)), off = (500 - (maxX - minX) * k) / 2;
+  p.towers.forEach((t, i) => buildTower(g, {x: off + (t.x - minX) * k, w: t.w * k, f: t.f, floorH, groundY: ground, delay: 80 + i * 220, step: Math.max(28, 900 / t.f), seed: p.id.charCodeAt(0) + i * 3}));
+  if (p.status !== 'ready') buildCrane(svg, 520, ground, Math.min(540, maxF * floorH + 60));
   svg.appendChild(svgEl('rect', {x:0, y:ground, width:560, height:2, fill:'#4ADE80', opacity:.6}));
   svg.appendChild(svgEl('ellipse', {cx:280, cy:ground+4, rx:280, ry:10, fill:'#16A34A', opacity:.25, filter:'url(#glow)'}));
-  requestAnimationFrame(() => svg.classList.add('in'));
-  twinkle(svg);
+  requestAnimationFrame(() => requestAnimationFrame(() => svg.classList.add('in')));
+}
+(function heroSlider() {
+  const SLIDE_MS = 7000;
+  const tabs = $('#heroTabs'), copy = $('#heroCopy'), hero = $('.hero');
+  tabs.style.setProperty('--n', PROJECTS.length);
+  tabs.style.setProperty('--slide', SLIDE_MS + 'ms');
+  tabs.innerHTML = PROJECTS.map((p, i) => `<button class="hero-tab" data-i="${i}">${p.name.replace('ЖК ', '')}<small>${p.tag}</small></button>`).join('');
+  let idx = 0, timer;
+  function go(i, first) {
+    idx = (i + PROJECTS.length) % PROJECTS.length;
+    const p = PROJECTS[idx];
+    $$('.hero-tab', tabs).forEach((t, j) => { t.classList.remove('active'); if (j === idx) { void t.offsetWidth; t.classList.add('active'); } });
+    $('#slideCount').innerHTML = `<b>${String(idx + 1).padStart(2, '0')}</b> / ${String(PROJECTS.length).padStart(2, '0')}`;
+    const apply = () => {
+      $('#heroEyebrow').textContent = `${p.tag} · ${p.loc}`;
+      const nm = p.name.replace('ЖК ', '').replace(/[«»]/g, '');
+      $('#heroTitle').innerHTML = `ЖК <span class="grad-text">${nm}</span>`;
+      $('#heroDesc').textContent = p.desc;
+      $('#heroMeta').innerHTML = `<div>Цена от<b>${fmt(p.priceM2)}/м²</b></div><div>Этажность<b>${p.floors} эт.</b></div><div>Сдача<b>${p.deadline}</b></div><div>Площади<b>${p.area}</b></div>`;
+      copy.classList.remove('out');
+      drawSkyline(p);
+    };
+    if (first) apply(); else { copy.classList.add('out'); setTimeout(apply, 300); }
+    clearTimeout(timer);
+    if (!reduce) timer = setTimeout(() => go(idx + 1), SLIDE_MS);
+  }
+  tabs.addEventListener('click', e => { const b = e.target.closest('.hero-tab'); if (b) go(+b.dataset.i); });
+  $('#slideNext').onclick = () => go(idx + 1);
+  $('#slidePrev').onclick = () => go(idx - 1);
+  $('#heroPick').onclick = () => { selectComplex(PROJECTS[idx].id); $('#chess').scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); };
+  // swipe on touch
+  let sx = null;
+  $('.hero-card').addEventListener('touchstart', e => sx = e.touches[0].clientX, {passive:true});
+  $('.hero-card').addEventListener('touchend', e => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) go(idx + (dx < 0 ? 1 : -1)); sx = null; });
+  window.__heroStart = () => { go(0, true); twinkle($('#skyline')); };
 })();
 
 /* windows turn on/off like real evening life */
@@ -1279,6 +1561,7 @@ function selectComplex(id) {
   });
   selectComplex(PROJECTS[0].id);
 })();
+window.__heroStart();
 
 /* ==========================================================
    QUIZ
@@ -1466,6 +1749,112 @@ addEventListener('keydown', e => {
   if (tourTab === 'photo' && e.key === 'ArrowLeft') { tourIdx--; renderTour(); }
 });
 $('#tourBook').addEventListener('click', () => { const {project, ...u} = tourUnit; closeTour(); openModal('Забронировать квартиру', u); });
+
+
+/* ==========================================================
+   CATALOG — все свободные квартиры с фильтрами
+   ========================================================== */
+const ALL_UNITS = PROJECTS.flatMap(p => {
+  const out = [];
+  for (let f = 2; f <= p.floors; f++) unitsFor(p, f).forEach(u => { if (u.status === 'free') out.push({...u, floor: f, project: p, complex: p.name, price: Math.round(u.price), ppm: Math.round(u.price / u.area)}); });
+  return out;
+});
+const cat = {cx:'', rooms:new Set(), price:400000, area:30, floor:'', sort:'price', shown:12, ready:''};
+function catFiltered() {
+  return ALL_UNITS.filter(u =>
+    (!cat.cx || u.project.id === cat.cx) &&
+    (!cat.ready || u.project.status === cat.ready || (cat.ready === 'build' && u.project.status === 'soon')) &&
+    (!cat.rooms.size || cat.rooms.has(Math.min(u.t, 4))) &&
+    u.price <= cat.price && u.area >= cat.area &&
+    (!cat.floor || (cat.floor === 'low' ? u.floor <= 5 : cat.floor === 'mid' ? u.floor >= 6 && u.floor <= 12 : cat.floor === 'high' ? u.floor >= 13 : u.floor === u.project.floors))
+  ).sort((a, b) => { const k = cat.sort.replace('-', ''), d = a[k] - b[k]; return cat.sort[0] === '-' ? -d : d; });
+}
+function renderCatalog() {
+  const list = catFiltered();
+  $('#catCount').textContent = list.length;
+  const best = list.length ? Math.min(...list.map(u => u.ppm)) : 0;
+  $('#catGrid').innerHTML = list.length ? list.slice(0, cat.shown).map((u, i) => `
+    <button class="flat" data-k="${ALL_UNITS.indexOf(u)}">
+      ${u.ppm === best ? '<span class="f-badge">Лучшая цена</span>' : u.floor === u.project.floors ? '<span class="f-badge">Видовая</span>' : ''}
+      <div class="f-plan">${planSVG(u.t)}</div>
+      <div class="f-top"><b>${u.rooms}</b><span>${u.area} м² · ${u.floor}/${u.project.floors} эт.</span></div>
+      <div class="f-cx">${u.complex} · № ${u.n}</div>
+      <div class="f-price"><b>${fmt(u.price)}</b><small>${fmt(u.ppm)}/м²</small></div>
+    </button>`).join('') : '<div class="cat-empty">По заданным параметрам квартир нет. Измените фильтры или <a class="grad-text js-open-modal-inline" href="#quiz">оставьте заявку на подбор</a>.</div>';
+  $('#catMore').style.display = list.length > cat.shown ? '' : 'none';
+  const qs = $('#qsBtn'); if (qs) qs.textContent = `Показать ${list.length} квартир`;
+}
+function syncFilters() {
+  $('#fCx').value = cat.cx;
+  $$('#fRooms button').forEach(b => b.classList.toggle('active', cat.rooms.has(+b.dataset.r)));
+  $('#fPrice').value = cat.price; $('#fPriceOut').textContent = fmt(cat.price);
+  $('#fArea').value = cat.area; $('#fAreaOut').textContent = cat.area + ' м²';
+  $('#fFloor').value = cat.floor; $('#fSort').value = cat.sort;
+}
+(function catalogInit() {
+  const opts = PROJECTS.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  $('#fCx').insertAdjacentHTML('beforeend', opts);
+  $('#qsCx').insertAdjacentHTML('beforeend', opts);
+  const upd = () => { cat.shown = 12; syncFilters(); renderCatalog(); };
+  $('#fCx').onchange = e => { cat.cx = e.target.value; upd(); };
+  $('#fRooms').onclick = e => { const b = e.target.closest('button'); if (!b) return; const r = +b.dataset.r; cat.rooms.has(r) ? cat.rooms.delete(r) : cat.rooms.add(r); upd(); };
+  $('#fPrice').oninput = e => { cat.price = +e.target.value; upd(); };
+  $('#fArea').oninput = e => { cat.area = +e.target.value; upd(); };
+  $('#fFloor').onchange = e => { cat.floor = e.target.value; upd(); };
+  $('#fSort').onchange = e => { cat.sort = e.target.value; upd(); };
+  $('#fReset').onclick = () => { Object.assign(cat, {cx:'', rooms:new Set(), price:400000, area:30, floor:'', ready:''}); upd(); };
+  $('#catMore').onclick = () => { cat.shown += 12; renderCatalog(); };
+  $('#catGrid').addEventListener('click', e => { const b = e.target.closest('.flat'); if (b) openTour(ALL_UNITS[+b.dataset.k]); });
+  // quick search под слайдером
+  const qs = $('#qsearch');
+  qs.addEventListener('change', () => {
+    cat.cx = qs.cx.value; cat.rooms = new Set(qs.rooms.value === '' ? [] : [+qs.rooms.value]);
+    cat.price = +qs.price.value || 400000; cat.ready = qs.ready.value; upd();
+  });
+  qs.addEventListener('submit', e => { e.preventDefault(); $('#catalog').scrollIntoView({behavior: reduce ? 'auto' : 'smooth'}); });
+  upd();
+})();
+
+/* ===== ход строительства ===== */
+(function construction() {
+  const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const STAGES = ['Котлован и фундамент','Монолитные работы','Возведение каркаса','Кладка стен и перегородок','Фасадные работы','Инженерные сети','Остекление','Отделка МОП','Благоустройство территории','Ввод в эксплуатацию'];
+  function reports(p) {
+    if (CONSTRUCTION[p.id]) return CONSTRUCTION[p.id];
+    const now = new Date(), out = [];
+    for (let i = 0; i < 4; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const pr = Math.max(2, p.progress - i * 6);
+      const st = STAGES[Math.min(STAGES.length - 1, Math.floor(pr / 10))];
+      out.push({month: `${MONTHS[d.getMonth()]} ${d.getFullYear()}`, pct: pr, text: p.status === 'ready' ? 'Дом сдан, ведётся заселение и благоустройство двора.' : `${st}. Готовность объекта — ${pr}%.`, photos: []});
+    }
+    return out;
+  }
+  const tabs = $('#buildTabs');
+  tabs.innerHTML = PROJECTS.map(p => `<button class="filter" data-id="${p.id}">${p.name.replace(/ЖК |«|»/g, '')}</button>`).join('');
+  function show(id) {
+    const p = PROJECTS.find(x => x.id === id);
+    $$('.filter', tabs).forEach(b => b.classList.toggle('active', b.dataset.id === id));
+    $('#ringFg').style.strokeDashoffset = 326.7 * (1 - p.progress / 100);
+    $('#ringVal').textContent = p.progress + '%';
+    $('#buildName').textContent = p.name;
+    $('#buildInfo').textContent = `${p.loc} · ${p.floors} этажей · сдача: ${p.deadline}`;
+    $('#timeline').innerHTML = reports(p).map(r => `
+      <div class="tl-item"><div class="tl-m">${r.month}${r.pct ? `<small>${r.pct}%</small>` : ''}</div>
+      <div><p>${r.text}</p><div class="tl-photos">${(r.photos && r.photos.length ? r.photos.map(src => `<img src="${src}" alt="Фотоотчёт ${r.month}" loading="lazy">`) : ['<span></span>','<span></span>','<span></span>']).join('')}</div></div></div>`).join('');
+  }
+  tabs.addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (b) show(b.dataset.id); });
+  show(PROJECTS[0].id);
+})();
+
+/* ===== карта и даты акций ===== */
+(function misc() {
+  const d = .012;
+  $('#mapFrame').src = `https://www.openstreetmap.org/export/embed.html?bbox=${OFFICE.lon - d * 1.6},${OFFICE.lat - d},${OFFICE.lon + d * 1.6},${OFFICE.lat + d}&layer=mapnik`;
+  const end = new Date(); end.setMonth(end.getMonth() + 1, 0);
+  $$('.js-month-end').forEach(el => el.textContent = `Акция до ${end.toLocaleDateString('ru-RU', {day:'numeric', month:'long'})}`);
+  $$('.js-wa').forEach(a => { if (a.tagName === 'BUTTON') a.onclick = () => window.open(waLink('Здравствуйте! Хочу купить квартиру онлайн.'), '_blank', 'noopener'); });
+})();
 
 /* ===== CTA form ===== */
 $('#ctaForm').addEventListener('submit', e => {
