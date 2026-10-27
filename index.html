@@ -184,6 +184,9 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .project-visual svg{position:absolute;inset:auto 0 0 0;width:100%;height:100%}
 .project-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
 .project:hover .project-photo{transform:scale(1.04)}
+.img-note{position:absolute;right:12px;bottom:12px;z-index:2;font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.88);color:var(--muted)}
+.hero-note{position:absolute;right:clamp(28px,4vw,64px);bottom:96px;z-index:3;font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.88);color:var(--muted)}
+.hero-note[hidden]{display:none}
 .project-tag{position:absolute;top:16px;left:16px;z-index:2;font-size:12px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid var(--field-border)}
 .project-tag.hot{background:var(--accent);border-color:transparent;color:#fff}
 .project-body{padding:24px;display:flex;flex-direction:column;gap:14px;flex:1}
@@ -825,6 +828,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
     <div class="hero-card frame">
       <div class="smoke-css" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="hero-photos" id="heroPhotos" aria-hidden="true"></div>
+      <span class="hero-note" id="heroNote" hidden></span>
       <div class="hero-shade"></div>
       <div class="hero-inner">
         <div class="hero-copy" id="heroCopy">
@@ -1390,8 +1394,8 @@ const OFFICE = {address: 'Бишкек, ул. Толомуша Океева, 39/
 const PROJECTS = [
   // Данные из открытых каталогов новостроек (elitka.kg, house.kg). Этажность и срок «Байхан-2»
   // в источниках не указаны или расходятся — уточните у отдела продаж и впишите сюда.
-  {id:'a', name:'ЖК «Байхан»', desc:'Жилой комплекс из двух 9-этажных домов на улице Мичурина. Комплекс сдан — наличие свободных квартир и цены уточняйте в отделе продаж.', loc:'Бишкек, ул. Мичурина, 267', status:'ready', tag:'Сдан', floors:9, deadline:'Сдан', priceM2:null, progress:100, area:'уточняйте', towers:[{x:60,w:110,f:9},{x:200,w:110,f:9}]},
-  {id:'b', name:'ЖК «Байхан-2»', desc:'Новый проект MK Group на проспекте Ленина. Оставьте заявку — пришлём планировки и актуальные цены.', loc:'Бишкек, пр. Ленина, 328', status:'build', tag:'Продажи открыты', hot:true, floors:12, floorsLabel:'уточняйте', deadline:'уточняйте', priceM2:105108, progress:null, area:'уточняйте', towers:[{x:110,w:150,f:12}]},
+  {id:'a', img:'media/zhk-a.jpg', imgNote:'Иллюстрация', name:'ЖК «Байхан»', desc:'Жилой комплекс из двух 9-этажных домов на улице Мичурина. Комплекс сдан — наличие свободных квартир и цены уточняйте в отделе продаж.', loc:'Бишкек, ул. Мичурина, 267', status:'ready', tag:'Сдан', floors:9, deadline:'Сдан', priceM2:null, progress:100, area:'уточняйте', towers:[{x:60,w:110,f:9},{x:200,w:110,f:9}]},
+  {id:'b', img:'media/zhk-b.jpg', imgNote:'Иллюстрация', name:'ЖК «Байхан-2»', desc:'Новый проект MK Group на проспекте Ленина. Оставьте заявку — пришлём планировки и актуальные цены.', loc:'Бишкек, пр. Ленина, 328', status:'build', tag:'Продажи открыты', hot:true, floors:12, floorsLabel:'уточняйте', deadline:'уточняйте', priceM2:105108, progress:null, area:'уточняйте', towers:[{x:110,w:150,f:12}]},
 ];
 
 /* ===== helpers ===== */
@@ -1526,6 +1530,7 @@ function drawSkyline(p) {
     $$('img', photos).forEach(x => { if (x !== im) x.classList.remove('active'); });
     if (im) { im.classList.remove('active'); void im.offsetWidth; im.classList.add('active'); }
     card.classList.toggle('has-photo', !!im);
+    $('#heroNote').hidden = !(im && p.imgNote); $('#heroNote').textContent = p.imgNote || '';
   }
   function go(i, first) {
     idx = (i + PROJECTS.length) % PROJECTS.length;
@@ -1582,6 +1587,7 @@ function twinkle(svg) {
         <span class="project-tag ${p.hot ? 'hot' : ''}">${p.tag}</span>
         <svg class="bld" viewBox="0 0 380 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true"></svg>
         ${p.img ? `<img class="project-photo" src="${p.img}" alt="${p.name}, визуализация" loading="lazy" onerror="this.remove()">` : ''}
+        ${p.img && p.imgNote ? `<span class="img-note">${p.imgNote}</span>` : ''}
       </div>
       <div class="project-body">
         <div><h3>${p.name}</h3><div class="loc">${p.loc}</div></div>
