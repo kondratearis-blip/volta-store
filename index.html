@@ -6,6 +6,7 @@
 <title>MK Group — элитные жилые комплексы</title>
 <meta name="description" content="MK Group — строительная компания. Элитные жилые комплексы, квартиры от застройщика, рассрочка и ипотека. Подберите квартиру за 1 минуту.">
 <meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Crect width=%2240%22 height=%2240%22 rx=%2211%22 fill=%22%2316A34A%22/%3E%3Cpath d=%22M9 29V13l6 9 6-9v16M25 13v16M25 21l7-8M27.5 18.5 32 29%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%222.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
@@ -21,10 +22,10 @@
   --field-border:rgba(255,255,255,.15);
   --panel:#0b0b0c;
   --panel-2:#111113;
-  --accent-1:#FF8A73;
-  --accent-2:#F0605A;
+  --accent-1:#4ADE80;
+  --accent-2:#16A34A;
   --accent:linear-gradient(180deg,var(--accent-1),var(--accent-2));
-  --card-border:linear-gradient(135deg,rgba(244,118,104,.67),rgba(244,118,104,.29));
+  --card-border:linear-gradient(135deg,rgba(74,222,128,.67),rgba(74,222,128,.29));
   --ok:#5fd39b;
   --warn:#f5b759;
   --radius:20px;
@@ -45,6 +46,9 @@ a{color:inherit;text-decoration:none}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0}
 ::selection{background:var(--accent-2);color:#fff}
+.plate{position:absolute;inset:0;z-index:-3;background:#000 url("https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/03c58212-3a59-4c80-b19d-30d05a174563.webp") right bottom/cover no-repeat}
+/* исходные медиа коралловые — перекрашиваем в зелёный */
+.plate,.smoke-video{filter:hue-rotate(125deg) saturate(1.1)}
 .wrap{width:100%;max-width:calc(var(--max) + var(--gutter)*2);margin:0 auto;padding:0 var(--gutter)}
 .grad-text{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
 
@@ -55,10 +59,10 @@ button{cursor:pointer;background:none;border:0}
   white-space:nowrap;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s,border-color .25s;
 }
 .btn-accent{
-  background:var(--accent);color:#fff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 6px rgba(140,20,20,.25),0 6px 20px -8px rgba(240,96,90,.6);
+  background:var(--accent);color:#03170a;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 6px rgba(5,70,30,.25),0 6px 20px -8px rgba(22,163,74,.6);
 }
-.btn-accent:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 6px rgba(140,20,20,.2),0 10px 30px -6px rgba(255,138,115,.75)}
+.btn-accent:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 6px rgba(5,70,30,.2),0 10px 30px -6px rgba(74,222,128,.75)}
 .btn-ghost{border:1px solid var(--field-border);background:rgba(255,255,255,.02)}
 .btn-ghost:hover{border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.05)}
 .field{
@@ -67,7 +71,7 @@ button{cursor:pointer;background:none;border:0}
 }
 .field::placeholder{color:var(--placeholder)}
 .field:hover{border-color:rgba(255,255,255,.32)}
-.field:focus{border-color:rgba(255,138,115,.8);box-shadow:0 0 0 4px rgba(240,96,90,.15)}
+.field:focus{border-color:rgba(74,222,128,.8);box-shadow:0 0 0 4px rgba(22,163,74,.15)}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent-1);box-shadow:0 0 10px var(--accent-1)}
 .h2{font-size:clamp(28px,3.6vw,52px);line-height:1.08;font-weight:600;letter-spacing:-.025em;margin:14px 0 16px}
@@ -98,21 +102,21 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .hero{padding:96px 0 0;min-height:100svh;display:flex;flex-direction:column}
 .hero-card{
   position:relative;flex:1;min-height:640px;border-radius:var(--radius);overflow:hidden;isolation:isolate;
-  background:#000 url("https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/03c58212-3a59-4c80-b19d-30d05a174563.webp") right bottom/cover no-repeat;
+  background:#000;
 }
 .frame::before{
   content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;background:var(--card-border);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
   pointer-events:none;z-index:5;
 }
-.smoke-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right bottom;opacity:0;transition:opacity 1.2s ease;z-index:0}
+.smoke-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right bottom;opacity:0;transition:opacity 1.2s ease;z-index:-1}
 .smoke-video.ready{opacity:.8}
 /* CSS fallback smoke, visible under the video */
-.smoke-css{position:absolute;inset:-20%;z-index:-1;filter:blur(40px);opacity:.75}
+.smoke-css{position:absolute;inset:-20%;z-index:-2;filter:blur(40px);opacity:.75}
 .smoke-css i{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:drift 18s ease-in-out infinite alternate}
-.smoke-css i:nth-child(1){width:55%;height:60%;right:0;bottom:5%;background:radial-gradient(closest-side,rgba(240,96,90,.75),transparent)}
-.smoke-css i:nth-child(2){width:40%;height:45%;right:18%;bottom:25%;background:radial-gradient(closest-side,rgba(255,138,115,.55),transparent);animation-duration:23s;animation-delay:-6s}
-.smoke-css i:nth-child(3){width:35%;height:40%;right:-5%;top:10%;background:radial-gradient(closest-side,rgba(180,30,50,.7),transparent);animation-duration:27s;animation-delay:-12s}
+.smoke-css i:nth-child(1){width:55%;height:60%;right:0;bottom:5%;background:radial-gradient(closest-side,rgba(22,163,74,.75),transparent)}
+.smoke-css i:nth-child(2){width:40%;height:45%;right:18%;bottom:25%;background:radial-gradient(closest-side,rgba(74,222,128,.55),transparent);animation-duration:23s;animation-delay:-6s}
+.smoke-css i:nth-child(3){width:35%;height:40%;right:-5%;top:10%;background:radial-gradient(closest-side,rgba(10,110,60,.7),transparent);animation-duration:27s;animation-delay:-12s}
 @keyframes drift{0%{transform:translate(0,0) scale(1) rotate(0)}50%{transform:translate(-6%,4%) scale(1.12) rotate(20deg)}100%{transform:translate(4%,-5%) scale(.95) rotate(-15deg)}}
 .hero-shade{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.65) 38%,rgba(0,0,0,.1) 70%),linear-gradient(0deg,rgba(0,0,0,.85),transparent 40%)}
 .hero-inner{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr 1fr;gap:20px;padding:clamp(28px,3.4vw,56px) clamp(28px,4vw,64px) clamp(20px,2vw,32px)}
@@ -145,9 +149,9 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .bld.in .floor{animation-play-state:running}
 @keyframes floorUp{from{opacity:0;transform:translateY(-14px) scaleY(.4)}to{opacity:1;transform:none}}
 .bld .win{fill:#1a1a1d;transition:fill .8s ease}
-.bld .win.on{fill:#ffb29a;filter:url(#glow)}
-.bld .win.on.warm{fill:#ff8a73}
-.bld .win.on.cool{fill:#ffe1d4}
+.bld .win.on{fill:#bff7d3;filter:url(#glow)}
+.bld .win.on.warm{fill:#4ade80}
+.bld .win.on.cool{fill:#f1fff6}
 .bld .crown{opacity:0;animation:fade .8s both;animation-play-state:paused}
 .bld.in .crown{animation-play-state:running}
 .crane-jib{transform-origin:0 0;animation:jib 9s ease-in-out infinite alternate}
@@ -177,7 +181,7 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 }
 .project.reveal.in:hover{transform:translateY(-4px)}
 .project.hide{display:none}
-.project-visual{position:relative;height:300px;overflow:hidden;background:radial-gradient(120% 90% at 70% 100%,rgba(240,96,90,.35),transparent 60%),#050505}
+.project-visual{position:relative;height:300px;overflow:hidden;background:radial-gradient(120% 90% at 70% 100%,rgba(22,163,74,.35),transparent 60%),#050505}
 .project-visual svg{position:absolute;inset:auto 0 0 0;width:100%;height:100%}
 .project-tag{position:absolute;top:16px;left:16px;z-index:2;font-size:12px;padding:6px 12px;border-radius:999px;background:rgba(0,0,0,.6);border:1px solid var(--field-border);backdrop-filter:blur(6px)}
 .project-tag.hot{background:var(--accent);border-color:transparent}
@@ -197,14 +201,14 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 
 /* ============ CHESS / FLOOR PICKER ============ */
 .picker{display:grid;grid-template-columns:minmax(280px,.9fr) 1.1fr;gap:20px;align-items:stretch}
-.picker-visual{position:relative;border-radius:var(--radius);background:radial-gradient(90% 70% at 50% 100%,rgba(240,96,90,.25),transparent 70%),var(--panel);padding:28px;display:flex;align-items:flex-end;justify-content:center;min-height:620px}
+.picker-visual{position:relative;border-radius:var(--radius);background:radial-gradient(90% 70% at 50% 100%,rgba(22,163,74,.25),transparent 70%),var(--panel);padding:28px;display:flex;align-items:flex-end;justify-content:center;min-height:620px}
 #tower{width:100%;max-width:360px;height:auto}
 #tower .tf{cursor:pointer}
 #tower .tf rect.slab{fill:#141416;stroke:#262629;stroke-width:1;transition:fill .2s}
-#tower .tf:hover rect.slab{fill:#2a1714}
-#tower .tf.sel rect.slab{fill:url(#selGrad);stroke:#FF8A73}
+#tower .tf:hover rect.slab{fill:#12261a}
+#tower .tf.sel rect.slab{fill:url(#selGrad);stroke:#4ADE80}
 #tower .tf .tw{fill:#2a2a2e;transition:fill .2s}
-#tower .tf:hover .tw,#tower .tf.sel .tw{fill:#ffd2c4}
+#tower .tf:hover .tw,#tower .tf.sel .tw{fill:#c9f7da}
 #tower .tf text{fill:#6b6b70;font-size:9px;font-weight:600}
 #tower .tf.sel text{fill:#fff}
 .picker-hint{position:absolute;top:24px;left:24px;font-size:13px;color:var(--muted)}
@@ -219,7 +223,7 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .units{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .unit{position:relative;text-align:left;border-radius:16px;border:1px solid var(--line-soft);padding:18px;background:#070708;transition:border-color .25s,transform .25s,background .25s;display:flex;flex-direction:column;gap:12px;min-height:170px}
-.unit:not([disabled]):hover{border-color:rgba(255,138,115,.7);transform:translateY(-2px);background:#0e0a0a}
+.unit:not([disabled]):hover{border-color:rgba(74,222,128,.7);transform:translateY(-2px);background:#0a0e0b}
 .unit[disabled]{opacity:.45;cursor:not-allowed}
 .unit .u-top{display:flex;justify-content:space-between;align-items:center}
 .unit .u-rooms{font-size:18px;font-weight:600}
@@ -233,7 +237,7 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 
 /* ============ QUIZ ============ */
 .quiz{display:grid;grid-template-columns:.8fr 1.2fr;gap:20px}
-.quiz-aside{border-radius:var(--radius);padding:clamp(24px,3vw,40px);background:radial-gradient(100% 80% at 100% 100%,rgba(240,96,90,.45),transparent 65%),var(--panel);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:20px}
+.quiz-aside{border-radius:var(--radius);padding:clamp(24px,3vw,40px);background:radial-gradient(100% 80% at 100% 100%,rgba(22,163,74,.45),transparent 65%),var(--panel);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:20px}
 .gift{margin-top:auto;display:flex;gap:16px;align-items:center;padding:18px;border-radius:16px;background:rgba(0,0,0,.55);border:1px solid var(--field-border)}
 .gift-ico{flex:none;width:48px;height:48px;border-radius:14px;background:var(--accent);display:grid;place-items:center;font-size:22px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
 .gift p{font-size:14px;color:#e5e5e7}
@@ -250,13 +254,13 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .q-opt{position:relative;text-align:left;border:1px solid var(--line-soft);border-radius:16px;padding:18px 18px 18px 52px;background:#070708;transition:.2s;min-height:64px;font-size:15px}
 .q-opt::before{content:"";position:absolute;left:18px;top:50%;width:20px;height:20px;margin-top:-10px;border-radius:50%;border:1.5px solid #3a3a3f;transition:.2s}
 .q-opt:hover{border-color:rgba(255,255,255,.3)}
-.q-opt.sel{border-color:var(--accent-1);background:#140c0b}
+.q-opt.sel{border-color:var(--accent-1);background:#0a140d}
 .q-opt.sel::before{border-color:var(--accent-1);background:radial-gradient(circle,var(--accent-1) 0 5px,transparent 6px)}
 .q-opt small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 .q-range{display:flex;flex-direction:column;gap:18px}
 .q-range output{font-size:clamp(32px,3.4vw,48px);font-weight:600;letter-spacing:-.03em}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:#232326;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--accent);border:3px solid #000;box-shadow:0 0 0 1px var(--accent-1),0 4px 14px rgba(240,96,90,.6);cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--accent);border:3px solid #000;box-shadow:0 0 0 1px var(--accent-1),0 4px 14px rgba(22,163,74,.6);cursor:pointer}
 input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent-1);border:3px solid #000;cursor:pointer}
 .range-scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
 .q-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto;padding-top:30px}
@@ -267,7 +271,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .channels label{cursor:pointer}
 .channels input{position:absolute;opacity:0;pointer-events:none}
 .channels span{display:inline-flex;height:40px;align-items:center;padding:0 16px;border-radius:999px;border:1px solid var(--field-border);font-size:14px;transition:.2s}
-.channels input:checked+span{border-color:var(--accent-1);color:var(--accent-1);background:#140c0b}
+.channels input:checked+span{border-color:var(--accent-1);color:var(--accent-1);background:#0a140d}
 .consent{font-size:12px;color:var(--placeholder)}
 .q-result{align-items:flex-start;text-align:left}
 .q-result .big{font-size:clamp(34px,4vw,56px);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin-bottom:12px}
@@ -285,7 +289,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .c-row{display:flex;flex-direction:column;gap:12px}
 .c-row .c-lab{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
 .c-row .c-lab b{color:#fff;font-size:18px;font-weight:600}
-.calc-res{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:20px;background:radial-gradient(120% 80% at 100% 0%,rgba(240,96,90,.35),transparent 60%),var(--panel)}
+.calc-res{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:20px;background:radial-gradient(120% 80% at 100% 0%,rgba(22,163,74,.35),transparent 60%),var(--panel)}
 .calc-res .monthly{font-size:clamp(40px,4.6vw,66px);font-weight:600;letter-spacing:-.04em;line-height:1}
 .calc-res ul{list-style:none;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line-soft)}
 .calc-res li{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line-soft);font-size:14px;color:var(--muted)}
@@ -295,7 +299,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 /* ============ ADVANTAGES ============ */
 .adv{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .adv-card{border-radius:var(--radius);background:var(--panel);padding:28px;display:flex;flex-direction:column;gap:14px;min-height:240px;position:relative;overflow:hidden;transition:background .3s}
-.adv-card::after{content:"";position:absolute;width:240px;height:240px;right:-120px;bottom:-120px;border-radius:50%;background:radial-gradient(closest-side,rgba(240,96,90,.45),transparent);opacity:0;transition:opacity .4s}
+.adv-card::after{content:"";position:absolute;width:240px;height:240px;right:-120px;bottom:-120px;border-radius:50%;background:radial-gradient(closest-side,rgba(22,163,74,.45),transparent);opacity:0;transition:opacity .4s}
 .adv-card:hover::after{opacity:1}
 .adv-ico{width:46px;height:46px;border-radius:14px;border:1px solid var(--field-border);display:grid;place-items:center}
 .adv-ico svg{width:22px;height:22px;stroke:var(--accent-1);fill:none;stroke-width:1.6}
@@ -335,10 +339,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
   min-height:max(340px, calc(340 * var(--v)));
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
   padding:calc(48 * var(--v)) 24px;
-  background:#000 url("https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/03c58212-3a59-4c80-b19d-30d05a174563.webp") right bottom/cover no-repeat;
+  background:#000;
 }
-.cta-card .smoke-video{z-index:-1}
-.cta-card .smoke-css{z-index:-2}
 .cta-card.frame::before{opacity:0;animation:fade .6s .05s both}
 .cta-card h2{font-size:clamp(28px,calc(34 * var(--u) * 1.2),52px);font-weight:600;letter-spacing:-.025em;line-height:1.1}
 .cta-card p{margin-top:12px;color:rgba(255,255,255,.82);font-size:clamp(14px,calc(16 * var(--u) * 1.1),18px)}
@@ -384,14 +386,14 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
 .modal.open{opacity:1;pointer-events:auto}
 .modal-card{position:relative;width:min(100%,480px);border-radius:var(--radius);background:#0a0a0b;padding:34px 28px 28px;transform:translateY(20px) scale(.98);transition:transform .35s var(--ease);overflow:hidden}
 .modal.open .modal-card{transform:none}
-.modal-card::after{content:"";position:absolute;width:360px;height:360px;right:-180px;top:-200px;border-radius:50%;background:radial-gradient(closest-side,rgba(240,96,90,.45),transparent);pointer-events:none}
+.modal-card::after{content:"";position:absolute;width:360px;height:360px;right:-180px;top:-200px;border-radius:50%;background:radial-gradient(closest-side,rgba(22,163,74,.45),transparent);pointer-events:none}
 .modal-close{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--field-border);z-index:2;font-size:18px}
 .modal h3{font-size:24px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px;position:relative;z-index:1}
 .modal .sub{color:var(--muted);font-size:14px;margin-bottom:20px;position:relative;z-index:1}
 .modal form{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
-.modal .unit-info{display:none;padding:14px 16px;border-radius:14px;background:#140c0b;border:1px solid rgba(255,138,115,.35);font-size:14px;margin-bottom:6px}
+.modal .unit-info{display:none;padding:14px 16px;border-radius:14px;background:#0a140d;border:1px solid rgba(74,222,128,.35);font-size:14px;margin-bottom:6px}
 .modal .unit-info.show{display:block}
-.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);z-index:120;background:#111;border:1px solid rgba(255,138,115,.5);border-radius:14px;padding:14px 20px;font-size:14px;opacity:0;pointer-events:none;transition:.35s var(--ease);max-width:calc(100% - 32px)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);z-index:120;background:#111;border:1px solid rgba(74,222,128,.5);border-radius:14px;padding:14px 20px;font-size:14px;opacity:0;pointer-events:none;transition:.35s var(--ease);max-width:calc(100% - 32px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .fab{position:fixed;right:20px;bottom:20px;z-index:60;width:60px;height:60px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 30px -6px rgba(37,211,102,.6)}
 .fab svg{width:30px;height:30px;fill:#fff}
@@ -403,6 +405,32 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
 .countdown div{min-width:62px;padding:10px 8px;border-radius:12px;background:rgba(0,0,0,.55);border:1px solid var(--field-border);text-align:center}
 .countdown b{display:block;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
 .countdown span{font-size:11px;color:var(--muted)}
+
+
+/* ============ APARTMENT TOUR ============ */
+.tour .modal-card{width:min(100%,1040px);max-height:calc(100dvh - 32px);overflow:auto;padding:28px}
+.tour-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;position:relative;z-index:1}
+.tour-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tour-stage{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:#070708;border:1px solid var(--line-soft)}
+.tour-stage img,.tour-stage video,.tour-stage iframe{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:0}
+.tour-stage .plan-big{position:absolute;inset:0;display:grid;place-items:center;padding:24px}
+.tour-stage .plan-big svg{width:100%;height:100%}
+.tour-stage .plan-big svg *{stroke-width:2;vector-effect:non-scaling-stroke}
+.tour-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:20px;color:var(--muted);font-size:14px;background:radial-gradient(80% 70% at 50% 100%,rgba(22,163,74,.25),transparent 70%),#070708}
+.tour-ph b{color:#fff;font-size:17px}
+.tour-arrow{position:absolute;top:50%;margin-top:-22px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid var(--field-border);z-index:2;font-size:18px}
+.tour-arrow.prev{left:12px}.tour-arrow.next{right:12px}
+.tour-thumbs{display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding-bottom:4px}
+.tour-thumbs button{flex:none;width:84px;height:56px;border-radius:10px;overflow:hidden;border:1px solid var(--line-soft);opacity:.6;transition:.2s;background:#0b0b0c}
+.tour-thumbs button.active{opacity:1;border-color:var(--accent-1)}
+.tour-thumbs img{width:100%;height:100%;object-fit:cover}
+.tour-info{display:flex;flex-direction:column;gap:14px}
+.tour-info .price-big{font-size:34px;font-weight:600;letter-spacing:-.03em}
+.tour-info ul{list-style:none;border-top:1px solid var(--line-soft)}
+.tour-info li{display:flex;justify-content:space-between;gap:16px;text-align:right;padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:14px;color:var(--muted)}
+.tour-info li b{color:#fff;font-weight:600}
+.unit .u-look{font-size:12px;color:var(--accent-1)}
+@media (max-width:860px){.tour-grid{grid-template-columns:1fr}.tour .modal-card{padding:22px 16px}}
 
 /* reveal on scroll */
 .quiz>*,.picker>*,.calc>*,.faq>*,.hero-inner>*{min-width:0}
@@ -487,17 +515,17 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
       <stop offset="0" stop-color="#1b1b1f"/><stop offset="1" stop-color="#0a0a0c"/>
     </linearGradient>
     <linearGradient id="glassR" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#0d0d0f"/><stop offset="1" stop-color="#1d1112"/>
+      <stop offset="0" stop-color="#0d0d0f"/><stop offset="1" stop-color="#101d15"/>
     </linearGradient>
     <linearGradient id="selGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#FF8A73" stop-opacity=".55"/><stop offset="1" stop-color="#F0605A" stop-opacity=".25"/>
+      <stop offset="0" stop-color="#4ADE80" stop-opacity=".55"/><stop offset="1" stop-color="#16A34A" stop-opacity=".25"/>
     </linearGradient>
     <symbol id="mk-mark" viewBox="0 0 40 40">
       <rect x=".75" y=".75" width="38.5" height="38.5" rx="11" fill="none" stroke="url(#mkg)" stroke-width="1.5"/>
       <path d="M9 29V13l6 9 6-9v16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M25 13v16M25 21l7-8M27.5 18.5 32 29" fill="none" stroke="url(#mkg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
-    <linearGradient id="mkg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A73"/><stop offset="1" stop-color="#F0605A"/></linearGradient>
+    <linearGradient id="mkg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient>
   </defs>
 </svg>
 
@@ -533,6 +561,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
 <section class="hero" aria-label="Главный экран">
   <div class="wrap" style="flex:1;display:flex;flex-direction:column">
     <div class="hero-card frame">
+      <div class="plate" aria-hidden="true"></div>
       <div class="smoke-css" aria-hidden="true"><i></i><i></i><i></i></div>
       <video class="smoke-video" autoplay muted loop playsinline preload="auto" aria-hidden="true"
         src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/f6f4ec49-d5dd-4893-8eb4-fa0f932aceaf.mp4"></video>
@@ -845,6 +874,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
 <section class="cta-section cta-pre" id="cta" aria-label="Заявка">
   <div class="cta-scope">
     <div class="cta-card frame">
+      <div class="plate" aria-hidden="true"></div>
       <div class="smoke-css" aria-hidden="true"><i></i><i></i><i></i></div>
       <video class="smoke-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true"
         src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/f6f4ec49-d5dd-4893-8eb4-fa0f932aceaf.mp4"></video>
@@ -911,6 +941,36 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   </div>
 </div>
 
+
+<!-- ============ APARTMENT TOUR ============ -->
+<div class="modal tour" id="tour" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+  <div class="modal-card">
+    <button class="modal-close" id="tourClose" aria-label="Закрыть">✕</button>
+    <h3 id="tourTitle">Квартира</h3>
+    <p class="sub" id="tourSub"></p>
+    <div class="tour-grid">
+      <div>
+        <div class="tour-tabs" id="tourTabs">
+          <button class="filter active" data-tab="photo">Фото интерьера</button>
+          <button class="filter" data-tab="video">Видео</button>
+          <button class="filter" data-tab="plan">Планировка</button>
+          <button class="filter" data-tab="view">Вид из окна</button>
+        </div>
+        <div class="tour-stage" id="tourStage"></div>
+        <div class="tour-thumbs" id="tourThumbs"></div>
+      </div>
+      <div class="tour-info">
+        <span class="eyebrow">Стоимость</span>
+        <div class="price-big grad-text" id="tourPrice"></div>
+        <ul id="tourSpecs"></ul>
+        <button class="btn btn-accent" id="tourBook" style="height:54px">Забронировать эту квартиру</button>
+        <a class="btn btn-ghost" id="tourWa" target="_blank" rel="noopener">Спросить в WhatsApp</a>
+        <p class="note">Фото и видео показывают пример отделки для этого типа квартиры.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <a class="fab js-wa" href="#" target="_blank" rel="noopener" aria-label="Написать в WhatsApp">
@@ -934,6 +994,22 @@ const CONFIG = {
   // Если есть бот/CRM — укажите URL, заявки будут отправляться POST-запросом (JSON)
   leadEndpoint: '',
 };
+
+
+/* ==========================================================
+   MEDIA — фото и видео квартир (что внутри).
+   Положите файлы в папку media/ и впишите пути, например:
+   'Студия': {photos:['media/studio-1.jpg','media/studio-2.jpg'], video:'media/studio.mp4', view:'media/view.jpg'}
+   Можно задать отдельно для ЖК: PROJECT_MEDIA.a = {...} — перекроет общие.
+   ========================================================== */
+const MEDIA = {
+  'Студия':      {photos:[], video:'', view:''},
+  '1-комнатная': {photos:[], video:'', view:''},
+  '2-комнатная': {photos:[], video:'', view:''},
+  '3-комнатная': {photos:[], video:'', view:''},
+  '4-комнатная': {photos:[], video:'', view:''},
+};
+const PROJECT_MEDIA = {};
 
 const PROJECTS = [
   {id:'a', name:'ЖК «Ала-Тоо Резиденс»', loc:'Бишкек, верхняя часть города', status:'build', tag:'Строится', hot:true, floors:16, deadline:'IV кв. 2027', priceM2:1150, progress:62, area:'42–180 м²', towers:[{x:40,w:90,f:14},{x:150,w:110,f:18},{x:280,w:80,f:12}]},
@@ -996,7 +1072,7 @@ function buildTower(g, {x, w, f, floorH = 18, groundY, delay = 0, step = 70, see
       fl.appendChild(svgEl('rect', {x:wx, y:y + 4, width:winW, height:floorH - 8, rx:1, class:cls}));
     }
     // balconies every other floor
-    if (i % 2 === 1) fl.appendChild(svgEl('rect', {x:x - 3, y:y + floorH - 2, width:w + 6, height:2, fill:'#3a2422'}));
+    if (i % 2 === 1) fl.appendChild(svgEl('rect', {x:x - 3, y:y + floorH - 2, width:w + 6, height:2, fill:'#1d3a29'}));
     g.appendChild(fl);
   }
   if (crown) {
@@ -1006,7 +1082,7 @@ function buildTower(g, {x, w, f, floorH = 18, groundY, delay = 0, step = 70, see
     cr.appendChild(svgEl('rect', {x:x - 4, y:topY - 6, width:w + 8, height:6, fill:'#1c1c20'}));
     cr.appendChild(svgEl('rect', {x:x + w*.3, y:topY - 22, width:w*.4, height:16, fill:'#141417'}));
     cr.appendChild(svgEl('line', {x1:x + w/2, y1:topY - 22, x2:x + w/2, y2:topY - 44, stroke:'#3a3a40', 'stroke-width':1.5}));
-    cr.appendChild(svgEl('circle', {cx:x + w/2, cy:topY - 45, r:2.5, fill:'#ff5b4f', class:'beacon', filter:'url(#glow)'}));
+    cr.appendChild(svgEl('circle', {cx:x + w/2, cy:topY - 45, r:2.5, fill:'#4ade80', class:'beacon', filter:'url(#glow)'}));
     g.appendChild(cr);
   }
   return groundY - f * floorH;
@@ -1016,18 +1092,18 @@ function buildCrane(svg, baseX, groundY, height) {
   const g = svgEl('g', {opacity:.9});
   const top = groundY - height;
   // mast lattice
-  g.appendChild(svgEl('rect', {x:baseX - 4, y:top, width:8, height, fill:'none', stroke:'#FF8A73', 'stroke-width':1.2, 'stroke-opacity':.75}));
-  for (let y = top; y < groundY; y += 12) g.appendChild(svgEl('path', {d:`M${baseX-4} ${y} L${baseX+4} ${y+12} M${baseX+4} ${y} L${baseX-4} ${y+12}`, stroke:'#FF8A73', 'stroke-opacity':.45, 'stroke-width':.8}));
+  g.appendChild(svgEl('rect', {x:baseX - 4, y:top, width:8, height, fill:'none', stroke:'#4ADE80', 'stroke-width':1.2, 'stroke-opacity':.75}));
+  for (let y = top; y < groundY; y += 12) g.appendChild(svgEl('path', {d:`M${baseX-4} ${y} L${baseX+4} ${y+12} M${baseX+4} ${y} L${baseX-4} ${y+12}`, stroke:'#4ADE80', 'stroke-opacity':.45, 'stroke-width':.8}));
   const jib = svgEl('g', {transform:`translate(${baseX} ${top})`});
   const inner = svgEl('g', {class:'crane-jib'});
-  inner.appendChild(svgEl('path', {d:'M-40 0 H150 M-40 -8 H40 M0 0 L0 -24 L150 0 M0 -24 L-40 -8', stroke:'#FF8A73', 'stroke-opacity':.85, 'stroke-width':1.3, fill:'none'}));
-  inner.appendChild(svgEl('rect', {x:-46, y:-2, width:16, height:10, fill:'#2a1513'}));
+  inner.appendChild(svgEl('path', {d:'M-40 0 H150 M-40 -8 H40 M0 0 L0 -24 L150 0 M0 -24 L-40 -8', stroke:'#4ADE80', 'stroke-opacity':.85, 'stroke-width':1.3, fill:'none'}));
+  inner.appendChild(svgEl('rect', {x:-46, y:-2, width:16, height:10, fill:'#12291b'}));
   const hook = svgEl('g', {class:'crane-hook'});
   hook.appendChild(svgEl('line', {x1:110, y1:0, x2:110, y2:40, stroke:'#aaa', 'stroke-width':.7}));
-  hook.appendChild(svgEl('rect', {x:96, y:40, width:28, height:7, fill:'#3a2422', stroke:'#FF8A73', 'stroke-width':.7}));
+  hook.appendChild(svgEl('rect', {x:96, y:40, width:28, height:7, fill:'#1d3a29', stroke:'#4ADE80', 'stroke-width':.7}));
   jib.appendChild(inner); inner.appendChild(hook);
   g.appendChild(jib);
-  g.appendChild(svgEl('circle', {cx:baseX, cy:top - 26, r:2, fill:'#ff5b4f', class:'beacon', filter:'url(#glow)'}));
+  g.appendChild(svgEl('circle', {cx:baseX, cy:top - 26, r:2, fill:'#4ade80', class:'beacon', filter:'url(#glow)'}));
   svg.appendChild(g);
 }
 
@@ -1046,8 +1122,8 @@ function buildCrane(svg, baseX, groundY, height) {
   buildTower(g, {x:190, w:118, f:26, floorH:20, groundY:ground, delay:100, step:55, seed:5});
   buildCrane(svg, 470, ground, 500);
   // ground line + glow
-  svg.appendChild(svgEl('rect', {x:0, y:ground, width:560, height:2, fill:'#FF8A73', opacity:.6}));
-  svg.appendChild(svgEl('ellipse', {cx:280, cy:ground+4, rx:280, ry:10, fill:'#F0605A', opacity:.25, filter:'url(#glow)'}));
+  svg.appendChild(svgEl('rect', {x:0, y:ground, width:560, height:2, fill:'#4ADE80', opacity:.6}));
+  svg.appendChild(svgEl('ellipse', {cx:280, cy:ground+4, rx:280, ry:10, fill:'#16A34A', opacity:.25, filter:'url(#glow)'}));
   requestAnimationFrame(() => svg.classList.add('in'));
   twinkle(svg);
 })();
@@ -1097,7 +1173,7 @@ function twinkle(svg) {
     const g = svgEl('g'); svg.appendChild(g);
     p.towers.forEach((t, i) => buildTower(g, {x:t.x, w:t.w, f:t.f, floorH, groundY:ground, delay:i * 200, step:45, seed:idx * 10 + i + 1}));
     if (p.status !== 'ready') buildCrane(svg, 355, ground, 280);
-    svg.appendChild(svgEl('rect', {x:0, y:ground, width:380, height:4, fill:'#FF8A73', opacity:.5}));
+    svg.appendChild(svgEl('rect', {x:0, y:ground, width:380, height:4, fill:'#4ADE80', opacity:.5}));
     twinkle(svg);
     grid.appendChild(card);
   });
@@ -1142,7 +1218,7 @@ function planSVG(t) {
     '<rect x="1" y="1" width="78" height="50" rx="3"/><path d="M26 1v50M52 1v50M52 26h27M1 30h25"/>',
     '<rect x="1" y="1" width="78" height="50" rx="3"/><path d="M20 1v50M40 1v26M60 1v50M20 27h40M60 30h19"/>',
   ];
-  return `<svg viewBox="0 0 80 52" fill="none" stroke="#FF8A73" stroke-opacity=".7" stroke-width="1.4">${plans[t]}</svg>`;
+  return `<svg viewBox="0 0 80 52" fill="none" stroke="#4ADE80" stroke-opacity=".7" stroke-width="1.4">${plans[t]}</svg>`;
 }
 
 function drawTower() {
@@ -1150,7 +1226,7 @@ function drawTower() {
   svg.innerHTML = '';
   const p = current.project, n = p.floors;
   const top = 40, bottom = 610, fh = (bottom - top) / n;
-  svg.appendChild(svgEl('rect', {x:40, y:bottom, width:220, height:6, fill:'#FF8A73', opacity:.6}));
+  svg.appendChild(svgEl('rect', {x:40, y:bottom, width:220, height:6, fill:'#4ADE80', opacity:.6}));
   svg.appendChild(svgEl('rect', {x:90, y:top - 26, width:120, height:26, fill:'#121214'}));
   for (let i = 1; i <= n; i++) {
     const y = bottom - i * fh;
@@ -1173,10 +1249,10 @@ function renderUnits() {
   $$('#tower .tf').forEach(g => g.classList.toggle('sel', +g.dataset.floor === f));
   const label = {free:'Свободна', booked:'Бронь', sold:'Продана'};
   $('#units').innerHTML = unitsFor(p, f).map(u => `
-    <button class="unit" ${u.status === 'sold' ? 'disabled' : ''} data-unit='${JSON.stringify({n:u.n, rooms:u.rooms, area:u.area, price:Math.round(u.price), floor:f})}'>
+    <button class="unit" ${u.status === 'sold' ? 'disabled' : ''} data-unit='${JSON.stringify({n:u.n, rooms:u.rooms, t:u.t, area:u.area, price:Math.round(u.price), floor:f, status:u.status})}'>
       <div class="u-top"><span class="u-rooms">${u.rooms}</span><span class="u-status ${u.status}">${label[u.status]}</span></div>
       <div class="u-plan">${planSVG(u.t)}</div>
-      <div class="u-meta"><span>№ ${u.n} · ${u.area} м²</span><b>${u.status === 'sold' ? '—' : fmt(u.price)}</b></div>
+      <div class="u-meta"><span>№ ${u.n} · ${u.area} м²${u.status === 'sold' ? '' : '<br><span class="u-look">Смотреть внутри →</span>'}</span><b>${u.status === 'sold' ? '—' : fmt(u.price)}</b></div>
     </button>`).join('');
 }
 
@@ -1199,8 +1275,7 @@ function selectComplex(id) {
   $('#floorDown').onclick = () => { current.floor = Math.max(1, current.floor - 1); renderUnits(); };
   $('#units').addEventListener('click', e => {
     const b = e.target.closest('.unit'); if (!b || b.disabled) return;
-    const u = JSON.parse(b.dataset.unit);
-    openModal('Забронировать квартиру', {...u, complex: current.project.name});
+    openTour({...JSON.parse(b.dataset.unit), complex: current.project.name, project: current.project});
   });
   selectComplex(PROJECTS[0].id);
 })();
@@ -1335,6 +1410,63 @@ $('#modalForm').addEventListener('submit', e => {
   f.reset(); closeModal();
 });
 
+
+/* ==========================================================
+   APARTMENT TOUR — что внутри квартиры
+   ========================================================== */
+let tourUnit = null, tourTab = 'photo', tourIdx = 0;
+function tourMedia(u) {
+  const own = (PROJECT_MEDIA[u.project.id] || {})[u.rooms] || {};
+  const base = MEDIA[u.rooms] || {};
+  return {photos: own.photos?.length ? own.photos : (base.photos || []), video: own.video || base.video || '', view: own.view || base.view || ''};
+}
+function placeholder(title, text) { return `<div class="tour-ph"><b>${title}</b>${text}</div>`; }
+function renderTour() {
+  const u = tourUnit, m = tourMedia(u), stage = $('#tourStage'), thumbs = $('#tourThumbs');
+  $$('#tourTabs .filter').forEach(b => b.classList.toggle('active', b.dataset.tab === tourTab));
+  thumbs.innerHTML = '';
+  if (tourTab === 'photo') {
+    if (!m.photos.length) { stage.innerHTML = placeholder('Фото интерьера скоро появятся', 'Запросите у менеджера фото и видео-показ этой квартиры'); return; }
+    tourIdx = (tourIdx + m.photos.length) % m.photos.length;
+    stage.innerHTML = `<img src="${m.photos[tourIdx]}" alt="${u.rooms}, интерьер, фото ${tourIdx + 1}">` +
+      (m.photos.length > 1 ? '<button class="tour-arrow prev" aria-label="Предыдущее фото">←</button><button class="tour-arrow next" aria-label="Следующее фото">→</button>' : '');
+    thumbs.innerHTML = m.photos.map((src, i) => `<button class="${i === tourIdx ? 'active' : ''}" data-i="${i}"><img src="${src}" alt="" loading="lazy"></button>`).join('');
+  } else if (tourTab === 'video') {
+    stage.innerHTML = m.video
+      ? (/youtube|youtu\.be|vimeo/.test(m.video) ? `<iframe src="${m.video}" allow="autoplay; fullscreen" allowfullscreen></iframe>` : `<video src="${m.video}" controls playsinline autoplay muted></video>`)
+      : placeholder('Видео-обзор скоро появится', 'Менеджер может провести онлайн-показ в WhatsApp');
+  } else if (tourTab === 'plan') {
+    stage.innerHTML = `<div class="plan-big">${planSVG(u.t)}</div>`;
+  } else {
+    stage.innerHTML = m.view ? `<img src="${m.view}" alt="Вид из окна, ${u.floor} этаж">` : placeholder(`Вид с ${u.floor} этажа`, 'Фото вида из окна добавим после съёмки');
+  }
+}
+function openTour(u) {
+  tourUnit = u; tourTab = tourMedia(u).photos.length ? 'photo' : 'plan'; tourIdx = 0;
+  $('#tourTitle').textContent = `${u.rooms} № ${u.n}`;
+  $('#tourSub').textContent = `${u.complex} · ${u.floor} этаж из ${u.project.floors}`;
+  $('#tourPrice').textContent = fmt(u.price);
+  const ppm = Math.round(u.price / u.area);
+  $('#tourSpecs').innerHTML = [['Площадь', u.area + ' м²'], ['Этаж', u.floor], ['Цена за м²', fmt(ppm)], ['Статус', u.status === 'booked' ? 'Бронь · лист ожидания' : 'Свободна'], ['Сдача дома', u.project.deadline]]
+    .map(([k, v]) => `<li><span>${k}</span><b>${v}</b></li>`).join('');
+  $('#tourWa').href = waLink(`Здравствуйте! Интересует ${u.rooms} № ${u.n}, ${u.area} м², ${u.floor} этаж, ${u.complex}. Можно фото и видео?`);
+  renderTour();
+  $('#tour').classList.add('open');
+}
+function closeTour() { $('#tour').classList.remove('open'); $('#tourStage').innerHTML = ''; }
+$('#tourTabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) { tourTab = b.dataset.tab; tourIdx = 0; renderTour(); } });
+$('#tourStage').addEventListener('click', e => { if (e.target.closest('.prev')) { tourIdx--; renderTour(); } if (e.target.closest('.next')) { tourIdx++; renderTour(); } });
+$('#tourThumbs').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) { tourIdx = +b.dataset.i; renderTour(); } });
+$('#tourClose').onclick = closeTour;
+$('#tour').addEventListener('click', e => { if (e.target.id === 'tour') closeTour(); });
+addEventListener('keydown', e => {
+  if (!$('#tour').classList.contains('open')) return;
+  if (e.key === 'Escape') closeTour();
+  if (tourTab === 'photo' && e.key === 'ArrowRight') { tourIdx++; renderTour(); }
+  if (tourTab === 'photo' && e.key === 'ArrowLeft') { tourIdx--; renderTour(); }
+});
+$('#tourBook').addEventListener('click', () => { const {project, ...u} = tourUnit; closeTour(); openModal('Забронировать квартиру', u); });
+
 /* ===== CTA form ===== */
 $('#ctaForm').addEventListener('submit', e => {
   e.preventDefault();
@@ -1359,7 +1491,7 @@ function sendLead(lead, openWa) {
   if (openWa && !CONFIG.leadEndpoint) setTimeout(() => window.open(waLink(leadText(lead)), '_blank', 'noopener'), 600);
 }
 function invalid(el) {
-  el.focus(); el.style.borderColor = '#F0605A';
+  el.focus(); el.style.borderColor = '#16A34A';
   el.animate?.([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}], {duration:300});
   setTimeout(() => el.style.borderColor = '', 1600);
 }
@@ -1429,7 +1561,7 @@ $$('.faq-q').forEach(q => q.addEventListener('click', () => q.parentElement.clas
   let shown = false;
   try { shown = sessionStorage.getItem('mk_exit') === '1'; } catch (e) {}
   document.addEventListener('mouseout', e => {
-    if (shown || e.relatedTarget || e.clientY > 10 || $('#modal').classList.contains('open')) return;
+    if (shown || e.relatedTarget || e.clientY > 10 || $('#modal').classList.contains('open') || $('#tour').classList.contains('open')) return;
     shown = true;
     try { sessionStorage.setItem('mk_exit', '1'); } catch (e) {}
     openModal('Не уходите без подарка! Зафиксируем цену на 7 дней');
