@@ -20,7 +20,8 @@ export const combo = {
 };
 
 export const STATUSES = {
-  new: 'Новый',
+  awaiting_payment: 'Ждёт оплаты',
+  new: 'Оплачен — новый',
   confirmed: 'Подтверждён',
   cooking: 'Готовится',
   delivering: 'В пути',
@@ -28,6 +29,6 @@ export const STATUSES = {
   canceled: 'Отменён',
 };
 
-export const PAYMENTS = { cash: 'Наличными курьеру', transfer: 'Переводом' };
+export const PAYMENTS = { qr: 'По QR', cash: 'Наличными курьеру', transfer: 'Переводом' };
 
 export const money = (n) => `${Number(n).toLocaleString('ru-RU')} сом`;

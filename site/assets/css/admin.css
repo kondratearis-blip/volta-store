@@ -64,3 +64,16 @@ body.admin { background: var(--kraft); min-height: 100vh; }
   .orders { grid-template-columns: 1fr; }
   .settings__row { grid-template-columns: 1fr; }
 }
+
+.qrset { display: flex; gap: 16px; align-items: center; padding: 14px; background: #fff; border-radius: 14px; border: 2px solid var(--line); }
+.qrset__img { width: 120px; height: 120px; object-fit: contain; border-radius: 8px; flex: none; }
+.qrset__body { display: grid; gap: 6px; justify-items: start; }
+.qrset__title { font-weight: 800; }
+.qrset__btn { cursor: pointer; }
+.qrset__btn:focus-within { outline: 3px solid var(--bucket); outline-offset: 2px; }
+
+.badge--awaiting_payment { background: transparent; border: 2px dashed var(--muted); color: var(--crust-soft); }
+.ord--awaiting { border: 3px dashed var(--line); }
+.ord__paid { font-size: 14px; font-weight: 700; color: var(--ok); }
+.ord__unpaid { font-size: 14px; font-weight: 700; color: var(--muted); }
+.ord__actions--3 { grid-template-columns: 1fr 1fr 1fr; }

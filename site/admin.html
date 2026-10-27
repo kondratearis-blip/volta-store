@@ -51,6 +51,15 @@
           <label class="field"><span>Цена комбо, сом</span><input name="combo_price" type="number" min="1" required></label>
           <label class="field"><span>Доставка, сом <i>(0 — бесплатно)</i></span><input name="delivery_fee" type="number" min="0" required></label>
         </div>
+        <div class="qrset">
+          <img class="qrset__img" data-qr-preview alt="QR-код для оплаты" hidden>
+          <div class="qrset__body">
+            <p class="qrset__title">QR-код для оплаты</p>
+            <p class="admin__hint" data-qr-state>Клиенты увидят его после оформления заказа.</p>
+            <label class="btn btn--small btn--ghost qrset__btn">Загрузить QR-код<input class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" data-qr-file></label>
+          </div>
+        </div>
+        <label class="field"><span>Подсказка под QR-кодом</span><textarea name="payment_note" rows="3" maxlength="500"></textarea></label>
         <label class="field"><span>Сообщение клиенту в WhatsApp</span><textarea name="whatsapp_template" rows="6" maxlength="1000"></textarea></label>
         <p class="admin__hint">Подстановки: {number} — номер заказа, {name}, {qty} — сколько комбо, {total} — сумма, {address}, {time}, {payment}</p>
         <p class="error" data-settings-error role="alert"></p>

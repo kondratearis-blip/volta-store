@@ -44,6 +44,7 @@
 
     <section class="card order" aria-labelledby="order-title" data-order-card>
       <form data-order-form novalidate>
+        <p class="step">Шаг 1 из 2 · Доставка</p>
         <h2 class="card__title" id="order-title">Оформить заказ</h2>
         <p class="notice" data-closed hidden></p>
 
@@ -72,11 +73,6 @@
             </select>
           </label>
           <label class="field" data-time-field hidden><span>Время</span><input name="time" type="time"></label>
-          <fieldset class="pay field--wide">
-            <legend>Оплата</legend>
-            <label class="pay__opt"><input type="radio" name="payment" value="cash" checked><span>Наличными курьеру</span></label>
-            <label class="pay__opt"><input type="radio" name="payment" value="transfer"><span>Переводом</span></label>
-          </fieldset>
           <label class="field field--wide"><span>Комментарий <i>(по желанию)</i></span><textarea name="comment" rows="2" maxlength="500" placeholder="Домофон, ориентир, пожелания"></textarea></label>
           <label class="visually-hidden" aria-hidden="true">Не заполняйте<input name="website" tabindex="-1" autocomplete="off"></label>
         </div>
@@ -88,15 +84,38 @@
         </div>
 
         <p class="error" data-form-error role="alert"></p>
-        <button class="btn btn--tray btn--block order__submit" type="submit" data-submit>Заказать</button>
-        <p class="order__hint">После заказа менеджер напишет вам в WhatsApp и подтвердит адрес и время доставки.</p>
+        <button class="btn btn--tray btn--block order__submit" type="submit" data-submit>Перейти к оплате</button>
+        <p class="order__hint">Оплата — по QR-коду на следующем шаге.</p>
       </form>
 
+      <div class="paystep" data-pay hidden tabindex="-1">
+        <p class="step">Шаг 2 из 2 · Оплата</p>
+        <h2 class="card__title">Заказ <span data-pay-num></span></h2>
+        <p class="paystep__sum">К оплате: <b data-pay-total></b></p>
+
+        <figure class="qr" data-qr hidden>
+          <img data-qr-img alt="QR-код для оплаты заказа">
+          <figcaption>С телефона: нажмите на QR-код и удерживайте, чтобы сохранить, затем в приложении банка выберите «Сканировать из галереи».</figcaption>
+        </figure>
+        <p class="notice" data-qr-missing hidden>QR-код для оплаты скоро появится. Напишите нам в WhatsApp — пришлём реквизиты.</p>
+        <p class="paystep__note" data-pay-note></p>
+
+        <label class="receipt" data-receipt-drop>
+          <input class="visually-hidden" type="file" accept="image/*,application/pdf" data-receipt>
+          <span class="receipt__preview" data-receipt-preview hidden></span>
+          <span class="receipt__hint" data-receipt-hint><b>Прикрепить чек</b><br>скриншот или фото оплаты, до 10 МБ</span>
+        </label>
+
+        <p class="error" data-pay-error role="alert"></p>
+        <button class="btn btn--tray btn--block order__submit" type="button" data-send-receipt disabled>Отправить чек</button>
+        <button class="linkbtn" type="button" data-cancel>Отменить заказ</button>
+      </div>
+
       <div class="done" data-done hidden tabindex="-1">
-        <p class="done__label">Заказ принят</p>
+        <p class="done__label">Оплата получена · заказ принят</p>
         <p class="done__num" data-done-num></p>
-        <p>К оплате: <b data-done-total></b></p>
-        <p class="done__text">Менеджер напишет вам в WhatsApp на номер <b data-done-phone></b> и подтвердит заказ. Держите телефон рядом!</p>
+        <p>Сумма: <b data-done-total></b></p>
+        <p class="done__text">Менеджер проверит оплату и напишет вам в WhatsApp на номер <b data-done-phone></b>, чтобы подтвердить адрес и время доставки.</p>
         <button class="btn btn--ghost btn--block" type="button" data-again>Сделать ещё заказ</button>
       </div>
     </section>

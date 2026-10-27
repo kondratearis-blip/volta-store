@@ -85,8 +85,10 @@ async function loadOrders() {
     if (err.status === 401) location.reload();
     return;
   }
-  const fresh = knownIds ? rows.filter((o) => !knownIds.has(o.id)) : [];
-  knownIds = new Set(rows.map((o) => o.id));
+  // Сигналим об оплаченных заказах: новых или только что приложивших чек
+  const paidNew = rows.filter((o) => o.status === 'new');
+  const fresh = knownIds ? paidNew.filter((o) => !knownIds.has(o.id)) : [];
+  knownIds = new Set(paidNew.map((o) => o.id));
   orders = rows;
   if (fresh.length) notifyNew(fresh.length);
   renderOrders();
@@ -135,7 +137,9 @@ function waLink(o) {
 
 function orderHtml(o) {
   const time = new Date(o.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bishkek' });
-  return `<article class="ord ${o.status === 'new' ? 'ord--new' : ''} ${isActive(o) ? '' : 'ord--closed'}" data-id="${o.id}">
+  const cls = o.status === 'new' ? 'ord--new' : o.status === 'awaiting_payment' ? 'ord--awaiting' : isActive(o) ? '' : 'ord--closed';
+  const paidAt = o.paid_at && new Date(o.paid_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bishkek' });
+  return `<article class="ord ${cls}" data-id="${o.id}">
     <div class="ord__head">
       <span class="ord__num">№ ${o.id}</span>
       <span class="ord__time">${time}</span>
@@ -148,7 +152,9 @@ function orderHtml(o) {
       <p class="ord__muted">${esc(o.delivery_time)} · ${esc(PAYMENTS[o.payment] || o.payment)}</p>
       ${o.comment ? `<p>💬 ${esc(o.comment)}</p>` : ''}
     </div>
-    <div class="ord__actions">
+    ${o.receipt_path ? `<p class="ord__paid">✓ Чек приложен в ${paidAt}</p>` : o.payment === 'qr' ? '<p class="ord__unpaid">Чека пока нет — клиент ещё не оплатил</p>' : ''}
+    <div class="ord__actions ${o.receipt_path ? 'ord__actions--3' : ''}">
+      ${o.receipt_path ? `<button class="btn btn--tray" type="button" data-receipt="${esc(o.receipt_path)}">Чек</button>` : ''}
       <a class="btn btn--wa" href="${esc(waLink(o))}" target="_blank" rel="noopener">WhatsApp</a>
       <a class="btn btn--ghost" href="tel:${esc(o.phone)}">Позвонить</a>
     </div>
@@ -163,6 +169,20 @@ $('[data-filters]').addEventListener('click', (e) => {
   if (!chip) return;
   filter = chip.dataset.filter;
   renderOrders();
+});
+
+$('[data-orders]').addEventListener('click', async (e) => {
+  const button = e.target.closest('[data-receipt]');
+  if (!button) return;
+  // Окно открываем сразу, по клику: иначе браузер посчитает его всплывающей рекламой
+  const tab = window.open('', '_blank');
+  try {
+    const url = await api.admin.receiptUrl(button.dataset.receipt);
+    if (tab) tab.location.href = url; else location.href = url;
+  } catch (err) {
+    tab?.close();
+    alert(`Не удалось открыть чек: ${err.message}`);
+  }
 });
 
 $('[data-orders]').addEventListener('change', async (e) => {
@@ -227,7 +247,8 @@ async function fillSettings() {
   try { settings = await api.settings(); } catch (err) { $('[data-settings-error]').textContent = err.message; return; }
   const f = $('[data-settings-form]').elements;
   f.accepting_orders.checked = settings.accepting_orders;
-  for (const k of ['closed_message', 'combo_price', 'delivery_fee', 'whatsapp_template']) f[k].value = settings[k];
+  for (const k of ['closed_message', 'combo_price', 'delivery_fee', 'payment_note', 'whatsapp_template']) f[k].value = settings[k];
+  showQr(settings.qr_url);
   $('[data-settings-saved]').textContent = '';
   $('[data-settings-error]').textContent = '';
 }
@@ -243,11 +264,37 @@ $('[data-settings-form]').addEventListener('submit', async (e) => {
       closed_message: f.closed_message.value.trim() || 'Сейчас мы не принимаем заказы. Загляните позже!',
       combo_price: Math.max(1, Math.round(Number(f.combo_price.value))),
       delivery_fee: Math.max(0, Math.round(Number(f.delivery_fee.value))),
+      payment_note: f.payment_note.value.trim(),
       whatsapp_template: f.whatsapp_template.value,
     });
     $('[data-settings-saved]').textContent = 'Сохранено ✓';
   } catch (err) {
     $('[data-settings-error]').textContent = err.message;
+  }
+});
+
+function showQr(url) {
+  $('[data-qr-preview]').hidden = !url;
+  if (url) $('[data-qr-preview]').src = url;
+  $('[data-qr-state]').textContent = url
+    ? 'Клиенты видят этот QR-код после оформления заказа.'
+    : 'QR-код не загружен — клиенты увидят просьбу написать в WhatsApp.';
+}
+
+$('[data-qr-file]').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  $('[data-settings-error]').textContent = '';
+  $('[data-qr-state]').textContent = 'Загружаем…';
+  try {
+    const url = await api.admin.uploadQr(file);
+    // QR сохраняется сразу: остальные поля формы меняются кнопкой «Сохранить»
+    settings = await api.admin.saveSettings({ qr_url: url });
+    showQr(settings.qr_url);
+  } catch (err) {
+    showQr(settings?.qr_url);
+    $('[data-settings-error]').textContent = `QR-код не загрузился: ${err.message}`;
   }
 });
 
