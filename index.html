@@ -431,6 +431,20 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
 .slide-count{position:absolute;left:clamp(28px,4vw,64px);top:clamp(28px,3.4vw,56px);z-index:4;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .slide-count b{color:var(--text);font-size:15px}
 
+
+/* hero photo slideshow */
+.hero-photos{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero-photos img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 60%;opacity:0;transform:scale(1.05);transition:opacity 1.2s ease}
+.hero-photos img.active{opacity:1;animation:kenburns 9s ease-out forwards}
+@keyframes kenburns{from{transform:scale(1.05)}to{transform:scale(1)}}
+.hero-card.has-photo .hero-shade{display:block;position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.86) 34%,rgba(255,255,255,.25) 62%,rgba(255,255,255,0) 80%),linear-gradient(0deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 22%)}
+.skyline-wrap{transition:opacity .6s ease}
+.hero-card.has-photo .skyline-wrap{opacity:0;pointer-events:none}
+.hero-card.has-photo .slide-arrows button{background:rgba(255,255,255,.85);backdrop-filter:blur(6px)}
+@media (max-width:980px){
+  .hero-card.has-photo .hero-shade{background:linear-gradient(180deg,rgba(255,255,255,.97) 0%,rgba(255,255,255,.9) 52%,rgba(255,255,255,0) 72%,rgba(255,255,255,0) 82%,rgba(255,255,255,.92) 100%)}
+}
+
 /* ============ QUICK SEARCH ============ */
 .qsearch{position:relative;z-index:6;width:100%;margin:-1px 0 0;display:grid;grid-template-columns:repeat(4,1fr) auto;gap:10px;padding:14px;border-radius:0 0 var(--radius) var(--radius);background:var(--panel);border:1px solid var(--line-soft);border-top:0}
 .select{appearance:none;-webkit-appearance:none;width:100%;height:52px;border-radius:14px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2316A34A' stroke-width='1.6'/%3E%3C/svg%3E") right 16px center no-repeat;border:1px solid var(--field-border);padding:0 40px 0 16px;outline:none;cursor:pointer;transition:border-color .2s}
@@ -810,6 +824,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   <div class="wrap" style="flex:1;display:flex;flex-direction:column">
     <div class="hero-card frame">
       <div class="smoke-css" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="hero-photos" id="heroPhotos" aria-hidden="true"></div>
       <div class="hero-shade"></div>
       <div class="hero-inner">
         <div class="hero-copy" id="heroCopy">
@@ -1497,6 +1512,20 @@ function drawSkyline(p) {
   tabs.style.setProperty('--slide', SLIDE_MS + 'ms');
   tabs.innerHTML = PROJECTS.map((p, i) => `<button class="hero-tab" data-i="${i}">${p.name.replace('ЖК ', '')}<small>${p.tag}</small></button>`).join('');
   let idx = 0, timer;
+  const photos = $('#heroPhotos'), card = $('.hero-card');
+  PROJECTS.forEach(p => {
+    if (!p.img) return;
+    const im = new Image();
+    im.src = p.img; im.alt = ''; im.dataset.id = p.id; im.decoding = 'async';
+    im.onerror = () => { im.remove(); p.img = ''; };
+    photos.appendChild(im);
+  });
+  function showPhoto(p) {
+    const im = p.img && photos.querySelector(`[data-id="${p.id}"]`);
+    $$('img', photos).forEach(x => { if (x !== im) x.classList.remove('active'); });
+    if (im) { im.classList.remove('active'); void im.offsetWidth; im.classList.add('active'); }
+    card.classList.toggle('has-photo', !!im);
+  }
   function go(i, first) {
     idx = (i + PROJECTS.length) % PROJECTS.length;
     const p = PROJECTS[idx];
@@ -1509,7 +1538,8 @@ function drawSkyline(p) {
       $('#heroDesc').textContent = p.desc;
       $('#heroMeta').innerHTML = `<div>Цена от<b>${fmt(p.priceM2)}/м²</b></div><div>Этажность<b>${p.floors} эт.</b></div><div>Сдача<b>${p.deadline}</b></div><div>Площади<b>${p.area}</b></div>`;
       copy.classList.remove('out');
-      drawSkyline(p);
+      showPhoto(p);
+      if (!p.img) drawSkyline(p);
     };
     if (first) apply(); else { copy.classList.add('out'); setTimeout(apply, 300); }
     clearTimeout(timer);
