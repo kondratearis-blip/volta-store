@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Заказы — KOKORO</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/img/favicon-48.png" sizes="48x48" type="image/png">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="admin">
+  <header class="admin__top">
+    <div class="wrap admin__bar">
+      <a class="admin__logo" href="./" aria-label="KOKORO — открыть сайт"><span class="logo-mask" aria-hidden="true"></span></a>
+      <nav class="tabs" data-tabs hidden>
+        <button type="button" data-tab="orders" aria-pressed="true">Заказы <span class="tabs__count" data-new-count></span></button>
+        <button type="button" data-tab="settings" aria-pressed="false">Настройки</button>
+      </nav>
+      <button class="btn btn--small btn--ghost-light" type="button" data-signout hidden>Выйти</button>
+    </div>
+  </header>
+
+  <main class="wrap admin__main">
+    <section class="card login" data-login hidden aria-labelledby="login-title">
+      <h1 class="card__title" id="login-title">Вход для менеджеров</h1>
+      <form data-login-form>
+        <label class="field"><span>Почта</span><input name="email" type="email" autocomplete="username" required></label>
+        <label class="field"><span>Пароль</span><input name="password" type="password" autocomplete="current-password" required></label>
+        <p class="error" data-login-error role="alert"></p>
+        <button class="btn btn--block" type="submit">Войти</button>
+      </form>
+    </section>
+
+    <section data-pane="orders" hidden>
+      <div class="toolbar">
+        <input class="input toolbar__date" type="date" data-day aria-label="Дата">
+        <div class="chips" data-filters></div>
+        <button class="chip" type="button" data-sound aria-pressed="true">🔔 Звук</button>
+      </div>
+      <p class="admin__hint" data-orders-status aria-live="polite"></p>
+      <div class="orders" data-orders></div>
+    </section>
+
+    <section class="card settings" data-pane="settings" hidden>
+      <h1 class="card__title">Настройки заказов</h1>
+      <form data-settings-form>
+        <label class="check"><input type="checkbox" name="accepting_orders"> <span>Принимать заказы на сайте</span></label>
+        <label class="field"><span>Текст, когда заказы закрыты</span><input name="closed_message" maxlength="300"></label>
+        <div class="settings__row">
+          <label class="field"><span>Цена комбо, сом</span><input name="combo_price" type="number" min="1" required></label>
+          <label class="field"><span>Доставка, сом <i>(0 — бесплатно)</i></span><input name="delivery_fee" type="number" min="0" required></label>
+        </div>
+        <label class="field"><span>Сообщение клиенту в WhatsApp</span><textarea name="whatsapp_template" rows="6" maxlength="1000"></textarea></label>
+        <p class="admin__hint">Подстановки: {number} — номер заказа, {name}, {qty} — сколько комбо, {total} — сумма, {address}, {time}, {payment}</p>
+        <p class="error" data-settings-error role="alert"></p>
+        <button class="btn" type="submit">Сохранить</button>
+        <span class="admin__saved" data-settings-saved></span>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="assets/js/admin.js"></script>
+</body>
+</html>

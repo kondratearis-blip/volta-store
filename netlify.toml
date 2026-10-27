@@ -1,11 +1,3 @@
+# Сайт статичный: публикуется папка site/ (без сборки)
 [build]
-  publish = "public"
-  functions = "netlify/functions"
-
-[functions]
-  node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/admin"
-  to = "/admin.html"
-  status = 200
+  publish = "site"
