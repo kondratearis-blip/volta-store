@@ -38,6 +38,11 @@
         <div class="chips" data-filters></div>
         <button class="chip" type="button" data-sound aria-pressed="true">🔔 Звук</button>
       </div>
+      <form class="waquick" data-wa-quick>
+        <label class="visually-hidden" for="wa-quick-phone">Номер для WhatsApp</label>
+        <input class="input" id="wa-quick-phone" name="phone" type="tel" inputmode="tel" placeholder="Номер, например 0700 123 456" autocomplete="off">
+        <button class="btn btn--small btn--wa" type="submit">Написать в WhatsApp</button>
+      </form>
       <p class="admin__hint" data-orders-status aria-live="polite"></p>
       <div class="orders" data-orders></div>
     </section>

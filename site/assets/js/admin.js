@@ -126,6 +126,8 @@ function waPhone(phone) {
   return d;
 }
 
+const WA_ICON = '<svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3a2.9 2.9 0 0 0-.9 2.2c0 1.3.9 2.5 1.1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>';
+
 function waLink(o) {
   const vars = {
     number: o.id, name: o.name, qty: o.qty, total: o.total.toLocaleString('ru-RU'),
@@ -147,7 +149,8 @@ function orderHtml(o) {
     </div>
     <p class="ord__what">Комбо × ${o.qty} <span>— ${money(o.total)}${o.delivery_fee ? ` (доставка ${money(o.delivery_fee)})` : ''}</span></p>
     <div class="ord__info">
-      <p><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a></p>
+      <p class="ord__client"><b>${esc(o.name)}</b>
+        <a class="phone-wa" href="https://wa.me/${waPhone(o.phone)}" target="_blank" rel="noopener" title="Открыть чат в WhatsApp">${WA_ICON}${esc(o.phone)}</a></p>
       <p>${esc(fullAddress(o))}</p>
       <p class="ord__muted">${esc(o.delivery_time)} · ${esc(PAYMENTS[o.payment] || o.payment)}</p>
       ${o.comment ? `<p>💬 ${esc(o.comment)}</p>` : ''}
@@ -155,7 +158,7 @@ function orderHtml(o) {
     ${o.receipt_path ? `<p class="ord__paid">✓ Чек приложен в ${paidAt}</p>` : o.payment === 'qr' ? '<p class="ord__unpaid">Чека пока нет — клиент ещё не оплатил</p>' : ''}
     <div class="ord__actions ${o.receipt_path ? 'ord__actions--3' : ''}">
       ${o.receipt_path ? `<button class="btn btn--tray" type="button" data-receipt="${esc(o.receipt_path)}">Чек</button>` : ''}
-      <a class="btn btn--wa" href="${esc(waLink(o))}" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn btn--wa" href="${esc(waLink(o))}" target="_blank" rel="noopener" title="Чат откроется с готовым текстом о заказе">${WA_ICON}О заказе</a>
       <a class="btn btn--ghost" href="tel:${esc(o.phone)}">Позвонить</a>
     </div>
     <select data-status aria-label="Статус заказа">${Object.entries(STATUSES)
@@ -163,6 +166,17 @@ function orderHtml(o) {
     <textarea data-note rows="1" maxlength="500" placeholder="Заметка менеджера" aria-label="Заметка менеджера">${esc(o.manager_note)}</textarea>
   </article>`;
 }
+
+// Быстрый переход в чат по любому номеру
+$('[data-wa-quick]').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = e.target.elements.phone;
+  const digits = input.value.replace(/\D/g, '');
+  if (digits.length < 9) { input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
+  input.removeAttribute('aria-invalid');
+  window.open(`https://wa.me/${waPhone(input.value)}`, '_blank', 'noopener');
+  input.value = '';
+});
 
 $('[data-filters]').addEventListener('click', (e) => {
   const chip = e.target.closest('[data-filter]');

@@ -77,3 +77,16 @@ body.admin { background: var(--kraft); min-height: 100vh; }
 .ord__paid { font-size: 14px; font-weight: 700; color: var(--ok); }
 .ord__unpaid { font-size: 14px; font-weight: 700; color: var(--muted); }
 .ord__actions--3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.wa-icon { width: 18px; height: 18px; flex: none; }
+.ord__client { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.phone-wa {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 999px;
+  background: #25D366; color: #fff; font-weight: 800; text-decoration: none; white-space: nowrap;
+}
+.phone-wa:hover { background: #1ebe5b; }
+.waquick { display: flex; gap: 8px; margin-bottom: 14px; max-width: 520px; }
+.waquick .input { min-height: 42px; padding: 8px 12px; }
+.waquick .input[aria-invalid="true"] { border-color: var(--chili); }
+.waquick .btn { flex: none; }
+.ord__actions .btn { white-space: nowrap; gap: 6px; padding-inline: 10px; }
