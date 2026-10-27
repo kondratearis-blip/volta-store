@@ -1,0 +1,9 @@
+# Статический сайт без сборки: Netlify публикует корень репозитория
+[build]
+  publish = "."
+  command = ""
+
+[[headers]]
+  for = "/media/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

@@ -1,25 +1,25 @@
-# Запуск сайта на своём домене
+# Запуск сайта в интернете
 
-Сайт статический (один `index.html` + папка `media/`), подходит любой хостинг.
+Сайт статический (`index.html` + папка `media/`), сборка не нужна.
 
-## 1. Купить домен
-Например `mkgroup.kg` — у любого регистратора доменов .kg, или `.com` у любого международного регистратора.
+## 1. Публикация на Netlify (бесплатно, ~5 минут)
+1. Зарегистрируйтесь на https://app.netlify.com (можно через GitHub).
+2. **Add new site → Import an existing project → GitHub** и дайте Netlify доступ к репозиторию `kondratearis-blip/-`.
+3. Выберите ветку `claude/adoring-bardeen-un37uy` (или `main`, если ветка уже слита).
+4. Настройки сборки подтянутся из `netlify.toml` — просто нажмите **Deploy**.
+5. Сайт появится по адресу вида `https://<имя>.netlify.app`. Имя можно сменить: **Site configuration → Change site name** (например `mkgroup`).
 
-## 2. Хостинг (бесплатно) — вариант A: Netlify
-1. Зайти на netlify.com → Add new site → Import from GitHub → выбрать этот репозиторий и ветку.
-2. Build command — пусто, Publish directory — `/`.
-3. Domain management → Add custom domain → ввести домен.
-4. У регистратора прописать DNS-записи, которые покажет Netlify. HTTPS включится автоматически.
+Каждый новый push в выбранную ветку автоматически обновляет сайт.
 
-## Вариант B: GitHub Pages
-1. Слить ветку в `main`. Репозиторий должен быть публичным (или тариф GitHub Pro).
-2. Settings → Pages → Source: Deploy from a branch → `main` / `(root)`.
-3. Settings → Pages → Custom domain → ввести домен (создастся файл `CNAME`), включить Enforce HTTPS.
-4. У регистратора добавить DNS:
-   - `A` для `@`: 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153
-   - `CNAME` для `www`: `<ваш-логин>.github.io`
+## 2. Свой домен (например mkgroup.kg)
+1. Купите домен у регистратора.
+2. В Netlify: **Domain management → Add a domain** → введите домен.
+3. У регистратора пропишите DNS-записи, которые покажет Netlify (или смените NS-серверы на Netlify DNS).
+4. HTTPS включится автоматически.
 
-## 3. Перед запуском
-- Заполнить `CONFIG` (телефон, WhatsApp, Telegram) и `PROJECTS` в `index.html`.
-- Добавить фото/видео в `media/` и прописать в `MEDIA`.
-- По желанию указать `CONFIG.leadEndpoint` — адрес CRM/бота для заявок.
+## 3. Перед публичным запуском
+- Заполните `CONFIG` (телефон, WhatsApp, Telegram) и `PROJECTS` (реальные ЖК, цены, сроки) в `index.html`.
+- Замените цифры компании в блоке «О компании».
+- Добавьте фото/видео в `media/` и пропишите в `MEDIA`.
+- Укажите `CONFIG.leadEndpoint`, если заявки должны идти в CRM/бота (иначе они уходят в WhatsApp).
+- Когда все данные реальные — поставьте `draft: false`, чтобы убрать плашку «черновик».
