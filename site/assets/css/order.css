@@ -103,3 +103,6 @@
   .combo__list li { font-size: 16px; }
   .combo__list b { font-size: 19px; }
 }
+
+.resume { background: var(--tray); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; display: grid; gap: 10px; font-weight: 600; }
+.resume__actions { display: flex; flex-wrap: wrap; gap: 8px; }

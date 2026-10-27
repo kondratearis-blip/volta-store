@@ -47,6 +47,13 @@
         <p class="step">Шаг 1 из 2 · Доставка</p>
         <h2 class="card__title" id="order-title">Оформить заказ</h2>
         <p class="notice" data-closed hidden></p>
+        <div class="resume" data-resume hidden>
+          <p>У вас есть неоплаченный заказ <b data-resume-num></b> на <b data-resume-total></b>.</p>
+          <div class="resume__actions">
+            <button class="btn btn--small" type="button" data-resume-go>Перейти к оплате</button>
+            <button class="btn btn--small btn--ghost" type="button" data-resume-drop>Отменить его</button>
+          </div>
+        </div>
 
         <div class="qty">
           <span class="qty__label">Сколько комбо</span>

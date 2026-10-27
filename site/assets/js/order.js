@@ -122,6 +122,7 @@ form.addEventListener('submit', async (e) => {
 
 function show(step) {
   form.hidden = step !== 'form';
+  if (step === 'form') showResume();
   $('[data-pay]').hidden = step !== 'pay';
   $('[data-done]').hidden = step !== 'done';
   if (step !== 'form') {
@@ -257,12 +258,26 @@ $('[data-again]').addEventListener('click', () => {
   render();
 });
 
-// Клиент ушёл на оплату в банк и вернулся — продолжаем с шага оплаты
-const saved = storage.get(PENDING_KEY);
-if (saved?.token && saved.number) {
-  pending = saved;
-  showPayment();
+// Клиент ушёл на оплату в банк и вернулся: сайт открывается с формы,
+// а над ней — напоминание о неоплаченном заказе
+function showResume() {
+  $('[data-resume]').hidden = !pending;
+  if (!pending) return;
+  $('[data-resume-num]').textContent = `№ ${pending.number}`;
+  $('[data-resume-total]').textContent = money(pending.total);
 }
+$('[data-resume-go]').addEventListener('click', showPayment);
+$('[data-resume-drop]').addEventListener('click', async () => {
+  if (!pending) return;
+  try { await api.cancelUnpaid(pending.token); } catch { /* без чека заказ всё равно не повезут */ }
+  pending = null;
+  storage.set(PENDING_KEY, null);
+  showResume();
+});
+
+const saved = storage.get(PENDING_KEY);
+if (saved?.token && saved.number) pending = saved;
+showResume();
 
 render();
 loadSettings();
