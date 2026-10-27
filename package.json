@@ -1,0 +1,11 @@
+{
+  "name": "kokoro-orders",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.6"
+  }
+}

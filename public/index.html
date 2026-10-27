@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kokoro — заказ доставки</title>
+<meta name="description" content="Закажите комбо Kokoro онлайн с доставкой">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/base.css">
+<style>
+  header.top { padding: 28px 0 8px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .logo { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; }
+  .logo span { color: var(--accent); }
+  .tagline { color: var(--muted); font-size: 14px; }
+
+  .tabs { position: sticky; top: 0; z-index: 5; background: var(--bg); display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs a { flex: none; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--text); text-decoration: none; font-size: 14px; }
+  .tabs a.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  section.cat { padding-top: 8px; scroll-margin-top: 60px; }
+  section.cat h2 { font-size: 20px; margin: 16px 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  .card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+  .card .img { aspect-ratio: 4 / 3; background: var(--soft); display: grid; place-items: center; color: var(--muted); font-size: 32px; }
+  .card .img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .body { padding: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card h3 { margin: 0; font-size: 16px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.4; flex: 1; }
+  .card .row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 8px; }
+  .price { font-weight: 700; }
+
+  .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; }
+  .stepper button { width: 34px; height: 34px; border: 0; background: none; font-size: 18px; color: var(--text); cursor: pointer; border-radius: 999px; }
+  .stepper span { min-width: 22px; text-align: center; font-weight: 600; }
+
+  .cartbar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 30%); z-index: 10; }
+  .cartbar button { width: 100%; max-width: 560px; margin: 0 auto; display: flex; justify-content: space-between; }
+  main { padding-bottom: 110px; }
+
+  .sheet { position: fixed; inset: 0; z-index: 20; display: none; }
+  .sheet.open { display: block; }
+  .sheet .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.4); }
+  .sheet .panel { position: absolute; right: 0; top: 0; bottom: 0; width: min(480px, 100%); background: var(--bg); overflow-y: auto; padding: 20px 16px calc(24px + env(safe-area-inset-bottom)); }
+  .sheet .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .sheet h2 { margin: 0; font-size: 22px; }
+  .close { border: 0; background: var(--soft); width: 36px; height: 36px; border-radius: 999px; font-size: 20px; cursor: pointer; color: var(--text); }
+  .line { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .line .name { flex: 1; }
+  .line .name small { display: block; color: var(--muted); }
+  .totals { padding: 12px 0; display: grid; gap: 6px; }
+  .totals div { display: flex; justify-content: space-between; }
+  .totals .sum { font-size: 18px; font-weight: 700; }
+  form h3 { margin: 20px 0 10px; font-size: 16px; }
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .hp { position: absolute; left: -9999px; }
+  .payinfo { background: var(--soft); border-radius: var(--radius); padding: 12px 14px; font-size: 14px; color: var(--muted); margin-top: 12px; }
+
+  .done { text-align: center; padding: 16px 0; }
+  .done .num { font-size: 40px; font-weight: 800; margin: 4px 0; }
+  .done img.qr { width: min(280px, 80%); border-radius: 12px; border: 1px solid var(--line); margin: 16px auto; display: block; background: #fff; }
+  .notice { margin: 8px 0; padding: 12px 14px; border-radius: var(--radius); background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">Kokoro<span>.</span></div>
+    <div class="tagline">Доставка комбо</div>
+  </header>
+  <div id="closed" class="notice" hidden></div>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="menu"><p class="muted">Загружаем меню…</p></main>
+</div>
+
+<div class="cartbar" id="cartbar" hidden>
+  <button class="btn primary" id="openCart"><span id="cartCount"></span><span id="cartTotal"></span></button>
+</div>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="backdrop" data-close></div>
+  <div class="panel">
+    <div class="head"><h2 id="sheetTitle">Ваш заказ</h2><button class="close" data-close aria-label="Закрыть">×</button></div>
+
+    <div id="checkout">
+      <div id="lines"></div>
+      <div class="totals" id="totals"></div>
+
+      <form id="form" novalidate>
+        <h3>Контакты</h3>
+        <label class="field"><span>Имя</span><input name="name" autocomplete="name" required maxlength="60"></label>
+        <label class="field"><span>Телефон (WhatsApp)</span><input name="phone" type="tel" autocomplete="tel" placeholder="0555 123 456" required maxlength="30"></label>
+
+        <h3>Доставка</h3>
+        <label class="field"><span>Адрес</span><input name="address" autocomplete="street-address" placeholder="Улица, дом" required maxlength="200"></label>
+        <div class="cols3">
+          <label class="field"><span>Подъезд</span><input name="entrance" maxlength="20" inputmode="numeric"></label>
+          <label class="field"><span>Этаж</span><input name="floor" maxlength="20" inputmode="numeric"></label>
+          <label class="field"><span>Кв./офис</span><input name="apartment" maxlength="20"></label>
+        </div>
+        <label class="field"><span>Когда доставить</span>
+          <select name="when" id="when"><option value="asap">Как можно скорее</option><option value="time">Ко времени</option></select>
+        </label>
+        <label class="field" id="timeField" hidden><span>Время</span><input name="time" type="time"></label>
+        <label class="field"><span>Комментарий</span><textarea name="comment" rows="2" maxlength="500" placeholder="Домофон, ориентир, пожелания"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <div class="payinfo">Оплата по QR-коду — он появится после оформления. Менеджер напишет вам в WhatsApp и подтвердит заказ.</div>
+        <p class="error" id="formError" role="alert"></p>
+        <button class="btn primary block" id="submit" type="submit">Оформить заказ</button>
+      </form>
+    </div>
+
+    <div id="success" class="done" hidden>
+      <div class="muted">Заказ принят</div>
+      <div class="num" id="doneNum"></div>
+      <div>К оплате: <b id="doneTotal"></b></div>
+      <img class="qr" id="doneQr" alt="QR-код для оплаты" hidden>
+      <p class="muted" id="doneNote"></p>
+      <button class="btn block" data-close>Вернуться в меню</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const money = (n) => n.toLocaleString("ru-RU") + " сом";
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+let menu = [];
+let settings = {};
+let cart = {};
+try { cart = JSON.parse(localStorage.getItem("kokoro-cart") || "{}"); } catch {}
+const saveCart = () => { try { localStorage.setItem("kokoro-cart", JSON.stringify(cart)); } catch {} };
+
+async function load() {
+  try {
+    const res = await fetch("/api/menu");
+    const data = await res.json();
+    menu = data.items;
+    settings = data.settings;
+  } catch {
+    $("#menu").innerHTML = '<p class="error">Не удалось загрузить меню. Обновите страницу.</p>';
+    return;
+  }
+  for (const id of Object.keys(cart)) if (!menu.some((m) => m.id === id)) delete cart[id];
+  if (!settings.acceptingOrders) { $("#closed").textContent = settings.closedMessage; $("#closed").hidden = false; }
+  renderMenu();
+  renderCart();
+}
+
+function renderMenu() {
+  if (!menu.length) { $("#menu").innerHTML = '<p class="muted">Меню скоро появится.</p>'; return; }
+  const cats = [...new Set(menu.map((m) => m.category))];
+  $("#tabs").innerHTML = cats.length > 1 ? cats.map((c, i) => `<a href="#cat-${i}" class="${i ? "" : "active"}">${esc(c)}</a>`).join("") : "";
+  $("#menu").innerHTML = cats.map((c, i) => `
+    <section class="cat" id="cat-${i}">
+      ${cats.length > 1 ? `<h2>${esc(c)}</h2>` : ""}
+      <div class="grid">${menu.filter((m) => m.category === c).map(cardHtml).join("")}</div>
+    </section>`).join("");
+}
+
+function cardHtml(m) {
+  return `<article class="card" data-id="${esc(m.id)}">
+    <div class="img">${m.image ? `<img src="${esc(m.image)}" alt="" loading="lazy">` : "🍱"}</div>
+    <div class="body">
+      <h3>${esc(m.name)}</h3>
+      ${m.description ? `<p>${esc(m.description)}</p>` : "<p></p>"}
+      <div class="row"><span class="price">${money(m.price)}</span><span class="ctrl">${ctrlHtml(m.id)}</span></div>
+    </div>
+  </article>`;
+}
+
+function ctrlHtml(id) {
+  const q = cart[id] || 0;
+  if (!settings.acceptingOrders) return "";
+  return q
+    ? `<span class="stepper"><button data-dec="${esc(id)}" aria-label="Убрать">−</button><span>${q}</span><button data-inc="${esc(id)}" aria-label="Добавить">+</button></span>`
+    : `<button class="btn small" data-inc="${esc(id)}">В корзину</button>`;
+}
+
+function change(id, d) {
+  cart[id] = Math.max(0, Math.min(50, (cart[id] || 0) + d));
+  if (!cart[id]) delete cart[id];
+  saveCart();
+  document.querySelectorAll(`.card[data-id="${CSS.escape(id)}"] .ctrl`).forEach((el) => (el.innerHTML = ctrlHtml(id)));
+  renderCart();
+}
+
+function cartLines() {
+  return Object.entries(cart).map(([id, qty]) => ({ item: menu.find((m) => m.id === id), qty })).filter((l) => l.item);
+}
+
+function renderCart() {
+  const lines = cartLines();
+  const count = lines.reduce((s, l) => s + l.qty, 0);
+  const subtotal = lines.reduce((s, l) => s + l.qty * l.item.price, 0);
+  const total = subtotal + (count ? settings.deliveryFee : 0);
+  $("#cartbar").hidden = !count;
+  $("#cartCount").textContent = `Корзина · ${count}`;
+  $("#cartTotal").textContent = money(total);
+
+  $("#lines").innerHTML = lines.length ? lines.map(({ item, qty }) => `
+    <div class="line">
+      <div class="name">${esc(item.name)}<small>${money(item.price)}</small></div>
+      <span class="stepper"><button data-dec="${esc(item.id)}" aria-label="Убрать">−</button><span>${qty}</span><button data-inc="${esc(item.id)}" aria-label="Добавить">+</button></span>
+    </div>`).join("") : '<p class="muted">Корзина пуста</p>';
+
+  const short = settings.minOrder - subtotal;
+  $("#totals").innerHTML = `
+    <div><span class="muted">Товары</span><span>${money(subtotal)}</span></div>
+    <div><span class="muted">Доставка</span><span>${settings.deliveryFee ? money(settings.deliveryFee) : "Бесплатно"}</span></div>
+    <div class="sum"><span>Итого</span><span>${money(total)}</span></div>
+    ${short > 0 && count ? `<div class="error">До минимальной суммы заказа не хватает ${money(short)}</div>` : ""}`;
+  $("#submit").disabled = !count || short > 0 || !settings.acceptingOrders;
+  if (!count && $("#sheet").classList.contains("open") && !$("#checkout").hidden) closeSheet();
+}
+
+function openSheet() {
+  $("#sheetTitle").textContent = "Ваш заказ";
+  $("#checkout").hidden = false;
+  $("#success").hidden = true;
+  $("#formError").textContent = "";
+  $("#sheet").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeSheet() {
+  $("#sheet").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-inc],[data-dec],[data-close]");
+  if (!t) return;
+  if (t.dataset.inc) change(t.dataset.inc, 1);
+  else if (t.dataset.dec) change(t.dataset.dec, -1);
+  else closeSheet();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+$("#openCart").addEventListener("click", openSheet);
+$("#when").addEventListener("change", (e) => { $("#timeField").hidden = e.target.value !== "time"; });
+
+// Restore saved contact details so returning customers don't retype them
+const form = $("#form");
+const remembered = ["name", "phone", "address", "entrance", "floor", "apartment"];
+try {
+  const saved = JSON.parse(localStorage.getItem("kokoro-contact") || "{}");
+  for (const k of remembered) if (saved[k]) form.elements[k].value = saved[k];
+} catch {}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = form.elements;
+  const err = $("#formError");
+  err.textContent = "";
+  if (!f.name.value.trim()) return (err.textContent = "Укажите имя"), f.name.focus();
+  if (f.phone.value.replace(/\D/g, "").length < 9) return (err.textContent = "Укажите номер телефона"), f.phone.focus();
+  if (f.address.value.trim().length < 3) return (err.textContent = "Укажите адрес доставки"), f.address.focus();
+  if (f.when.value === "time" && !f.time.value) return (err.textContent = "Укажите время доставки"), f.time.focus();
+
+  const payload = {
+    items: cartLines().map((l) => ({ id: l.item.id, qty: l.qty })),
+    name: f.name.value, phone: f.phone.value, address: f.address.value,
+    entrance: f.entrance.value, floor: f.floor.value, apartment: f.apartment.value,
+    time: f.when.value === "time" ? "Ко времени: " + f.time.value : "Как можно скорее",
+    comment: f.comment.value, website: f.website.value,
+  };
+  const btn = $("#submit");
+  btn.disabled = true;
+  btn.textContent = "Отправляем…";
+  try {
+    const res = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Не удалось оформить заказ");
+    try { localStorage.setItem("kokoro-contact", JSON.stringify(Object.fromEntries(remembered.map((k) => [k, f[k].value])))); } catch {}
+    cart = {};
+    saveCart();
+    f.comment.value = "";
+    showSuccess(data);
+    renderMenu();
+    renderCart();
+  } catch (ex) {
+    err.textContent = ex.message === "Failed to fetch" ? "Нет соединения. Попробуйте ещё раз." : ex.message;
+  } finally {
+    btn.textContent = "Оформить заказ";
+    renderCart();
+  }
+});
+
+function showSuccess(data) {
+  $("#checkout").hidden = true;
+  $("#success").hidden = false;
+  $("#sheetTitle").textContent = "Спасибо!";
+  $("#doneNum").textContent = "№ " + data.number;
+  $("#doneTotal").textContent = money(data.total);
+  $("#doneQr").hidden = !data.qrImage;
+  if (data.qrImage) $("#doneQr").src = data.qrImage;
+  $("#doneNote").textContent = data.qrNote || "";
+  $("#sheet .panel").scrollTop = 0;
+}
+
+// Highlight the category tab for the section in view
+const observer = new IntersectionObserver((entries) => {
+  for (const en of entries) if (en.isIntersecting) {
+    document.querySelectorAll("#tabs a").forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id));
+  }
+}, { rootMargin: "-40% 0px -55% 0px" });
+new MutationObserver(() => document.querySelectorAll("section.cat").forEach((s) => observer.observe(s))).observe($("#menu"), { childList: true });
+
+load();
+</script>
+</body>
+</html>
