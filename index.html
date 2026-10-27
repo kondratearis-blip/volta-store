@@ -173,7 +173,7 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .filter{height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--field-border);font-size:14px;transition:.25s}
 .filter:hover{border-color:rgba(14,27,20,.35)}
 .filter.active{background:var(--text);color:#fff;border-color:var(--text)}
-.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:20px}
 .project{
   position:relative;border-radius:var(--radius);background:var(--panel);overflow:hidden;display:flex;flex-direction:column;
   transition:transform .4s var(--ease),opacity .4s;
@@ -834,7 +834,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
         <div class="hero-copy" id="heroCopy">
           <span class="eyebrow" id="heroEyebrow">Квартиры от застройщика · Бишкек</span>
           <h1 class="hero-title" id="heroTitle">Элитные дома, в которых <span class="grad-text">хочется жить</span></h1>
-          <p class="lead" id="heroDesc">MK Group — застройщик в Бишкеке с 2018 года.</p>
+          <p class="lead" id="heroDesc">MK Group — застройщик в Бишкеке и Оше с 2018 года.</p>
           <div class="hero-meta" id="heroMeta"></div>
           <div class="hero-cta">
             <button class="btn btn-accent" id="heroPick">Выбрать квартиру →</button>
@@ -860,8 +860,8 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   </div>
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span>Квартиры от застройщика</span><span>ЖК «Байхан» — ул. Мичурина, 267</span><span>ЖК «Байхан-2» — пр. Ленина, 328</span><span>Офис продаж — ул. Толомуша Океева, 39/7</span><span>MK Group — с 2018 года</span>
-      <span>Квартиры от застройщика</span><span>ЖК «Байхан» — ул. Мичурина, 267</span><span>ЖК «Байхан-2» — пр. Ленина, 328</span><span>Офис продаж — ул. Толомуша Океева, 39/7</span><span>MK Group — с 2018 года</span>
+      <span>Квартиры от застройщика</span><span>ЖК «Байхан» — ул. Мичурина, 267</span><span>ЖК «Байхан-2» — пр. Ленина, 328</span><span>Дом в мкр Анар — Ош</span><span>Дом «София» — Ош, ул. Масалиева, 5</span><span>Офисы: Бишкек, Океева 39/7 · Ош, Масалиева 7</span><span>MK Group — с 2018 года</span>
+      <span>Квартиры от застройщика</span><span>ЖК «Байхан» — ул. Мичурина, 267</span><span>ЖК «Байхан-2» — пр. Ленина, 328</span><span>Дом в мкр Анар — Ош</span><span>Дом «София» — Ош, ул. Масалиева, 5</span><span>Офисы: Бишкек, Океева 39/7 · Ош, Масалиева 7</span><span>MK Group — с 2018 года</span>
     </div>
   </div>
 </section>
@@ -1132,13 +1132,13 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   <div class="wrap about">
     <div class="about-text reveal">
       <span class="eyebrow">О компании</span>
-      <h2 class="h2" style="margin:0">MK Group — застройщик в Бишкеке с 2018 года</h2>
-      <p class="lead">MK Group (МК Групп) — строительная компания из Бишкека, работает с 2018 года. Компания построила ЖК «Байхан» на улице Мичурина и ведёт проект «Байхан-2» на проспекте Ленина. Офис продаж — ул. Толомуша Океева, 39/7.</p>
+      <h2 class="h2" style="margin:0">MK Group — застройщик в Бишкеке и Оше с 2018 года</h2>
+      <p class="lead">MK Group (МК Групп) — строительная компания из Бишкека, работает с 2018 года. В Бишкеке компания построила ЖК «Байхан» на улице Мичурина и ведёт проект «Байхан-2» на проспекте Ленина. В Оше — дом в микрорайоне Анар и дом «София» на улице Масалиева. Офисы продаж: Бишкек, ул. Толомуша Океева, 39/7 и Ош, пр. Масалиева, 7.</p>
       <a class="btn btn-ghost" href="#build" style="align-self:flex-start">Ход строительства →</a>
     </div>
     <div class="about-stats">
       <div class="stat reveal"><b>2018</b><span>год основания</span></div>
-      <div class="stat reveal"><b><span class="count" data-to="2">0</span></b><span>жилых комплекса</span></div>
+      <div class="stat reveal"><b><span class="count" data-to="4">0</span></b><span>объекта в Бишкеке и Оше</span></div>
       <div class="stat reveal" style="grid-column:1/-1"><b><span class="count" data-to="9">0</span> этажей</b><span>в каждом доме ЖК «Байхан»</span></div>
     </div>
   </div>
@@ -1229,7 +1229,8 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
     <div class="contacts reveal">
       <div class="contact-card">
         <div class="c-item"><span>Телефон</span><a class="u-link js-phone" href="tel:+996700000000">+996 (700) 00-00-00</a></div>
-        <div class="c-item"><span>Адрес</span><b>г. Бишкек, ул. Толомуша Океева, 39/7</b></div>
+        <div class="c-item"><span>Офис в Бишкеке</span><b>ул. Толомуша Океева, 39/7</b></div>
+        <div class="c-item"><span>Офис в Оше</span><b>пр. Масалиева, 7</b></div>
         <div class="c-item"><span>Режим работы</span><b>уточняйте по телефону</b></div>
         <div class="c-item"><span>Email</span><a class="u-link" href="mailto:info@mkgroup.kg">info@mkgroup.kg</a></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:auto">
@@ -1265,7 +1266,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
     <div class="foot-grid">
       <div class="foot-left">
         <a href="#top" class="logo foot-mark"><svg><use href="#mk-mark"/></svg>MK Group</a>
-        <p>MK Group (МК Групп) — строительная компания в Бишкеке, работает с 2018 года. ЖК «Байхан» (ул. Мичурина, 267) и ЖК «Байхан-2» (пр. Ленина, 328). Квартиры от застройщика.</p>
+        <p>MK Group (МК Групп) — строительная компания в Бишкеке, работает с 2018 года. Бишкек: ЖК «Байхан» и ЖК «Байхан-2». Ош: дом в мкр Анар и дом «София». Квартиры от застройщика.</p>
         <div class="socials">
           <a href="https://www.instagram.com/mkgroup_kg" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
           <a class="js-wa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.6 2.1 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.1z"/></svg></a>
@@ -1283,7 +1284,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
         <div class="foot-col">
           <h4>Связаться с нами</h4>
           <a class="u-link js-phone" href="tel:+996700000000" style="color:var(--text);font-weight:600;align-self:flex-start">+996 (700) 00-00-00</a>
-          <span>Офис продаж MK Group,<br>г. Бишкек, ул. Толомуша Океева, 39/7</span>
+          <span>Бишкек: ул. Толомуша Океева, 39/7<br>Ош: пр. Масалиева, 7</span>
         </div>
       </div>
     </div>
@@ -1396,6 +1397,8 @@ const PROJECTS = [
   // в источниках не указаны или расходятся — уточните у отдела продаж и впишите сюда.
   {id:'a', img:'media/zhk-a.jpg', imgNote:'Иллюстрация', name:'ЖК «Байхан»', desc:'Жилой комплекс из двух 9-этажных домов на улице Мичурина. Комплекс сдан — наличие свободных квартир и цены уточняйте в отделе продаж.', loc:'Бишкек, ул. Мичурина, 267', status:'ready', tag:'Сдан', floors:9, deadline:'Сдан', priceM2:null, progress:100, area:'уточняйте', towers:[{x:60,w:110,f:9},{x:200,w:110,f:9}]},
   {id:'b', img:'media/zhk-b.jpg', imgNote:'Иллюстрация', name:'ЖК «Байхан-2»', desc:'Новый проект MK Group на проспекте Ленина. Оставьте заявку — пришлём планировки и актуальные цены.', loc:'Бишкек, пр. Ленина, 328', status:'build', tag:'Продажи открыты', hot:true, floors:12, floorsLabel:'уточняйте', deadline:'уточняйте', priceM2:105108, progress:null, area:'уточняйте', towers:[{x:110,w:150,f:12}]},
+  {id:'c', img:'media/zhk-c.jpg', imgNote:'Иллюстрация', name:'Дом в мкр Анар', desc:'9-этажный жилой дом комфорт-класса в микрорайоне Анар в Оше. Дом сдан — наличие квартир и цены уточняйте в ошском офисе продаж.', loc:'Ош, мкр Анар', status:'ready', tag:'Сдан', floors:9, deadline:'Сдан', priceM2:null, progress:100, area:'1–3-комнатные', towers:[{x:110,w:150,f:9}]},
+  {id:'d', img:'media/zhk-d.jpg', imgNote:'Иллюстрация', name:'Жилой дом «София»', desc:'Жилой дом на улице Масалиева в Оше, рядом с офисом продаж MK Group. Актуальный этап строительства и цены уточняйте у менеджера.', loc:'Ош, ул. Масалиева, 5', status:'build', tag:'Строится', floors:12, floorsLabel:'уточняйте', deadline:'уточняйте', priceM2:null, progress:null, area:'1–3-комнатные', towers:[{x:110,w:150,f:12}]},
 ];
 
 /* ===== helpers ===== */
@@ -1540,7 +1543,7 @@ function drawSkyline(p) {
     const apply = () => {
       $('#heroEyebrow').textContent = `${p.tag} · ${p.loc}`;
       const nm = p.name.replace('ЖК ', '').replace(/[«»]/g, '');
-      $('#heroTitle').innerHTML = `ЖК <span class="grad-text">${nm}</span>`;
+      $('#heroTitle').innerHTML = p.name.startsWith('ЖК ') ? `ЖК <span class="grad-text">${nm}</span>` : `<span class="grad-text">${nm}</span>`;
       $('#heroDesc').textContent = p.desc;
       $('#heroMeta').innerHTML = `<div>Цена за м²<b>${priceM2Label(p)}</b></div><div>Этажность<b>${floorsLabel(p)}</b></div><div>Сдача<b>${p.deadline}</b></div><div>Площади<b>${p.area}</b></div>`;
       copy.classList.remove('out');
