@@ -182,6 +182,8 @@ section{position:relative;padding:clamp(72px,9vw,140px) 0}
 .project.hide{display:none}
 .project-visual{position:relative;height:300px;overflow:hidden;background:radial-gradient(120% 90% at 70% 100%,rgba(22,163,74,.12),transparent 60%),linear-gradient(180deg,#E6F4EA,#fff)}
 .project-visual svg{position:absolute;inset:auto 0 0 0;width:100%;height:100%}
+.project-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.project:hover .project-photo{transform:scale(1.04)}
 .project-tag{position:absolute;top:16px;left:16px;z-index:2;font-size:12px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid var(--field-border)}
 .project-tag.hot{background:var(--accent);border-color:transparent;color:#fff}
 .project-body{padding:24px;display:flex;flex-direction:column;gap:14px;flex:1}
@@ -628,6 +630,116 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
   .about-stats .stat,.about-stats .stat:first-child{padding:20px}
   .map{min-height:320px}
 }
+
+/* ============ MOBILE-FIRST COMPACT ============ */
+.cat-toggle{display:none}
+@media (max-width:760px){
+  section{padding:44px 0}
+  .h2{font-size:clamp(24px,7vw,30px);margin:8px 0 10px}
+  .lead{font-size:14.5px}
+  .eyebrow{font-size:11px}
+  .sec-head{margin-bottom:20px;gap:14px}
+  .btn{height:44px;padding:0 18px;font-size:14px}
+  .nav .wrap{height:60px}
+  .mobile-menu{inset:60px 0 auto 0}
+  .hero{padding-top:68px;min-height:0}
+  .hero-inner{padding:20px 18px 0;gap:8px}
+  .hero-copy .hero-title{font-size:clamp(30px,9vw,40px);margin:10px 0 10px}
+  .hero-copy .lead{font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .hero-meta{display:grid;grid-template-columns:repeat(4,auto);gap:10px 14px;margin-top:14px}
+  .hero-meta div{font-size:11px}
+  .hero-meta b{font-size:14px}
+  .hero-cta{margin-top:16px;gap:8px;flex-wrap:nowrap}
+  .hero-cta .btn-accent{flex:1.4 1 0}
+  .hero-cta .btn{flex:1 1 0;height:46px;padding:0 10px;font-size:13.5px;white-space:nowrap}
+  .skyline-wrap,#skyline{max-height:230px}
+  .slide-count{display:none}
+  .slide-arrows{display:none}
+  .hero-tabs{margin:0 18px;gap:16px}
+  .hero-tab{padding:12px 0 14px;font-size:13px}
+  .qsearch{grid-template-columns:1fr 1fr;gap:8px;padding:10px}
+  .qsearch .btn{grid-column:1/-1;height:46px}
+  .select{height:44px;font-size:14px;border-radius:12px}
+  .qs-field{gap:4px;font-size:11px}
+  .marquee{margin-top:24px;padding:12px 0}
+  .marquee-track{font-size:13px;gap:32px}
+  .marquee-track span{gap:32px}
+  /* horizontal carousels instead of long stacks */
+  .projects,.promos,.adv{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:0 calc(-1 * var(--gutter));padding:0 var(--gutter) 6px;scroll-padding-inline:var(--gutter);scrollbar-width:none}
+  .projects::-webkit-scrollbar,.promos::-webkit-scrollbar,.adv::-webkit-scrollbar{display:none}
+  .project{flex:0 0 84%;scroll-snap-align:start}
+  .project.hide{display:none}
+  .project-visual{height:190px}
+  .project-body{padding:16px;gap:10px}
+  .project h3{font-size:18px}
+  .specs{padding:10px 0}
+  .specs b{font-size:13px}
+  .price b{font-size:17px}
+  .promo{flex:0 0 78%;scroll-snap-align:start;padding:22px;min-height:220px}
+  .promo .p-big{font-size:44px}
+  .promo h3{font-size:18px}
+  .adv-card{flex:0 0 70%;scroll-snap-align:start;min-height:0;padding:20px}
+  .filters{flex-wrap:nowrap;overflow-x:auto;margin:0 calc(-1 * var(--gutter));padding:0 var(--gutter);scrollbar-width:none;width:calc(100% + 2 * var(--gutter))}
+  .filters::-webkit-scrollbar{display:none}
+  .filter{flex:none;height:36px;padding:0 14px;font-size:13px}
+  /* catalog */
+  .cat-toggle{display:flex;width:100%;margin-bottom:10px}
+  .cat-filters{display:none;padding:16px;gap:14px}
+  .cat-filters.open{display:grid}
+  .cat-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .flat{padding:10px;gap:6px;border-radius:14px}
+  .flat .f-plan{height:72px}
+  .flat .f-plan svg{height:48px}
+  .flat .f-top{flex-direction:column;gap:2px}
+  .flat .f-top b{font-size:14px}
+  .flat .f-top span,.flat .f-cx{font-size:11px}
+  .flat .f-price{padding-top:8px;flex-direction:column;align-items:flex-start;gap:2px}
+  .flat .f-price b{font-size:15px}
+  .flat .f-badge{top:16px;left:16px;font-size:10px;padding:3px 8px}
+  .cat-head .found b{font-size:17px}
+  .cat-head .select{height:38px;font-size:13px}
+  /* floor picker */
+  .picker-visual{padding:44px 12px 12px}
+  #tower{max-width:200px}
+  .picker-panel{padding:16px;gap:14px}
+  .pp-floor{font-size:38px}
+  .floor-nav button{width:38px;height:38px}
+  .units{grid-template-columns:1fr 1fr;gap:8px}
+  .unit{padding:12px;min-height:0;gap:8px}
+  .unit .u-rooms{font-size:14px}
+  .unit .u-plan{height:38px}
+  .unit .u-meta{flex-direction:column;align-items:flex-start;gap:4px;font-size:11px}
+  .unit .u-meta b{font-size:15px}
+  /* quiz & calc */
+  .quiz-aside{padding:20px;gap:12px}
+  .quiz-aside .h2{font-size:22px}
+  .gift{padding:12px}
+  .quiz-box{padding:20px}
+  .q-title{font-size:19px;margin-bottom:14px}
+  .q-options,.q-options.cols-3{grid-template-columns:1fr 1fr;gap:8px}
+  .q-opt{padding:12px 10px 12px 38px;min-height:54px;font-size:13.5px}
+  .q-opt::before{left:12px;width:18px;height:18px;margin-top:-9px}
+  .q-nav{padding-top:18px}
+  .q-bar{margin-bottom:20px}
+  .calc-box,.calc-res{padding:20px;gap:18px}
+  .calc-res .monthly{font-size:40px}
+  .steps{grid-template-columns:1fr 1fr;gap:16px}
+  .step{padding:18px 8px 0 0}
+  .step h3{font-size:16px}
+  .step p{font-size:13px}
+  .faq-q{padding:16px 0;font-size:15px}
+  .about-text{padding:20px}
+  .about-stats .stat b{font-size:26px}
+  .build-sum,.timeline{padding:20px}
+  .ring{width:120px;height:120px}
+  .ring b{font-size:28px}
+  .contact-card{padding:20px;gap:14px}
+  .contact-card .c-item b,.contact-card .c-item a{font-size:16px}
+  .map{min-height:220px}
+  footer{padding:36px 0 24px}
+  .foot-grid{padding-bottom:24px;gap:24px}
+  .cta-card{min-height:0;padding:36px 18px}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .smoke-video{display:none}
@@ -707,7 +819,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
           <div class="hero-meta" id="heroMeta"></div>
           <div class="hero-cta">
             <button class="btn btn-accent" id="heroPick">Выбрать квартиру →</button>
-            <button class="btn btn-ghost js-open-modal" data-title="Получить презентацию ЖК">Получить презентацию</button>
+            <button class="btn btn-ghost js-open-modal" data-title="Получить презентацию ЖК">Презентация</button>
           </div>
         </div>
         <div class="skyline-wrap" aria-hidden="true">
@@ -766,6 +878,7 @@ footer{padding:clamp(48px,5vw,72px) 0 28px}
       </div>
     </div>
     <div class="catalog reveal">
+      <button class="btn btn-ghost cat-toggle" id="catToggle" type="button" aria-expanded="false">Фильтры ⌄</button>
       <aside class="cat-filters" id="catFilters">
         <div><h4>Жилой комплекс</h4><select class="select" id="fCx"><option value="">Все комплексы</option></select></div>
         <div><h4>Количество комнат</h4><div class="room-chips" id="fRooms"><button data-r="0">Ст</button><button data-r="1">1</button><button data-r="2">2</button><button data-r="3">3</button><button data-r="4">4+</button></div></div>
@@ -1258,13 +1371,15 @@ const CONSTRUCTION = {};
 /* Координаты офиса для карты */
 const OFFICE = {lat: 42.8746, lon: 74.5698};
 
+/* Фото ЖК: положите визуализацию в media/ и укажите img, например img:'media/zhk-a.jpg'.
+   Пока файла нет — показывается анимированный дом. */
 const PROJECTS = [
-  {id:'a', desc:'Клубный комплекс в верхней части города: вид на горы, закрытый двор без машин, подземный паркинг и собственная сервисная служба.', name:'ЖК «Ала-Тоо Резиденс»', loc:'Бишкек, верхняя часть города', status:'build', tag:'Строится', hot:true, floors:16, deadline:'IV кв. 2027', priceM2:1150, progress:62, area:'42–180 м²', towers:[{x:40,w:90,f:14},{x:150,w:110,f:18},{x:280,w:80,f:12}]},
-  {id:'b', desc:'Дом у парка для тех, кто ценит тишину и зелень. Панорамные окна, лобби с консьержем, фитнес-зал и детский клуб на территории.', name:'ЖК «Premium Park»',      loc:'Бишкек, рядом с парком',    status:'build', tag:'Старт 2-й очереди', floors:20, deadline:'II кв. 2028', priceM2:1290, progress:28, area:'48–220 м²', towers:[{x:60,w:100,f:20},{x:190,w:100,f:16}]},
-  {id:'c', desc:'Сданный комплекс с готовой инфраструктурой — школа, сад и магазины рядом. Заезжайте сразу после покупки.', name:'ЖК «Asman City»',        loc:'Бишкек, южный район',       status:'ready', tag:'Сдан · есть квартиры', floors:12, deadline:'Сдан', priceM2:1050, progress:100, area:'38–140 м²', towers:[{x:30,w:80,f:10},{x:125,w:120,f:12},{x:265,w:80,f:9}]},
-  {id:'d', desc:'Самая высокая башня проекта в деловом центре: пентхаусы, террасы на крыше и видовые квартиры с потолками 3,3 м.', name:'ЖК «Sky Tower»',         loc:'Бишкек, деловой центр',     status:'soon',  tag:'Старт продаж', hot:true, floors:25, deadline:'IV кв. 2028', priceM2:1400, progress:8, area:'55–320 м²', towers:[{x:125,w:110,f:24}]},
-  {id:'e', desc:'Камерный малоэтажный квартал у подножия гор: чистый воздух, прогулочные зоны и доступные цены.', name:'ЖК «Green Hills»',       loc:'Пригород, у гор',           status:'build', tag:'Строится', floors:9, deadline:'I кв. 2027', priceM2:890, progress:81, area:'36–110 м²', towers:[{x:30,w:90,f:9},{x:135,w:90,f:9},{x:240,w:90,f:9}]},
-  {id:'f', desc:'Премиальный дом в самом центре: всё в шаговой доступности, просторные планировки и дизайнерское лобби.', name:'ЖК «Central Lux»',       loc:'Бишкек, центр',             status:'ready', tag:'Сдан', floors:14, deadline:'Сдан', priceM2:1350, progress:100, area:'60–240 м²', towers:[{x:90,w:180,f:14}]},
+  {id:'a', img:'media/zhk-a.jpg', desc:'Клубный комплекс в верхней части города: вид на горы, закрытый двор без машин, подземный паркинг и собственная сервисная служба.', name:'ЖК «Ала-Тоо Резиденс»', loc:'Бишкек, верхняя часть города', status:'build', tag:'Строится', hot:true, floors:16, deadline:'IV кв. 2027', priceM2:1150, progress:62, area:'42–180 м²', towers:[{x:40,w:90,f:14},{x:150,w:110,f:18},{x:280,w:80,f:12}]},
+  {id:'b', img:'media/zhk-b.jpg', desc:'Дом у парка для тех, кто ценит тишину и зелень. Панорамные окна, лобби с консьержем, фитнес-зал и детский клуб на территории.', name:'ЖК «Premium Park»',      loc:'Бишкек, рядом с парком',    status:'build', tag:'Старт 2-й очереди', floors:20, deadline:'II кв. 2028', priceM2:1290, progress:28, area:'48–220 м²', towers:[{x:60,w:100,f:20},{x:190,w:100,f:16}]},
+  {id:'c', img:'media/zhk-c.jpg', desc:'Сданный комплекс с готовой инфраструктурой — школа, сад и магазины рядом. Заезжайте сразу после покупки.', name:'ЖК «Asman City»',        loc:'Бишкек, южный район',       status:'ready', tag:'Сдан · есть квартиры', floors:12, deadline:'Сдан', priceM2:1050, progress:100, area:'38–140 м²', towers:[{x:30,w:80,f:10},{x:125,w:120,f:12},{x:265,w:80,f:9}]},
+  {id:'d', img:'media/zhk-d.jpg', desc:'Самая высокая башня проекта в деловом центре: пентхаусы, террасы на крыше и видовые квартиры с потолками 3,3 м.', name:'ЖК «Sky Tower»',         loc:'Бишкек, деловой центр',     status:'soon',  tag:'Старт продаж', hot:true, floors:25, deadline:'IV кв. 2028', priceM2:1400, progress:8, area:'55–320 м²', towers:[{x:125,w:110,f:24}]},
+  {id:'e', img:'media/zhk-e.jpg', desc:'Камерный малоэтажный квартал у подножия гор: чистый воздух, прогулочные зоны и доступные цены.', name:'ЖК «Green Hills»',       loc:'Пригород, у гор',           status:'build', tag:'Строится', floors:9, deadline:'I кв. 2027', priceM2:890, progress:81, area:'36–110 м²', towers:[{x:30,w:90,f:9},{x:135,w:90,f:9},{x:240,w:90,f:9}]},
+  {id:'f', img:'media/zhk-f.jpg', desc:'Премиальный дом в самом центре: всё в шаговой доступности, просторные планировки и дизайнерское лобби.', name:'ЖК «Central Lux»',       loc:'Бишкек, центр',             status:'ready', tag:'Сдан', floors:14, deadline:'Сдан', priceM2:1350, progress:100, area:'60–240 м²', towers:[{x:90,w:180,f:14}]},
 ];
 
 /* ===== helpers ===== */
@@ -1435,6 +1550,7 @@ function twinkle(svg) {
       <div class="project-visual">
         <span class="project-tag ${p.hot ? 'hot' : ''}">${p.tag}</span>
         <svg class="bld" viewBox="0 0 380 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true"></svg>
+        ${p.img ? `<img class="project-photo" src="${p.img}" alt="${p.name}, визуализация" loading="lazy" onerror="this.remove()">` : ''}
       </div>
       <div class="project-body">
         <div><h3>${p.name}</h3><div class="loc">${p.loc}</div></div>
@@ -1760,7 +1876,8 @@ const ALL_UNITS = PROJECTS.flatMap(p => {
   for (let f = 2; f <= p.floors; f++) unitsFor(p, f).forEach(u => { if (u.status === 'free') out.push({...u, floor: f, project: p, complex: p.name, price: Math.round(u.price), ppm: Math.round(u.price / u.area)}); });
   return out;
 });
-const cat = {cx:'', rooms:new Set(), price:400000, area:30, floor:'', sort:'price', shown:12, ready:''};
+const PAGE = matchMedia('(max-width:760px)').matches ? 6 : 12;
+const cat = {cx:'', rooms:new Set(), price:400000, area:30, floor:'', sort:'price', shown:PAGE, ready:''};
 function catFiltered() {
   return ALL_UNITS.filter(u =>
     (!cat.cx || u.project.id === cat.cx) &&
@@ -1796,7 +1913,7 @@ function syncFilters() {
   const opts = PROJECTS.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
   $('#fCx').insertAdjacentHTML('beforeend', opts);
   $('#qsCx').insertAdjacentHTML('beforeend', opts);
-  const upd = () => { cat.shown = 12; syncFilters(); renderCatalog(); };
+  const upd = () => { cat.shown = PAGE; syncFilters(); renderCatalog(); };
   $('#fCx').onchange = e => { cat.cx = e.target.value; upd(); };
   $('#fRooms').onclick = e => { const b = e.target.closest('button'); if (!b) return; const r = +b.dataset.r; cat.rooms.has(r) ? cat.rooms.delete(r) : cat.rooms.add(r); upd(); };
   $('#fPrice').oninput = e => { cat.price = +e.target.value; upd(); };
@@ -1804,7 +1921,8 @@ function syncFilters() {
   $('#fFloor').onchange = e => { cat.floor = e.target.value; upd(); };
   $('#fSort').onchange = e => { cat.sort = e.target.value; upd(); };
   $('#fReset').onclick = () => { Object.assign(cat, {cx:'', rooms:new Set(), price:400000, area:30, floor:'', ready:''}); upd(); };
-  $('#catMore').onclick = () => { cat.shown += 12; renderCatalog(); };
+  $('#catMore').onclick = () => { cat.shown += PAGE; renderCatalog(); };
+  $('#catToggle').onclick = () => { const o = $('#catFilters').classList.toggle('open'); $('#catToggle').setAttribute('aria-expanded', o); };
   $('#catGrid').addEventListener('click', e => { const b = e.target.closest('.flat'); if (b) openTour(ALL_UNITS[+b.dataset.k]); });
   // quick search под слайдером
   const qs = $('#qsearch');
