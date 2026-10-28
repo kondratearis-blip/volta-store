@@ -271,7 +271,18 @@
       </g>`;
   }
 
+  // фото товара: строка — одно фото на все цвета, массив — фото по индексу цвета
+  function photoFor(p, colorIdx) {
+    if (!p.photo) return null;
+    return Array.isArray(p.photo) ? p.photo[colorIdx] || p.photo[0] : p.photo;
+  }
+
   function render(p, colorIdx = 0, withSheen = false) {
+    const src = photoFor(p, colorIdx);
+    if (src) {
+      const alt = p.colors.length > 1 ? `${p.name}, ${p.colors[colorIdx].name.toLowerCase()}` : p.name;
+      return `<img class="photo" src="${src}" alt="${alt}" loading="lazy" decoding="async">`;
+    }
     const c = p.colors[colorIdx].hex;
     const u = "r" + uidSeed++;
     let svg;

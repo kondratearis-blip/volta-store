@@ -87,6 +87,8 @@ a { color: inherit; text-decoration: none; }
 button, select, input { font: inherit; color: inherit; }
 button { cursor: pointer; border: 0; background: none; padding: 0; }
 svg { display: block; }
+/* фото товара с вырезанным фоном: вписываем без искажений, мягкая тень вместо подложки */
+.photo { display: block; object-fit: contain; filter: drop-shadow(0 12px 18px rgba(20, 24, 40, 0.18)); user-select: none; -webkit-user-drag: none; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 10px; }
 .container {
   width: 100%; max-width: 1240px; margin-inline: auto;
@@ -159,7 +161,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 }
 .story-chip.is-seen .story-chip__ring { background: var(--line); }
 .story-chip__inner { width: 100%; height: 100%; border-radius: 19px; border: 3px solid var(--bg); background: var(--tile); display: grid; place-items: center; overflow: hidden; }
-.story-chip__inner svg { width: 62%; height: 78%; }
+.story-chip__inner svg, .story-chip__inner .photo { width: 62%; height: 78%; }
 
 /* ---------- promo banners ---------- */
 .promos {
@@ -175,7 +177,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .promo p { opacity: 0.85; max-width: 55%; font-size: 15px; }
 .promo .btn { margin-top: auto; background: #fff; color: #121317; height: 42px; }
 .promo__art { position: absolute; z-index: -1; right: 4%; bottom: -8%; width: 38%; height: 92%; transition: transform 0.6s var(--ease); }
-.promo__art svg { width: 100%; height: 100%; }
+.promo__art svg, .promo__art .photo { width: 100%; height: 100%; }
 .promo:hover .promo__art { transform: translateY(-6px) scale(1.03); }
 .dots { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
 .dots button { width: 8px; height: 8px; border-radius: 999px; background: var(--line); transition: width 0.3s var(--ease), background-color 0.3s; }
@@ -201,7 +203,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tile b { font-size: 15px; font-weight: 600; position: relative; z-index: 1; }
 .tile small { color: var(--muted); font-size: 13px; position: relative; z-index: 1; }
 .tile__art { position: absolute; right: -6%; bottom: -10%; width: 58%; height: 82%; transition: transform 0.4s var(--ease); }
-.tile__art svg { width: 100%; height: 100%; }
+.tile__art svg, .tile__art .photo { width: 100%; height: 100%; }
 .tile:hover .tile__art { transform: translateY(-4px) scale(1.04); }
 
 /* ---------- chips ---------- */
@@ -223,7 +225,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .pcard:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
 .pcard__media { position: relative; aspect-ratio: 1; border-radius: var(--r-sm); background: var(--stage); display: grid; place-items: center; }
 .pcard__media .render { width: 62%; height: 78%; }
-.pcard__media svg { width: 100%; height: 100%; }
+.pcard__media svg, .pcard__media .photo { width: 100%; height: 100%; }
 .tag { position: absolute; top: 10px; left: 10px; height: 24px; padding: 0 9px; border-radius: 8px; font-size: 12px; font-weight: 700; display: grid; place-items: center; color: #fff; background: var(--sale); }
 .tag--new { background: var(--ok); }
 .tag--hit { background: var(--accent); }
@@ -301,13 +303,13 @@ input[type="range"] { width: 100%; accent-color: var(--accent); height: 28px; }
 .gallery__stage { aspect-ratio: 1; border-radius: var(--r); background: var(--stage); display: grid; place-items: center; overflow: hidden; }
 .gallery__stage .render { width: 56%; height: 78%; animation: float 6s ease-in-out infinite; }
 .gallery__stage .render.swap { animation: swap 0.45s var(--ease), float 6s 0.45s ease-in-out infinite; }
-.gallery__stage svg { width: 100%; height: 100%; }
+.gallery__stage svg, .gallery__stage .photo { width: 100%; height: 100%; }
 @keyframes float { 50% { translate: 0 -10px; } }
 @keyframes swap { from { opacity: 0; transform: scale(0.94); } }
 .thumbs { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; scrollbar-width: none; }
 .thumbs button { width: 64px; height: 64px; flex-shrink: 0; border-radius: 14px; background: var(--stage); display: grid; place-items: center; border: 2px solid transparent; transition: border-color 0.2s; }
 .thumbs button.is-active { border-color: var(--accent); }
-.thumbs svg { width: 60%; height: 76%; }
+.thumbs svg, .thumbs .photo { width: 60%; height: 76%; }
 .opts { padding: 20px; display: flex; flex-direction: column; gap: 18px; }
 .opt-label { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
 .opt-label b { color: var(--text); font-weight: 600; }
@@ -363,7 +365,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); height: 28px; }
 .sheet__empty b { color: var(--text); font-size: 17px; }
 .citem { display: grid; grid-template-columns: 72px 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .citem__img { width: 72px; height: 72px; border-radius: 16px; background: var(--stage); display: grid; place-items: center; }
-.citem__img svg { width: 60%; height: 76%; }
+.citem__img svg, .citem__img .photo { width: 60%; height: 76%; }
 .citem b { display: block; font-size: 14px; font-weight: 600; line-height: 1.3; }
 .citem small { display: block; color: var(--muted); font-size: 13px; }
 .qty { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 3px; border-radius: 10px; background: var(--surface-2); font-variant-numeric: tabular-nums; }
@@ -389,7 +391,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); height: 28px; }
 .story__slide p { font-size: 17px; opacity: 0.9; }
 .story__slide .btn { margin-top: auto; background: #fff; color: #121317; position: relative; z-index: 3; }
 .story__art { flex: 1; min-height: 0; display: grid; place-items: center; }
-.story__art svg { height: 100%; max-height: 360px; width: auto; max-width: 80%; animation: float 5s ease-in-out infinite; }
+.story__art svg, .story__art .photo { height: 100%; max-height: 360px; width: auto; max-width: 80%; animation: float 5s ease-in-out infinite; }
 .story__bars { position: absolute; top: max(16px, env(safe-area-inset-top, 0px)); left: 50%; translate: -50% 0; width: min(396px, calc(100% - 24px)); display: flex; gap: 4px; z-index: 3; }
 .story__bars span { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, 0.35); overflow: hidden; }
 .story__bars i { display: block; height: 100%; width: 0; background: #fff; }

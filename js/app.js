@@ -478,7 +478,7 @@
         <div class="product__layout">
           <div class="gallery card">
             <div class="gallery__stage"><div class="render" id="pRender">${render(p, ps.color, true)}</div></div>
-            ${p.colors.length > 1 ? `<div class="thumbs">${p.colors.map((c, k) => `<button class="${k === ps.color ? "is-active" : ""}" data-p-color="${k}" aria-label="${c.name}">${render(p, k)}</button>`).join("")}</div>` : ""}
+            ${p.colors.length > 1 && (!p.photo || Array.isArray(p.photo)) ? `<div class="thumbs">${p.colors.map((c, k) => `<button class="${k === ps.color ? "is-active" : ""}" data-p-color="${k}" aria-label="${c.name}">${render(p, k)}</button>`).join("")}</div>` : ""}
           </div>
           <div class="opts card">
             ${p.colors.length > 1 ? `<div>
