@@ -9,9 +9,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <script>
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("has-motion");
+      setTimeout(function () { if (!window.VOLTA_MOTION) document.documentElement.classList.remove("has-motion"); }, 4000);
+    }
+  </script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23111'/><path d='M18 5 9 18h6l-2 9 9-13h-6z' fill='white'/></svg>" />
 </head>
 <body>
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader__inner">
+      <span class="preloader__logo">VOLTA</span>
+      <span class="preloader__count" id="preCount">0</span>
+    </div>
+    <div class="preloader__bar"><i id="preBar"></i></div>
+  </div>
+  <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__label" id="cursorLabel"></span></div>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
   <header class="header" id="header">
     <div class="container header__inner">
       <a href="#top" class="logo" aria-label="VOLTA, на главную">
@@ -74,6 +91,25 @@
     <section class="brands" aria-label="Бренды">
       <div class="container brands__row" id="brands"></div>
     </section>
+
+    <!-- SHOWCASE -->
+    <section class="showcase" id="showcase">
+      <div class="container showcase__head">
+        <span class="kicker">Флагманы</span>
+        <h2>Лучшее в&nbsp;каждом классе</h2>
+      </div>
+      <div class="showcase__viewport">
+        <div class="showcase__track" id="showcaseTrack"></div>
+      </div>
+    </section>
+
+    <!-- TICKER -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track" id="ticker">
+        <span>Доставка за 2 часа</span><i>●</i><span>Trade-in до −40%</span><i>●</i><span>Рассрочка 0%</span><i>●</i><span>Официальная гарантия</span><i>●</i>
+        <span>Доставка за 2 часа</span><i>●</i><span>Trade-in до −40%</span><i>●</i><span>Рассрочка 0%</span><i>●</i><span>Официальная гарантия</span><i>●</i>
+      </div>
+    </div>
 
     <!-- CATALOG -->
     <section class="section" id="catalog">
@@ -198,6 +234,9 @@
         <span class="muted">Ежедневно 9:00–22:00</span>
       </div>
     </div>
+    <div class="container">
+      <div class="footer__word" id="footerWord" aria-hidden="true">VOLTA</div>
+    </div>
     <div class="container footer__bottom">
       <span>© <span id="year"></span> VOLTA</span>
       <span class="muted">Демонстрационный сайт. Цены ориентировочные.</span>
@@ -213,7 +252,7 @@
         <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
     </div>
-    <div class="cart__items" id="cartItems"></div>
+    <div class="cart__items" id="cartItems" data-lenis-prevent></div>
     <div class="cart__foot">
       <div class="cart__total"><span>Итого</span><strong id="cartTotal">0 ₽</strong></div>
       <button class="btn btn--primary btn--block" id="checkout">Оформить заказ</button>
@@ -222,7 +261,7 @@
 
   <!-- PRODUCT MODAL -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Товар">
-    <div class="modal__box">
+    <div class="modal__box" data-lenis-prevent>
       <button class="icon-btn modal__close" id="modalClose" aria-label="Закрыть">
         <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
@@ -232,6 +271,10 @@
 
   <div class="toast" id="toast" role="status"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/motion.js"></script>
 </body>
 </html>

@@ -15,6 +15,9 @@
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = matchMedia("(pointer: fine)").matches;
 
+  // the motion layer swaps in its smooth scroller when it is active
+  const scrollToEl = (el) => (window.VOLTA?.scrollTo ? window.VOLTA.scrollTo(el) : el.scrollIntoView({ behavior: "smooth" }));
+
   /* ================= COLOR HELPERS ================= */
   const hexToRgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   const rgbToHex = (rgb) => "#" + rgb.map((v) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, "0")).join("");
@@ -402,7 +405,7 @@
     if (search.classList.contains("is-open")) setTimeout(() => searchInput.focus(), 150);
   });
   searchInput.addEventListener("input", () => { query = searchInput.value.trim().toLowerCase(); renderProducts(); });
-  searchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") $("#catalog").scrollIntoView({ behavior: "smooth" }); });
+  searchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") scrollToEl($("#catalog")); });
 
   /* ================= HERO ================= */
   const hero = byId["iphone-17-pro"];
@@ -416,12 +419,15 @@
   $("#heroColors").innerHTML = hero.colors
     .map((c, i) => `<button class="swatch${i === 0 ? " is-active" : ""}" style="--sw:${c.hex}" data-hero-color="${i}" role="radio" aria-checked="${i === 0}" aria-label="${c.name}"></button>`)
     .join("");
+  function setHeroColor(i, animate = true) {
+    if (i === heroColor) return;
+    heroColor = i;
+    $$("[data-hero-color]").forEach((s, k) => { s.classList.toggle("is-active", k === i); s.setAttribute("aria-checked", k === i); });
+    paintHero(animate);
+  }
   $("#heroColors").addEventListener("click", (e) => {
     const b = e.target.closest("[data-hero-color]");
-    if (!b) return;
-    heroColor = +b.dataset.heroColor;
-    $$("[data-hero-color]").forEach((s) => { s.classList.toggle("is-active", s === b); s.setAttribute("aria-checked", s === b); });
-    paintHero(true);
+    if (b) setHeroColor(+b.dataset.heroColor);
   });
   $("#heroPrice").textContent = fmt(hero.opts[0][1]);
   $("#heroAdd").addEventListener("click", (e) => addToCart(hero.id, heroColor, 0, false, e.currentTarget));
@@ -448,7 +454,7 @@
     brand = brand === b.dataset.brand ? "" : b.dataset.brand;
     $$("[data-brand]").forEach((x) => x.classList.toggle("is-active", x.dataset.brand === brand));
     renderProducts();
-    $("#catalog").scrollIntoView({ behavior: "smooth" });
+    scrollToEl($("#catalog"));
   });
 
   /* ================= FILTERS ================= */
@@ -739,6 +745,34 @@
   }
   tickCountdown();
   setInterval(tickCountdown, 1000);
+
+  /* ================= SHOWCASE ================= */
+  const showcase = [
+    ["iphone-17-pro-max", 0, "Камерофон года"],
+    ["galaxy-s25-ultra", 0, "Android-флагман"],
+    ["macbook-pro-14-m5", 0, "Для работы"],
+    ["galaxy-z-flip7", 0, "Складной"],
+    ["pixel-10-pro", 2, "Чистый Android"],
+    ["sony-wh-1000xm6", 0, "Тишина"],
+  ];
+  $("#showcaseTrack").innerHTML = showcase.map(([id, ci, label]) => {
+    const p = byId[id];
+    return `
+      <article class="slide" style="--tint:${p.colors[ci].hex}">
+        <div class="slide__media" data-open="${id}" data-cursor="Открыть"><div class="slide__render${p.kind === "laptop" || p.kind === "headphones" ? " slide__render--wide" : ""}">${render(p, ci)}</div></div>
+        <div class="slide__info">
+          <span class="slide__label">${label}</span>
+          <h3>${p.name}</h3>
+          <p class="muted">${p.short}</p>
+          <div class="slide__buy">
+            <span class="price"><strong>${p.opts.length > 1 ? "от " : ""}${fmt(p.opts[0][1])}</strong></span>
+            <button class="btn btn--primary" data-add="${id}">В корзину</button>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+
+  window.VOLTA = { setHeroColor, heroColorCount: hero.colors.length };
 
   /* ================= SCROLL REVEAL ================= */
   $$(".section__head, .deal, .service__item, .newsletter").forEach((el) => el.classList.add("reveal"));
