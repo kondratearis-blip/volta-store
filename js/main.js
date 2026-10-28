@@ -15,197 +15,451 @@
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = matchMedia("(pointer: fine)").matches;
 
-  /* ================= DEVICE ILLUSTRATIONS (SVG) ================= */
-  const art = {
-    phone: (c) => `
-      <svg viewBox="0 0 120 200" style="stroke:none">
-        <defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient></defs>
-        <rect x="14" y="4" width="92" height="192" rx="20" fill="#1b1b24"/>
-        <rect x="18" y="8" width="84" height="184" rx="17" fill="url(#g-${c.id})"/>
-        <rect x="46" y="14" width="28" height="8" rx="4" fill="#0a0a10"/>
-        <circle cx="60" cy="110" r="26" fill="rgba(255,255,255,.18)"/>
-        <rect x="30" y="160" width="60" height="16" rx="8" fill="rgba(255,255,255,.22)"/>
-      </svg>`,
-    laptop: (c) => `
-      <svg viewBox="0 0 220 150" style="stroke:none">
-        <defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient></defs>
-        <rect x="30" y="8" width="160" height="108" rx="10" fill="#1b1b24"/>
-        <rect x="36" y="14" width="148" height="96" rx="5" fill="url(#g-${c.id})"/>
-        <rect x="46" y="24" width="56" height="76" rx="6" fill="rgba(255,255,255,.18)"/>
-        <rect x="110" y="24" width="64" height="34" rx="6" fill="rgba(255,255,255,.14)"/>
-        <rect x="110" y="66" width="64" height="34" rx="6" fill="rgba(255,255,255,.22)"/>
-        <path d="M8 120h204l-10 16H18z" fill="#c9c9d6"/>
-        <rect x="92" y="120" width="36" height="5" rx="2.5" fill="#8d8da3"/>
-      </svg>`,
-    tablet: (c) => `
-      <svg viewBox="0 0 170 210" style="stroke:none">
-        <defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient></defs>
-        <rect x="8" y="6" width="154" height="198" rx="18" fill="#1b1b24"/>
-        <rect x="15" y="13" width="140" height="184" rx="12" fill="url(#g-${c.id})"/>
-        <g fill="rgba(255,255,255,.22)">
-          <rect x="28" y="30" width="26" height="26" rx="7"/><rect x="62" y="30" width="26" height="26" rx="7"/><rect x="96" y="30" width="26" height="26" rx="7"/>
-          <rect x="28" y="64" width="26" height="26" rx="7"/><rect x="62" y="64" width="26" height="26" rx="7"/>
-          <rect x="28" y="150" width="114" height="30" rx="10"/>
-        </g>
-      </svg>`,
-    headphones: (c) => `
-      <svg viewBox="0 0 200 200" style="stroke:none">
-        <defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient></defs>
-        <path d="M30 120V95a70 70 0 0 1 140 0v25" fill="none" stroke="#2a2a36" stroke-width="16" stroke-linecap="round"/>
-        <path d="M30 120V95a70 70 0 0 1 140 0v25" fill="none" stroke="url(#g-${c.id})" stroke-width="8" stroke-linecap="round"/>
-        <rect x="14" y="106" width="46" height="74" rx="20" fill="url(#g-${c.id})"/>
-        <rect x="140" y="106" width="46" height="74" rx="20" fill="url(#g-${c.id})"/>
-        <rect x="24" y="118" width="26" height="50" rx="12" fill="rgba(0,0,0,.25)"/>
-        <rect x="150" y="118" width="26" height="50" rx="12" fill="rgba(0,0,0,.25)"/>
-      </svg>`,
-    watch: (c) => `
-      <svg viewBox="0 0 140 210" style="stroke:none">
-        <defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient></defs>
-        <rect x="38" y="2" width="64" height="70" rx="16" fill="url(#g-${c.id})" opacity=".8"/>
-        <rect x="38" y="138" width="64" height="70" rx="16" fill="url(#g-${c.id})" opacity=".8"/>
-        <rect x="22" y="50" width="96" height="110" rx="28" fill="#1b1b24"/>
-        <rect x="30" y="58" width="80" height="94" rx="22" fill="#05050a"/>
-        <circle cx="70" cy="105" r="30" fill="none" stroke="url(#g-${c.id})" stroke-width="7" stroke-dasharray="140 200" stroke-linecap="round"/>
-        <circle cx="70" cy="105" r="18" fill="none" stroke="${c.b}" stroke-width="5" stroke-dasharray="70 200" stroke-linecap="round" opacity=".8"/>
-        <rect x="118" y="88" width="8" height="22" rx="4" fill="#3a3a48"/>
-      </svg>`,
-    gaming: (c) => `
-      <svg viewBox="0 0 220 150" style="stroke:none">
-        <defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient></defs>
-        <path d="M60 30h100c30 0 46 30 52 70 4 26-18 40-34 26l-22-20H64l-22 20c-16 14-38 0-34-26 6-40 22-70 52-70z" fill="url(#g-${c.id})"/>
-        <g fill="rgba(0,0,0,.3)"><rect x="46" y="62" width="34" height="10" rx="4"/><rect x="58" y="50" width="10" height="34" rx="4"/></g>
-        <g fill="rgba(255,255,255,.75)"><circle cx="160" cy="56" r="7"/><circle cx="176" cy="70" r="7"/><circle cx="144" cy="70" r="7"/><circle cx="160" cy="84" r="7"/></g>
-        <circle cx="90" cy="94" r="12" fill="rgba(0,0,0,.3)"/><circle cx="130" cy="94" r="12" fill="rgba(0,0,0,.3)"/>
-      </svg>`,
+  /* ================= COLOR HELPERS ================= */
+  const hexToRgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const rgbToHex = (rgb) => "#" + rgb.map((v) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, "0")).join("");
+  // amt > 0 mixes with white, amt < 0 mixes with black
+  const shade = (hex, amt) => {
+    const t = amt > 0 ? 255 : 0;
+    return rgbToHex(hexToRgb(hex).map((v) => v + (t - v) * Math.abs(amt)));
   };
+  const isLight = (hex) => {
+    const [r, g, b] = hexToRgb(hex);
+    return 0.299 * r + 0.587 * g + 0.114 * b > 150;
+  };
+
+  /* ================= DEVICE RENDERS (SVG) ================= */
+  let uidSeed = 0;
+  function defs(u, c) {
+    return `<defs>
+      <linearGradient id="${u}b" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="${shade(c, 0.22)}"/><stop offset=".45" stop-color="${c}"/><stop offset="1" stop-color="${shade(c, -0.18)}"/>
+      </linearGradient>
+      <linearGradient id="${u}e" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="${shade(c, -0.35)}"/><stop offset=".08" stop-color="${shade(c, 0.35)}"/>
+        <stop offset=".5" stop-color="${shade(c, -0.05)}"/><stop offset=".92" stop-color="${shade(c, 0.3)}"/><stop offset="1" stop-color="${shade(c, -0.35)}"/>
+      </linearGradient>
+      <linearGradient id="${u}s" x1="0" y1="0" x2="1" y2="0.6">
+        <stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+      <radialGradient id="${u}l" cx=".4" cy=".35" r=".7">
+        <stop offset="0" stop-color="#3d4a7a"/><stop offset=".45" stop-color="#151a2e"/><stop offset="1" stop-color="#05060a"/>
+      </radialGradient>
+      <linearGradient id="${u}d" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="${shade(c, 0.55)}"/><stop offset=".5" stop-color="${shade(c, 0.15)}"/><stop offset="1" stop-color="${shade(c, -0.3)}"/>
+      </linearGradient>
+    </defs>`;
+  }
+  function lens(u, x, y, r, ring) {
+    return `<g>
+      <circle cx="${x}" cy="${y}" r="${r}" fill="${ring}"/>
+      <circle cx="${x}" cy="${y}" r="${r * 0.86}" fill="#0a0b0f"/>
+      <circle cx="${x}" cy="${y}" r="${r * 0.62}" fill="url(#${u}l)"/>
+      <circle cx="${x}" cy="${y}" r="${r * 0.3}" fill="#05060a"/>
+      <circle cx="${x - r * 0.22}" cy="${y - r * 0.26}" r="${r * 0.14}" fill="#fff" opacity=".55"/>
+    </g>`;
+  }
+  const flash = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#f4ecd6" stroke="rgba(0,0,0,.25)" stroke-width="1"/>`;
+  const phoneBody = (u, rx = 36) => `
+    <rect x="8" y="8" width="184" height="384" rx="${rx}" fill="url(#${u}e)"/>
+    <rect x="13" y="13" width="174" height="374" rx="${rx - 5}" fill="url(#${u}b)"/>
+    <rect x="13" y="13" width="174" height="374" rx="${rx - 5}" fill="url(#${u}s)"/>`;
+
+  const renders = {
+    iphonePro(c, u) {
+      const ring = shade(c, -0.3);
+      return `<svg viewBox="0 0 200 400">${defs(u, c)}${phoneBody(u)}
+        <path d="M13 44a31 31 0 0 1 31-31h112a31 31 0 0 1 31 31v96H13z" fill="${shade(c, 0.08)}"/>
+        <path d="M13 140h174" stroke="${shade(c, -0.2)}" stroke-width="1.5"/>
+        <rect x="22" y="22" width="110" height="108" rx="30" fill="${shade(c, -0.12)}"/>
+        ${lens(u, 52, 52, 21, ring)}${lens(u, 52, 102, 21, ring)}${lens(u, 100, 77, 21, ring)}
+        ${flash(156, 50, 8)}<circle cx="156" cy="102" r="8" fill="#15161a"/><circle cx="156" cy="76" r="3" fill="#15161a"/>
+      </svg>`;
+    },
+    iphoneAir(c, u) {
+      return `<svg viewBox="0 0 200 400">${defs(u, c)}${phoneBody(u)}
+        <rect x="22" y="24" width="156" height="56" rx="28" fill="${shade(c, -0.08)}"/>
+        <rect x="22" y="24" width="156" height="56" rx="28" fill="url(#${u}s)"/>
+        ${lens(u, 52, 52, 20, shade(c, -0.3))}
+        <circle cx="104" cy="52" r="7" fill="#0a0b0f"/>${flash(146, 52, 6)}
+      </svg>`;
+    },
+    iphone(c, u) {
+      return `<svg viewBox="0 0 200 400">${defs(u, c)}${phoneBody(u)}
+        <rect x="24" y="24" width="56" height="110" rx="28" fill="${shade(c, 0.12)}" stroke="${shade(c, -0.15)}" stroke-width="1.5"/>
+        ${lens(u, 52, 52, 21, shade(c, -0.25))}${lens(u, 52, 106, 21, shade(c, -0.25))}
+        ${flash(98, 44, 7)}
+      </svg>`;
+    },
+    galaxyUltra(c, u) {
+      const ring = shade(c, -0.25);
+      return `<svg viewBox="0 0 200 400">${defs(u, c)}${phoneBody(u, 22)}
+        ${lens(u, 46, 50, 20, ring)}${lens(u, 46, 100, 20, ring)}${lens(u, 46, 150, 20, ring)}
+        ${lens(u, 92, 62, 14, ring)}${flash(92, 100, 6)}<circle cx="92" cy="126" r="4" fill="#0a0b0f"/>
+      </svg>`;
+    },
+    galaxyFold(c, u) {
+      const ring = shade(c, -0.25);
+      return `<svg viewBox="0 0 200 400">${defs(u, c)}${phoneBody(u, 20)}
+        <rect x="13" y="13" width="10" height="374" fill="${shade(c, -0.2)}" opacity=".6"/>
+        <rect x="32" y="26" width="52" height="150" rx="26" fill="${shade(c, -0.1)}"/>
+        ${lens(u, 58, 54, 19, ring)}${lens(u, 58, 100, 19, ring)}${lens(u, 58, 146, 19, ring)}
+        ${flash(102, 48, 6)}
+      </svg>`;
+    },
+    galaxyFlip(c, u) {
+      const ring = shade(c, -0.25);
+      return `<svg viewBox="0 0 200 400">${defs(u, c)}${phoneBody(u, 30)}
+        <rect x="18" y="18" width="164" height="172" rx="26" fill="#0b0c10"/>
+        <rect x="18" y="18" width="164" height="172" rx="26" fill="url(#${u}s)" opacity=".5"/>
+        <text x="100" y="80" text-anchor="middle" font-family="Onest, sans-serif" font-size="34" font-weight="500" fill="#fff">12:30</text>
+        <text x="100" y="104" text-anchor="middle" font-family="Onest, sans-serif" font-size="12" fill="#9aa">ср, 28 окт.</text>
+        ${lens(u, 44, 160, 17, ring)}${lens(u, 86, 160, 17, ring)}
+        <rect x="13" y="196" width="174" height="10" fill="${shade(c, -0.25)}"/>
+      </svg>`;
+    },
+    pixel(c, u) {
+      const band = isLight(c) ? shade(c, -0.12) : shade(c, 0.12);
+      return `<svg viewBox="0 0 200 400">${defs(u, c)}${phoneBody(u, 40)}
+        <rect x="8" y="64" width="184" height="64" rx="32" fill="${band}"/>
+        <rect x="22" y="72" width="156" height="48" rx="24" fill="#0b0c10"/>
+        ${lens(u, 50, 96, 17, "#2a2b30")}${lens(u, 92, 96, 17, "#2a2b30")}${lens(u, 134, 96, 13, "#2a2b30")}
+        ${flash(164, 96, 5)}
+      </svg>`;
+    },
+    xiaomi(c, u) {
+      const ring = shade(c, -0.25);
+      return `<svg viewBox="0 0 200 400">${defs(u, c)}${phoneBody(u, 30)}
+        <circle cx="100" cy="104" r="74" fill="${shade(c, -0.3)}"/>
+        <circle cx="100" cy="104" r="68" fill="#0e0f13"/>
+        <circle cx="100" cy="104" r="68" fill="url(#${u}s)"/>
+        ${lens(u, 72, 76, 22, ring)}${lens(u, 128, 76, 22, ring)}${lens(u, 72, 132, 22, ring)}${lens(u, 128, 132, 22, ring)}
+        ${flash(100, 104, 5)}
+      </svg>`;
+    },
+    laptop(c, u, wall) {
+      const w = wall || c;
+      return `<svg viewBox="0 0 320 210">${defs(u, w)}
+        <defs><linearGradient id="${u}k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(c, 0.2)}"/><stop offset="1" stop-color="${shade(c, -0.25)}"/></linearGradient>
+          <clipPath id="${u}c"><rect x="44" y="16" width="232" height="148" rx="4"/></clipPath></defs>
+        <rect x="34" y="6" width="252" height="168" rx="12" fill="${shade(c, -0.45)}"/>
+        <rect x="38" y="10" width="244" height="160" rx="9" fill="#08090c"/>
+        <rect x="44" y="16" width="232" height="148" rx="4" fill="url(#${u}d)"/>
+        <g clip-path="url(#${u}c)">
+          <circle cx="110" cy="70" r="70" fill="${shade(w, 0.4)}" opacity=".55"/>
+          <circle cx="230" cy="140" r="60" fill="${shade(w, -0.35)}" opacity=".45"/>
+        </g>
+        <rect x="44" y="16" width="232" height="10" fill="rgba(0,0,0,.25)"/>
+        <rect x="146" y="16" width="28" height="7" rx="3.5" fill="#08090c"/>
+        <path d="M10 176h300l-8 14a10 10 0 0 1-8.7 5H26.7a10 10 0 0 1-8.7-5z" fill="url(#${u}k)"/>
+        <path d="M10 176h300" stroke="${shade(c, 0.4)}" stroke-width="1.5"/>
+        <rect x="134" y="176" width="52" height="5" rx="2.5" fill="${shade(c, -0.3)}"/>
+      </svg>`;
+    },
+    tablet(c, u, pro) {
+      const ring = shade(c, -0.25);
+      return `<svg viewBox="0 0 280 380">${defs(u, c)}
+        <rect x="8" y="8" width="264" height="364" rx="28" fill="url(#${u}e)"/>
+        <rect x="12" y="12" width="256" height="356" rx="24" fill="url(#${u}b)"/>
+        <rect x="12" y="12" width="256" height="356" rx="24" fill="url(#${u}s)"/>
+        ${pro
+          ? `<rect x="24" y="24" width="58" height="82" rx="22" fill="${shade(c, -0.1)}"/>${lens(u, 53, 50, 15, ring)}<circle cx="53" cy="86" r="9" fill="#111"/>${flash(72, 68, 4)}`
+          : `${lens(u, 44, 44, 15, ring)}`}
+      </svg>`;
+    },
+    earbuds(c, u) {
+      return `<svg viewBox="0 0 240 240">${defs(u, c)}
+        <rect x="34" y="52" width="172" height="146" rx="52" fill="url(#${u}b)"/>
+        <rect x="34" y="52" width="172" height="146" rx="52" fill="url(#${u}s)"/>
+        <path d="M36 104h168" stroke="${shade(c, -0.18)}" stroke-width="2"/>
+        <circle cx="120" cy="134" r="3.5" fill="#2ecc71"/>
+        <rect x="104" y="186" width="32" height="6" rx="3" fill="${shade(c, -0.3)}"/>
+      </svg>`;
+    },
+    headphones(c, u) {
+      const dark = shade(c, -0.3);
+      return `<svg viewBox="0 0 240 260">${defs(u, c)}
+        <path d="M44 150V112a76 76 0 0 1 152 0v38" fill="none" stroke="${dark}" stroke-width="18" stroke-linecap="round"/>
+        <path d="M44 150V112a76 76 0 0 1 152 0v38" fill="none" stroke="url(#${u}b)" stroke-width="12" stroke-linecap="round"/>
+        <rect x="18" y="128" width="62" height="104" rx="30" fill="url(#${u}b)"/>
+        <rect x="160" y="128" width="62" height="104" rx="30" fill="url(#${u}b)"/>
+        <rect x="18" y="128" width="62" height="104" rx="30" fill="url(#${u}s)"/>
+        <rect x="160" y="128" width="62" height="104" rx="30" fill="url(#${u}s)"/>
+        <rect x="60" y="140" width="18" height="80" rx="9" fill="${dark}" opacity=".7"/>
+        <rect x="162" y="140" width="18" height="80" rx="9" fill="${dark}" opacity=".7"/>
+      </svg>`;
+    },
+    watchSquare(c, u) {
+      return `<svg viewBox="0 0 160 260">${defs(u, c)}
+        <rect x="42" y="0" width="76" height="80" rx="14" fill="${shade(c, -0.15)}"/>
+        <rect x="42" y="180" width="76" height="80" rx="14" fill="${shade(c, -0.15)}"/>
+        <rect x="20" y="54" width="120" height="152" rx="38" fill="url(#${u}e)"/>
+        <rect x="27" y="61" width="106" height="138" rx="32" fill="#050608"/>
+        <text x="80" y="122" text-anchor="middle" font-family="Onest, sans-serif" font-size="30" font-weight="600" fill="#fff">10:09</text>
+        <circle cx="80" cy="156" r="16" fill="none" stroke="#ff375f" stroke-width="5" stroke-dasharray="70 120" transform="rotate(-90 80 156)"/>
+        <circle cx="80" cy="156" r="9" fill="none" stroke="#9cff3a" stroke-width="4" stroke-dasharray="38 80" transform="rotate(-90 80 156)"/>
+        <rect x="138" y="96" width="9" height="26" rx="4" fill="${shade(c, -0.2)}"/>
+      </svg>`;
+    },
+    watchRound(c, u) {
+      return `<svg viewBox="0 0 180 260">${defs(u, c)}
+        <rect x="52" y="0" width="76" height="80" rx="14" fill="${shade(c, -0.2)}"/>
+        <rect x="52" y="180" width="76" height="80" rx="14" fill="${shade(c, -0.2)}"/>
+        <circle cx="90" cy="130" r="74" fill="url(#${u}e)"/>
+        <circle cx="90" cy="130" r="64" fill="#050608"/>
+        <text x="90" y="138" text-anchor="middle" font-family="Onest, sans-serif" font-size="30" font-weight="600" fill="#fff">10:09</text>
+        <circle cx="90" cy="130" r="56" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-dasharray="200 400" transform="rotate(-90 90 130)"/>
+        <rect x="160" y="104" width="10" height="20" rx="4" fill="${shade(c, -0.2)}"/>
+        <rect x="160" y="136" width="10" height="20" rx="4" fill="${shade(c, -0.2)}"/>
+      </svg>`;
+    },
+    ps5(c, u) {
+      return `<svg viewBox="0 0 220 380">${defs(u, c)}
+        <path d="M86 40h48v320H86z" fill="#121318"/>
+        <path d="M86 30C60 30 30 60 26 120l-6 220c0 12 8 20 20 20h46z" fill="url(#${u}b)"/>
+        <path d="M134 30c26 0 56 30 60 90l6 220c0 12-8 20-20 20h-46z" fill="url(#${u}b)"/>
+        <path d="M86 30C60 30 30 60 26 120l-6 220c0 12 8 20 20 20h46z" fill="url(#${u}s)"/>
+        <rect x="22" y="168" width="64" height="7" fill="#121318"/><rect x="22" y="186" width="64" height="7" fill="#121318"/>
+        <rect x="134" y="168" width="64" height="7" fill="#121318"/><rect x="134" y="186" width="64" height="7" fill="#121318"/>
+        <rect x="104" y="60" width="12" height="4" rx="2" fill="#5aa8ff"/>
+      </svg>`;
+    },
+    switch2(c, u) {
+      return `<svg viewBox="0 0 360 200">${defs(u, "#7b6cff")}
+        <rect x="6" y="20" width="62" height="160" rx="28" fill="#2a2c33"/>
+        <rect x="292" y="20" width="62" height="160" rx="28" fill="#2a2c33"/>
+        <rect x="62" y="24" width="6" height="152" fill="#4aa8ff"/><rect x="292" y="24" width="6" height="152" fill="#ff5a5f"/>
+        <rect x="68" y="20" width="224" height="160" rx="8" fill="#111216"/>
+        <rect x="78" y="30" width="204" height="140" rx="4" fill="url(#${u}d)"/>
+        <circle cx="140" cy="90" r="46" fill="#ffd166" opacity=".5"/><circle cx="230" cy="130" r="40" fill="#06d6a0" opacity=".45"/>
+        <circle cx="36" cy="60" r="13" fill="#15161a"/><circle cx="36" cy="60" r="9" fill="#33353d"/>
+        <g fill="#15161a"><circle cx="36" cy="112" r="6"/><circle cx="36" cy="136" r="6"/><circle cx="24" cy="124" r="6"/><circle cx="48" cy="124" r="6"/></g>
+        <circle cx="324" cy="126" r="13" fill="#15161a"/><circle cx="324" cy="126" r="9" fill="#33353d"/>
+        <g fill="#15161a"><circle cx="324" cy="52" r="6"/><circle cx="324" cy="78" r="6"/><circle cx="311" cy="65" r="6"/><circle cx="337" cy="65" r="6"/></g>
+      </svg>`;
+    },
+  };
+
+  function render(p, colorIdx = 0) {
+    const c = p.colors[colorIdx].hex;
+    const u = "r" + uidSeed++;
+    if (p.kind === "laptop") return renders.laptop(c, u, p.wall);
+    if (p.kind === "tablet" || p.kind === "tabletPro") return renders.tablet(c, u, p.kind === "tabletPro");
+    return renders[p.kind](c, u);
+  }
 
   /* ================= DATA ================= */
   const categories = [
-    { id: "phone", name: "Смартфоны", color: "#7c5cff", a: "#7c5cff", b: "#00d4ff" },
-    { id: "laptop", name: "Ноутбуки", color: "#00d4ff", a: "#00d4ff", b: "#2ee59d" },
-    { id: "tablet", name: "Планшеты", color: "#ff4fd8", a: "#ff4fd8", b: "#7c5cff" },
-    { id: "headphones", name: "Аудио", color: "#ffb347", a: "#ffb347", b: "#ff4fd8" },
-    { id: "watch", name: "Часы", color: "#2ee59d", a: "#2ee59d", b: "#00d4ff" },
-    { id: "gaming", name: "Игры", color: "#ff5e7e", a: "#ff5e7e", b: "#ffb347" },
+    { id: "all", name: "Все" },
+    { id: "phone", name: "Смартфоны" },
+    { id: "laptop", name: "Ноутбуки" },
+    { id: "tablet", name: "Планшеты" },
+    { id: "audio", name: "Аудио" },
+    { id: "watch", name: "Часы" },
+    { id: "gaming", name: "Игры" },
   ];
 
+  const C = (name, hex) => ({ name, hex });
   const products = [
-    { id: "nova-x-pro", type: "phone", brand: "Nova", name: "Nova X Pro 256 ГБ", specs: '6.7" OLED · 200 Мп · 5000 мА·ч', price: 109990, old: 124990, rating: 4.9, reviews: 1284, tag: "Хит", a: "#7c5cff", b: "#00d4ff", pop: 99 },
-    { id: "pixelon-9", type: "phone", brand: "Pixelon", name: "Pixelon 9 128 ГБ", specs: '6.3" OLED · ИИ-камера · 120 Гц', price: 74990, rating: 4.8, reviews: 842, tag: "Новинка", a: "#2ee59d", b: "#00d4ff", pop: 92 },
-    { id: "aura-lite", type: "phone", brand: "Aura", name: "Aura Lite 5G", specs: '6.5" AMOLED · 108 Мп · NFC', price: 32990, old: 37990, rating: 4.6, reviews: 2140, a: "#ff4fd8", b: "#ffb347", pop: 88 },
-    { id: "zentrix-book-pro", type: "laptop", brand: "Zentrix", name: "Zentrix Book Pro 16", specs: '16" 3.2K 120 Гц · 32 ГБ · 1 ТБ', price: 149990, old: 199990, rating: 4.9, reviews: 512, tag: "−25%", a: "#00d4ff", b: "#7c5cff", pop: 97 },
-    { id: "quanta-air", type: "laptop", brand: "Quanta", name: "Quanta Air 14", specs: '14" 2.8K · 16 ГБ · 512 ГБ · 1.2 кг', price: 89990, rating: 4.7, reviews: 391, a: "#c9c9d6", b: "#7c5cff", pop: 85 },
-    { id: "vertex-gamer", type: "laptop", brand: "Vertex", name: "Vertex Strike 17", specs: '17" 240 Гц · RTX · 32 ГБ', price: 179990, rating: 4.8, reviews: 276, tag: "Новинка", a: "#ff5e7e", b: "#7c5cff", pop: 80 },
-    { id: "lumen-tab", type: "tablet", brand: "Lumen", name: "Lumen Tab 12", specs: '12.4" OLED · стилус в комплекте', price: 59990, old: 69990, rating: 4.7, reviews: 604, a: "#ff4fd8", b: "#7c5cff", pop: 83 },
-    { id: "lumen-tab-mini", type: "tablet", brand: "Lumen", name: "Lumen Tab Mini", specs: '8.7" · 128 ГБ · Wi-Fi', price: 27990, rating: 4.5, reviews: 330, a: "#00d4ff", b: "#2ee59d", pop: 70 },
-    { id: "orbita-max", type: "headphones", brand: "Orbita", name: "Orbita Max ANC", specs: "Шумоподавление · 40 ч · Hi-Res", price: 24990, old: 29990, rating: 4.9, reviews: 1890, tag: "Хит", a: "#ffb347", b: "#ff4fd8", pop: 95 },
-    { id: "orbita-studio", type: "headphones", brand: "Orbita", name: "Orbita Studio", specs: "Проводные · 50 мм · студийный звук", price: 14990, rating: 4.6, reviews: 412, a: "#7c5cff", b: "#2ee59d", pop: 66 },
-    { id: "nova-watch-4", type: "watch", brand: "Nova", name: "Nova Watch 4", specs: "AMOLED · ЭКГ · GPS · 7 дней", price: 29990, rating: 4.8, reviews: 978, tag: "Новинка", a: "#2ee59d", b: "#00d4ff", pop: 90 },
-    { id: "aura-band", type: "watch", brand: "Aura", name: "Aura Band 8", specs: "Фитнес-браслет · SpO₂ · 14 дней", price: 4990, old: 5990, rating: 4.5, reviews: 3520, a: "#ff4fd8", b: "#ff5e7e", pop: 86 },
-    { id: "vertex-pad", type: "gaming", brand: "Vertex", name: "Vertex Pad Elite", specs: "Беспроводной · haptic · 30 ч", price: 8990, rating: 4.7, reviews: 760, a: "#ff5e7e", b: "#ffb347", pop: 78 },
-    { id: "quanta-console", type: "gaming", brand: "Quanta", name: "Quanta Play X", specs: "4K 120 FPS · 1 ТБ SSD", price: 54990, old: 59990, rating: 4.9, reviews: 1420, tag: "Хит", a: "#7c5cff", b: "#ff5e7e", pop: 93 },
+    { id: "iphone-17-pro", brand: "Apple", name: "iPhone 17 Pro", cat: "phone", kind: "iphonePro", year: 2025, pop: 100, tag: "Новинка",
+      colors: [C("Космический оранжевый", "#d9773f"), C("Глубокий синий", "#33415c"), C("Серебристый", "#dcdde0")],
+      opts: [["256 ГБ", 119990], ["512 ГБ", 144990], ["1 ТБ", 169990]],
+      short: '6,3" · A19 Pro · 3 камеры 48 Мп',
+      specs: ['Дисплей 6,3" Super Retina XDR, ProMotion 120 Гц', "Чип A19 Pro", "Три камеры 48 Мп с телеобъективом", "Алюминиевый корпус"] },
+    { id: "iphone-17-pro-max", brand: "Apple", name: "iPhone 17 Pro Max", cat: "phone", kind: "iphonePro", year: 2025, pop: 98,
+      colors: [C("Космический оранжевый", "#d9773f"), C("Глубокий синий", "#33415c"), C("Серебристый", "#dcdde0")],
+      opts: [["256 ГБ", 139990], ["512 ГБ", 164990], ["1 ТБ", 189990], ["2 ТБ", 239990]],
+      short: '6,9" · A19 Pro · 3 камеры 48 Мп',
+      specs: ['Дисплей 6,9" Super Retina XDR, ProMotion 120 Гц', "Чип A19 Pro", "Три камеры 48 Мп с телеобъективом", "Самая большая батарея среди iPhone"] },
+    { id: "iphone-air", brand: "Apple", name: "iPhone Air", cat: "phone", kind: "iphoneAir", year: 2025, pop: 90, tag: "Новинка",
+      colors: [C("Небесно-голубой", "#c8d9e8"), C("Светлое золото", "#e9dcc2"), C("Облачно-белый", "#f1f0ec"), C("Космический чёрный", "#2a2a2c")],
+      opts: [["256 ГБ", 109990], ["512 ГБ", 129990], ["1 ТБ", 149990]],
+      short: '6,5" · A19 Pro · толщина 5,6 мм',
+      specs: ['Дисплей 6,5" ProMotion 120 Гц', "Чип A19 Pro", "Титановый корпус толщиной 5,6 мм", "Камера Fusion 48 Мп"] },
+    { id: "iphone-17", brand: "Apple", name: "iPhone 17", cat: "phone", kind: "iphone", year: 2025, pop: 96,
+      colors: [C("Лавандовый", "#d8cbe8"), C("Шалфей", "#b7c6ac"), C("Туманно-синий", "#9fb4c9"), C("Белый", "#f2f2f0"), C("Чёрный", "#2b2b2d")],
+      opts: [["256 ГБ", 84990], ["512 ГБ", 104990]],
+      short: '6,3" · A19 · 120 Гц',
+      specs: ['Дисплей 6,3" ProMotion 120 Гц', "Чип A19", "Две камеры 48 Мп", "Фронтальная камера Center Stage"] },
+    { id: "galaxy-s25-ultra", brand: "Samsung", name: "Galaxy S25 Ultra", cat: "phone", kind: "galaxyUltra", year: 2025, pop: 95, old: 129990, tag: "−19%",
+      colors: [C("Titanium Silverblue", "#a9b7c7"), C("Titanium Black", "#2c2d30"), C("Titanium Gray", "#8e8f92"), C("Titanium Whitesilver", "#e5e5e2")],
+      opts: [["256 ГБ", 104990], ["512 ГБ", 119990], ["1 ТБ", 144990]],
+      short: '6,9" · Snapdragon 8 Elite · 200 Мп',
+      specs: ['Дисплей 6,9" Dynamic AMOLED 2X, 120 Гц', "Snapdragon 8 Elite for Galaxy", "Основная камера 200 Мп", "Стилус S Pen в комплекте"] },
+    { id: "galaxy-z-fold7", brand: "Samsung", name: "Galaxy Z Fold7", cat: "phone", kind: "galaxyFold", year: 2025, pop: 84,
+      colors: [C("Blue Shadow", "#3c4b66"), C("Silver Shadow", "#b9bcc3"), C("Jetblack", "#1d1e21")],
+      opts: [["256 ГБ", 179990], ["512 ГБ", 199990]],
+      short: '8" складной · 200 Мп',
+      specs: ['Внутренний дисплей 8", внешний 6,5"', "Snapdragon 8 Elite for Galaxy", "Основная камера 200 Мп", "Самый тонкий Fold от Samsung"] },
+    { id: "galaxy-z-flip7", brand: "Samsung", name: "Galaxy Z Flip7", cat: "phone", kind: "galaxyFlip", year: 2025, pop: 82,
+      colors: [C("Coralred", "#e0625b"), C("Blue Shadow", "#3c4b66"), C("Jetblack", "#1d1e21")],
+      opts: [["256 ГБ", 109990], ["512 ГБ", 124990]],
+      short: '6,9" складной · внешний экран 4,1"',
+      specs: ['Внутренний дисплей 6,9", внешний 4,1" на всю крышку', "Exynos 2500", "Камера 50 Мп", "Компактный в сложенном виде"] },
+    { id: "pixel-10-pro", brand: "Google", name: "Pixel 10 Pro", cat: "phone", kind: "pixel", year: 2025, pop: 80,
+      colors: [C("Obsidian", "#2a2b2e"), C("Moonstone", "#7c8896"), C("Jade", "#c8dbcb"), C("Porcelain", "#ece6dc")],
+      opts: [["256 ГБ", 99990], ["512 ГБ", 114990]],
+      short: '6,3" · Tensor G5 · 50 Мп',
+      specs: ['Дисплей 6,3" Super Actua', "Чип Google Tensor G5", "Три камеры, телеобъектив 5×", "Семь лет обновлений Android"] },
+    { id: "xiaomi-15-ultra", brand: "Xiaomi", name: "Xiaomi 15 Ultra", cat: "phone", kind: "xiaomi", year: 2025, pop: 78, old: 119990, tag: "−8%",
+      colors: [C("Чёрный", "#232427"), C("Белый", "#efeeea"), C("Серебристый хром", "#c3c5c9")],
+      opts: [["512 ГБ", 109990], ["1 ТБ", 129990]],
+      short: '6,73" · Snapdragon 8 Elite · Leica',
+      specs: ['Дисплей 6,73" AMOLED, 120 Гц', "Snapdragon 8 Elite", "Четыре камеры Leica, сенсор 1 дюйм", "Батарея 5410 мА·ч"] },
+    { id: "macbook-air-13-m4", brand: "Apple", name: "MacBook Air 13 M4", cat: "laptop", kind: "laptop", year: 2025, pop: 94,
+      colors: [C("Небесно-голубой", "#c5d5e3"), C("Серебристый", "#e2e3e5"), C("Сияющая звезда", "#e5dbca"), C("Полночь", "#2f3743")],
+      opts: [["16 ГБ / 256 ГБ", 109990], ["16 ГБ / 512 ГБ", 129990], ["24 ГБ / 512 ГБ", 149990]],
+      short: '13,6" · M4 · до 18 часов',
+      specs: ['Дисплей Liquid Retina 13,6"', "Чип Apple M4", "До 18 часов работы", "Вес 1,24 кг"] },
+    { id: "macbook-pro-14-m5", brand: "Apple", name: "MacBook Pro 14 M5", cat: "laptop", kind: "laptop", year: 2025, pop: 88, tag: "Новинка",
+      colors: [C("Чёрный космос", "#2c2c2f"), C("Серебристый", "#e2e3e5")],
+      opts: [["16 ГБ / 512 ГБ", 179990], ["16 ГБ / 1 ТБ", 199990], ["24 ГБ / 1 ТБ", 224990]],
+      short: '14,2" XDR · M5',
+      specs: ['Дисплей Liquid Retina XDR 14,2"', "Чип Apple M5", "До 24 часов работы", "HDMI, SDXC, три Thunderbolt"] },
+    { id: "rog-zephyrus-g16", brand: "ASUS", name: "ROG Zephyrus G16", cat: "laptop", kind: "laptop", year: 2025, pop: 74, wall: "#7a3cff",
+      colors: [C("Eclipse Gray", "#3a3c41"), C("Platinum White", "#dcdcdc")],
+      opts: [["RTX 5070 Ti / 32 ГБ", 219990], ["RTX 5080 / 32 ГБ", 279990]],
+      short: '16" OLED 240 Гц · RTX 50',
+      specs: ['Дисплей 16" OLED 2,5K, 240 Гц', "Intel Core Ultra 9", "Видеокарта GeForce RTX 50-й серии", "Алюминиевый корпус"] },
+    { id: "ipad-pro-11-m5", brand: "Apple", name: "iPad Pro 11 M5", cat: "tablet", kind: "tabletPro", year: 2025, pop: 83, tag: "Новинка",
+      colors: [C("Чёрный космос", "#2c2c2f"), C("Серебристый", "#e2e3e5")],
+      opts: [["256 ГБ", 109990], ["512 ГБ", 129990], ["1 ТБ", 169990]],
+      short: '11" Tandem OLED · M5',
+      specs: ['Дисплей Ultra Retina XDR 11"', "Чип Apple M5", "Поддержка Apple Pencil Pro", "Толщина 5,3 мм"] },
+    { id: "ipad-air-11-m3", brand: "Apple", name: "iPad Air 11 M3", cat: "tablet", kind: "tablet", year: 2025, pop: 86,
+      colors: [C("Серый космос", "#6d6f74"), C("Синий", "#a9bdd1"), C("Фиолетовый", "#c9bedc"), C("Сияющая звезда", "#e5dbca")],
+      opts: [["128 ГБ", 64990], ["256 ГБ", 74990], ["512 ГБ", 94990]],
+      short: '11" Liquid Retina · M3',
+      specs: ['Дисплей Liquid Retina 11"', "Чип Apple M3", "Поддержка Apple Pencil Pro", "Touch ID в кнопке питания"] },
+    { id: "airpods-pro-3", brand: "Apple", name: "AirPods Pro 3", cat: "audio", kind: "earbuds", year: 2025, pop: 97, tag: "Хит",
+      colors: [C("Белый", "#f4f4f2")],
+      opts: [["", 27990]],
+      short: "Шумоподавление · пульсометр",
+      specs: ["Активное шумоподавление", "Датчик пульса во время тренировок", "Живой перевод", "Защита IP57"] },
+    { id: "sony-wh-1000xm6", brand: "Sony", name: "WH-1000XM6", cat: "audio", kind: "headphones", year: 2025, pop: 87, old: 44990, tag: "−11%",
+      colors: [C("Чёрный", "#25262a"), C("Платиновый серебристый", "#d8d6d1"), C("Полуночный синий", "#2f3b50")],
+      opts: [["", 39990]],
+      short: "Шумоподавление · 30 часов",
+      specs: ["Процессор шумоподавления QN3", "До 30 часов с шумоподавлением", "12 микрофонов для звонков", "Складная конструкция"] },
+    { id: "apple-watch-s11", brand: "Apple", name: "Apple Watch Series 11", cat: "watch", kind: "watchSquare", year: 2025, pop: 89,
+      colors: [C("Угольно-чёрный", "#1f1f21"), C("Розовое золото", "#e6c3b3"), C("Серебристый", "#dfe0e2"), C("Серый космос", "#5d6065")],
+      opts: [["42 мм", 41990], ["46 мм", 44990]],
+      short: "Always-On · ЭКГ · сон",
+      specs: ["Дисплей Always-On Retina", "ЭКГ, пульс, оценка сна", "До 24 часов работы", "Защита от воды до 50 м"] },
+    { id: "galaxy-watch8", brand: "Samsung", name: "Galaxy Watch8", cat: "watch", kind: "watchRound", year: 2025, pop: 76,
+      colors: [C("Graphite", "#3b3c3f"), C("Silver", "#c8c9cc")],
+      opts: [["40 мм", 26990], ["44 мм", 29990]],
+      short: "AMOLED · индекс антиоксидантов",
+      specs: ["Дисплей Super AMOLED", "Мониторинг сна и стресса", "Gemini на запястье", "Защита IP68 и 5ATM"] },
+    { id: "ps5-pro", brand: "Sony", name: "PlayStation 5 Pro", cat: "gaming", kind: "ps5", year: 2024, pop: 91,
+      colors: [C("Белый", "#f3f3f1")],
+      opts: [["2 ТБ", 79990]],
+      short: "2 ТБ SSD · PSSR · Wi-Fi 7",
+      specs: ["Улучшенный графический процессор", "Масштабирование PSSR", "SSD 2 ТБ", "Wi-Fi 7"] },
+    { id: "nintendo-switch-2", brand: "Nintendo", name: "Nintendo Switch 2", cat: "gaming", kind: "switch2", year: 2025, pop: 93, tag: "Хит",
+      colors: [C("Тёмно-серый", "#2a2c33")],
+      opts: [["256 ГБ", 49990]],
+      short: '7,9" 120 Гц · 4K на ТВ',
+      specs: ['Экран 7,9" Full HD, 120 Гц', "До 4K при подключении к ТВ", "Магнитные Joy-Con 2", "Память 256 ГБ"] },
   ];
   const byId = Object.fromEntries(products.map((p) => [p.id, p]));
-
-  const reviews = [
-    { name: "Анна К.", city: "Москва", text: "Заказала смартфон вечером — утром уже был у меня. Всё оригинальное, упаковка идеальная." },
-    { name: "Дмитрий С.", city: "Санкт-Петербург", text: "Взял ноутбук в рассрочку, оформление заняло 5 минут. Цены ниже, чем у конкурентов." },
-    { name: "Мария Л.", city: "Казань", text: "Консультант помог выбрать наушники под мои задачи. Звук — космос, спасибо!" },
-    { name: "Игорь П.", city: "Екатеринбург", text: "Сдал старый телефон по trade-in и получил хорошую скидку на новый. Очень удобно." },
-    { name: "Елена В.", city: "Новосибирск", text: "Красивый и удобный сайт, быстрая доставка. Буду заказывать ещё." },
-    { name: "Артём Р.", city: "Краснодар", text: "Купил приставку к дню рождения сына — привезли за 2 часа, курьер вежливый." },
-  ];
+  const DEAL = { id: "macbook-air-13-m4", price: 93490 };
+  const optLabel = (p, i) => p.opts[i][0];
+  const priceOf = (p, optIdx, deal) => (deal ? DEAL.price : p.opts[optIdx][1]);
 
   /* ================= STATE ================= */
-  let cart = store.get("volta-cart", {});
-  let favs = new Set(store.get("volta-favs", []));
+  let cart = store.get("volta-cart-v2", {});
+  const favs = new Set(store.get("volta-favs-v2", []));
+  const cardColor = {}; // selected colour per product card
   let filter = "all";
+  let brand = "";
   let query = "";
   let sortBy = "popular";
 
   /* ================= THEME ================= */
   const root = document.documentElement;
-  const savedTheme = store.get("volta-theme", null);
+  const savedTheme = store.get("volta-theme-v2", null);
   if (savedTheme) root.dataset.theme = savedTheme;
   $("#themeBtn").addEventListener("click", () => {
-    const next = root.dataset.theme === "light" ? "dark" : "light";
+    const current = root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const next = current === "dark" ? "light" : "dark";
     root.dataset.theme = next;
-    store.set("volta-theme", next);
+    store.set("volta-theme-v2", next);
   });
 
-  /* ================= HEADER / NAV ================= */
+  /* ================= HEADER ================= */
   const header = $("#header");
-  const progress = $(".progress");
-  const onScroll = () => {
-    const y = scrollY;
-    header.classList.toggle("is-scrolled", y > 20);
-    const max = document.documentElement.scrollHeight - innerHeight;
-    progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
-  };
-  addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
-
+  addEventListener("scroll", () => header.classList.toggle("is-scrolled", scrollY > 8), { passive: true });
   const burger = $("#burger");
   const nav = $("#nav");
-  burger.addEventListener("click", () => {
-    burger.classList.toggle("is-open");
-    nav.classList.toggle("is-open");
-  });
-  $$("#nav a").forEach((a) => a.addEventListener("click", () => {
-    burger.classList.remove("is-open");
-    nav.classList.remove("is-open");
-  }));
+  burger.addEventListener("click", () => { burger.classList.toggle("is-open"); nav.classList.toggle("is-open"); });
+  $$("#nav a").forEach((a) => a.addEventListener("click", () => { burger.classList.remove("is-open"); nav.classList.remove("is-open"); }));
 
   const search = $("#search");
   const searchInput = $("#searchInput");
   $("#searchBtn").addEventListener("click", () => {
     search.classList.toggle("is-open");
-    if (search.classList.contains("is-open")) setTimeout(() => searchInput.focus(), 200);
+    if (search.classList.contains("is-open")) setTimeout(() => searchInput.focus(), 150);
   });
-  searchInput.addEventListener("input", () => {
-    query = searchInput.value.trim().toLowerCase();
-    renderProducts();
-  });
-  searchInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") $("#catalog").scrollIntoView({ behavior: "smooth" });
-  });
+  searchInput.addEventListener("input", () => { query = searchInput.value.trim().toLowerCase(); renderProducts(); });
+  searchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") $("#catalog").scrollIntoView({ behavior: "smooth" }); });
 
-  /* ================= CATEGORIES ================= */
-  const catWrap = $("#categoryCards");
-  catWrap.innerHTML = categories.map((c, i) => {
-    const count = products.filter((p) => p.type === c.id).length;
-    return `
-      <a href="#catalog" class="category reveal" style="--c:${c.color};--d:${i * 0.07}s" data-cat="${c.id}">
-        <div class="category__icon">${art[c.id]({ id: "cat-" + c.id, a: c.a, b: c.b })}</div>
-        <h3>${c.name}</h3>
-        <small>${count} ${plural(count, ["товар", "товара", "товаров"])}</small>
-      </a>`;
-  }).join("");
-  $$(".category").forEach((el) => el.addEventListener("click", () => setFilter(el.dataset.cat)));
-
-  function plural(n, forms) {
-    const m10 = n % 10, m100 = n % 100;
-    if (m10 === 1 && m100 !== 11) return forms[0];
-    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return forms[1];
-    return forms[2];
+  /* ================= HERO ================= */
+  const hero = byId["iphone-17-pro"];
+  let heroColor = 0;
+  const heroStage = $("#heroStage");
+  function paintHero(animate) {
+    heroStage.innerHTML = render(hero, heroColor);
+    $("#heroColorName").textContent = hero.colors[heroColor].name;
+    if (animate) { heroStage.classList.remove("swap"); void heroStage.offsetWidth; heroStage.classList.add("swap"); }
   }
+  $("#heroColors").innerHTML = hero.colors
+    .map((c, i) => `<button class="swatch${i === 0 ? " is-active" : ""}" style="--sw:${c.hex}" data-hero-color="${i}" role="radio" aria-checked="${i === 0}" aria-label="${c.name}"></button>`)
+    .join("");
+  $("#heroColors").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-hero-color]");
+    if (!b) return;
+    heroColor = +b.dataset.heroColor;
+    $$("[data-hero-color]").forEach((s) => { s.classList.toggle("is-active", s === b); s.setAttribute("aria-checked", s === b); });
+    paintHero(true);
+  });
+  $("#heroPrice").textContent = fmt(hero.opts[0][1]);
+  $("#heroAdd").addEventListener("click", (e) => addToCart(hero.id, heroColor, 0, false, e.currentTarget));
+  $("#heroMore").addEventListener("click", () => openModal(hero.id, heroColor));
+  paintHero(false);
+
+  if (finePointer && !reducedMotion) {
+    const vis = $("#heroVisual");
+    vis.addEventListener("pointermove", (e) => {
+      const r = vis.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      heroStage.style.transform = `rotateY(${x * 28}deg) rotateX(${-y * 14}deg)`;
+    });
+    vis.addEventListener("pointerleave", () => { heroStage.style.transform = ""; });
+  }
+
+  /* ================= BRANDS ================= */
+  const brandNames = [...new Set(products.map((p) => p.brand))];
+  $("#brands").innerHTML = brandNames.map((b) => `<button data-brand="${b}">${b}</button>`).join("");
+  $("#brands").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-brand]");
+    if (!b) return;
+    brand = brand === b.dataset.brand ? "" : b.dataset.brand;
+    $$("[data-brand]").forEach((x) => x.classList.toggle("is-active", x.dataset.brand === brand));
+    renderProducts();
+    $("#catalog").scrollIntoView({ behavior: "smooth" });
+  });
 
   /* ================= FILTERS ================= */
   const filtersEl = $("#filters");
-  filtersEl.innerHTML =
-    `<span class="filter-pill"></span>` +
-    [{ id: "all", name: "Все" }, ...categories]
-      .map((c) => `<button class="filter${c.id === "all" ? " is-active" : ""}" data-filter="${c.id}" role="tab">${c.name}</button>`)
-      .join("");
+  filtersEl.innerHTML = `<span class="filter-pill"></span>` +
+    categories.map((c) => `<button class="filter${c.id === "all" ? " is-active" : ""}" data-filter="${c.id}" role="tab">${c.name}</button>`).join("");
   const pill = $(".filter-pill", filtersEl);
-
   function movePill() {
-    const active = $(".filter.is-active", filtersEl);
-    if (!active) return;
-    pill.style.left = active.offsetLeft + "px";
-    pill.style.top = active.offsetTop + "px";
-    pill.style.width = active.offsetWidth + "px";
-    pill.style.height = active.offsetHeight + "px";
+    const a = $(".filter.is-active", filtersEl);
+    if (!a) return;
+    Object.assign(pill.style, { left: a.offsetLeft + "px", top: a.offsetTop + "px", width: a.offsetWidth + "px", height: a.offsetHeight + "px" });
   }
   function setFilter(id) {
     filter = id;
@@ -213,189 +467,184 @@
     movePill();
     renderProducts();
   }
-  filtersEl.addEventListener("click", (e) => {
-    const b = e.target.closest(".filter");
-    if (b) setFilter(b.dataset.filter);
-  });
+  filtersEl.addEventListener("click", (e) => { const b = e.target.closest(".filter"); if (b) setFilter(b.dataset.filter); });
+  $$("[data-goto]").forEach((a) => a.addEventListener("click", () => setFilter(a.dataset.goto)));
   addEventListener("resize", movePill);
   document.fonts?.ready.then(movePill);
   requestAnimationFrame(movePill);
-
-  $("#sort").addEventListener("change", (e) => {
-    sortBy = e.target.value;
-    renderProducts();
-  });
+  $("#sort").addEventListener("change", (e) => { sortBy = e.target.value; renderProducts(); });
 
   /* ================= PRODUCTS ================= */
   const productsEl = $("#products");
-  const heartSvg = `<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8 3.4 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4 20.6 4 23 8 21.5 11.7 19.5 16.4 12 21 12 21z"/></svg>`;
+  const heartSvg = `<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.7-8.8C2 7.9 4.2 4.5 7.6 4.5c1.9 0 3.3 1 4.4 2.5 1.1-1.5 2.5-2.5 4.4-2.5 3.4 0 5.6 3.4 4.3 6.7C19 15.6 12 20 12 20z"/></svg>`;
   const plusSvg = `<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>`;
   const checkSvg = `<svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>`;
+  const plural = (n, f) => {
+    const a = n % 10, b = n % 100;
+    return a === 1 && b !== 11 ? f[0] : a >= 2 && a <= 4 && (b < 12 || b > 14) ? f[1] : f[2];
+  };
 
   function renderProducts() {
-    let list = products.filter((p) => filter === "all" || p.type === filter);
-    if (query) list = list.filter((p) => `${p.brand} ${p.name} ${p.specs} ${categories.find((c) => c.id === p.type).name}`.toLowerCase().includes(query));
+    let list = products.filter((p) => (filter === "all" || p.cat === filter) && (!brand || p.brand === brand));
+    if (query) list = list.filter((p) => `${p.brand} ${p.name} ${p.short}`.toLowerCase().includes(query));
     const sorters = {
       popular: (a, b) => b.pop - a.pop,
-      "price-asc": (a, b) => a.price - b.price,
-      "price-desc": (a, b) => b.price - a.price,
-      rating: (a, b) => b.rating - a.rating,
+      "price-asc": (a, b) => a.opts[0][1] - b.opts[0][1],
+      "price-desc": (a, b) => b.opts[0][1] - a.opts[0][1],
+      new: (a, b) => b.year - a.year || b.pop - a.pop,
     };
     list.sort(sorters[sortBy]);
 
-    $("#resultInfo").textContent = `Найдено: ${list.length} ${plural(list.length, ["товар", "товара", "товаров"])}`;
+    $("#resultInfo").textContent = `${list.length} ${plural(list.length, ["товар", "товара", "товаров"])}` + (brand ? ` · ${brand}` : "");
     $("#empty").hidden = list.length > 0;
 
-    productsEl.innerHTML = list.map((p, i) => `
-      <article class="card" style="--c:${p.a};--d:${Math.min(i, 8) * 0.06}s" data-id="${p.id}">
-        ${p.tag ? `<span class="card__tag${p.tag === "Новинка" ? " card__tag--new" : ""}">${p.tag}</span>` : ""}
-        <button class="card__fav${favs.has(p.id) ? " is-active" : ""}" data-fav="${p.id}" aria-label="В избранное">${heartSvg}</button>
-        <div class="card__media" data-quick="${p.id}">${art[p.type](p)}</div>
+    productsEl.innerHTML = list.map((p, i) => {
+      const ci = cardColor[p.id] || 0;
+      const tagCls = p.tag?.startsWith("−") ? " tag--sale" : p.tag === "Новинка" ? " tag--new" : "";
+      return `
+      <article class="card" style="--d:${Math.min(i, 8) * 0.04}s" data-id="${p.id}">
+        ${p.tag ? `<span class="tag${tagCls}">${p.tag}</span>` : ""}
+        <button class="fav${favs.has(p.id) ? " is-active" : ""}" data-fav="${p.id}" aria-label="В избранное">${heartSvg}</button>
+        <div class="card__media" data-open="${p.id}"><div class="render">${render(p, ci)}</div></div>
         <div class="card__body">
+          <div class="card__swatches">${p.colors.length > 1 ? p.colors.map((c, k) =>
+            `<button class="swatch swatch--sm${k === ci ? " is-active" : ""}" style="--sw:${c.hex}" data-card-color="${p.id}" data-k="${k}" aria-label="${c.name}" title="${c.name}"></button>`).join("") : ""}</div>
           <span class="card__brand">${p.brand}</span>
           <h3 class="card__title">${p.name}</h3>
-          <span class="card__specs">${p.specs}</span>
-          <span class="card__rating"><b>★ ${p.rating}</b> · ${p.reviews.toLocaleString("ru-RU")} отзывов</span>
+          <span class="card__specs">${p.short}</span>
           <div class="card__bottom">
-            <div class="price"><strong>${fmt(p.price)}</strong>${p.old ? `<s>${fmt(p.old)}</s>` : ""}</div>
-            <button class="add-btn" data-add="${p.id}" aria-label="Добавить в корзину">${plusSvg}</button>
+            <div class="price"><strong>${p.opts.length > 1 ? "от " : ""}${fmt(p.opts[0][1])}</strong>${p.old ? `<s>${fmt(p.old)}</s>` : ""}</div>
+            <button class="add" data-add="${p.id}" aria-label="Добавить в корзину">${plusSvg}</button>
           </div>
         </div>
-      </article>`).join("");
+      </article>`;
+    }).join("");
   }
   renderProducts();
 
-  // spotlight that follows the cursor on cards
-  productsEl.addEventListener("pointermove", (e) => {
-    const card = e.target.closest(".card");
-    if (!card) return;
-    const r = card.getBoundingClientRect();
-    card.style.setProperty("--mx", e.clientX - r.left + "px");
-    card.style.setProperty("--my", e.clientY - r.top + "px");
-  });
-
-  /* ================= GLOBAL CLICK HANDLING ================= */
+  /* ================= CLICK HANDLING ================= */
   document.addEventListener("click", (e) => {
+    const sw = e.target.closest("[data-card-color]");
+    if (sw) {
+      const id = sw.dataset.cardColor;
+      cardColor[id] = +sw.dataset.k;
+      const card = sw.closest(".card");
+      $$(".swatch", card).forEach((s) => s.classList.toggle("is-active", s === sw));
+      const box = $(".render", card);
+      box.innerHTML = render(byId[id], cardColor[id]);
+      box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
+      return;
+    }
     const add = e.target.closest("[data-add]");
     if (add) {
-      addToCart(add.dataset.add, add);
-      return;
+      const id = add.dataset.add;
+      if (add.dataset.deal) return addToCart(id, 0, 0, true, add);
+      if (add.dataset.modal) return addToCart(id, modalState.color, modalState.opt, false, add);
+      return addToCart(id, cardColor[id] || 0, 0, false, add);
     }
     const fav = e.target.closest("[data-fav]");
     if (fav) {
       const id = fav.dataset.fav;
       favs.has(id) ? favs.delete(id) : favs.add(id);
       fav.classList.toggle("is-active", favs.has(id));
-      store.set("volta-favs", [...favs]);
-      toast(favs.has(id) ? "❤️ Добавлено в избранное" : "Удалено из избранного");
+      store.set("volta-favs-v2", [...favs]);
+      toast(favs.has(id) ? "Добавлено в избранное" : "Удалено из избранного");
       return;
     }
-    const quick = e.target.closest("[data-quick]");
-    if (quick) openModal(quick.dataset.quick);
+    const open = e.target.closest("[data-open]");
+    if (open) openModal(open.dataset.open, cardColor[open.dataset.open] || 0);
   });
 
   /* ================= CART ================= */
   const cartEl = $("#cart");
   const overlay = $("#overlay");
   const cartBtn = $("#cartBtn");
+  const keyOf = (id, c, o, deal) => [id, c, o, deal ? 1 : 0].join("|");
+  const parseKey = (k) => { const [id, c, o, d] = k.split("|"); return { id, c: +c, o: +o, deal: d === "1" }; };
 
-  function saveCart() {
-    store.set("volta-cart", cart);
-    renderCart();
-  }
+  function saveCart() { store.set("volta-cart-v2", cart); renderCart(); }
 
-  function addToCart(id, sourceEl) {
-    if (!byId[id]) return;
-    cart[id] = (cart[id] || 0) + 1;
+  function addToCart(id, colorIdx, optIdx, deal, el) {
+    const p = byId[id];
+    if (!p) return;
+    const k = keyOf(id, colorIdx, optIdx, deal);
+    cart[k] = (cart[k] || 0) + 1;
     saveCart();
-    flyToCart(sourceEl);
-    toast(`🛒 ${byId[id].name} в корзине`);
-    if (sourceEl.classList.contains("add-btn")) {
-      sourceEl.classList.add("is-added");
-      sourceEl.innerHTML = checkSvg;
-      setTimeout(() => {
-        sourceEl.classList.remove("is-added");
-        sourceEl.innerHTML = plusSvg;
-      }, 1400);
+    flyToCart(el);
+    toast(`${p.name} — в корзине`);
+    if (el?.classList.contains("add")) {
+      el.classList.add("is-added");
+      el.innerHTML = checkSvg;
+      setTimeout(() => { el.classList.remove("is-added"); el.innerHTML = plusSvg; }, 1300);
     }
   }
 
   function flyToCart(fromEl) {
     if (reducedMotion || !fromEl) return bumpCart();
-    const from = fromEl.getBoundingClientRect();
-    const to = cartBtn.getBoundingClientRect();
+    const a = fromEl.getBoundingClientRect();
+    const b = cartBtn.getBoundingClientRect();
     const dot = document.createElement("span");
     dot.className = "fly";
     document.body.appendChild(dot);
-    const sx = from.left + from.width / 2 - 11, sy = from.top + from.height / 2 - 11;
-    const ex = to.left + to.width / 2 - 11, ey = to.top + to.height / 2 - 11;
-    dot.animate(
-      [
-        { transform: `translate(${sx}px, ${sy}px) scale(1)`, opacity: 1 },
-        { transform: `translate(${(sx + ex) / 2}px, ${Math.min(sy, ey) - 120}px) scale(1.3)`, opacity: 1, offset: 0.5 },
-        { transform: `translate(${ex}px, ${ey}px) scale(0.3)`, opacity: 0.4 },
-      ],
-      { duration: 800, easing: "cubic-bezier(.5,0,.5,1)" }
-    ).onfinish = () => {
-      dot.remove();
-      bumpCart();
-    };
+    const sx = a.left + a.width / 2 - 7, sy = a.top + a.height / 2 - 7;
+    const ex = b.left + b.width / 2 - 7, ey = b.top + b.height / 2 - 7;
+    dot.animate([
+      { transform: `translate(${sx}px,${sy}px) scale(1)` },
+      { transform: `translate(${(sx + ex) / 2}px,${Math.min(sy, ey) - 90}px) scale(1.2)`, offset: 0.5 },
+      { transform: `translate(${ex}px,${ey}px) scale(.4)`, opacity: 0.5 },
+    ], { duration: 700, easing: "cubic-bezier(.5,0,.5,1)" }).onfinish = () => { dot.remove(); bumpCart(); };
   }
-  function bumpCart() {
-    cartBtn.classList.remove("bump");
-    void cartBtn.offsetWidth;
-    cartBtn.classList.add("bump");
-  }
+  function bumpCart() { cartBtn.classList.remove("bump"); void cartBtn.offsetWidth; cartBtn.classList.add("bump"); }
 
   function renderCart() {
-    const ids = Object.keys(cart).filter((id) => byId[id] && cart[id] > 0);
-    const count = ids.reduce((s, id) => s + cart[id], 0);
-    const total = ids.reduce((s, id) => s + cart[id] * byId[id].price, 0);
+    const keys = Object.keys(cart).filter((k) => byId[parseKey(k).id] && cart[k] > 0);
+    let count = 0, total = 0;
+    const html = keys.map((k) => {
+      const { id, c, o, deal } = parseKey(k);
+      const p = byId[id];
+      const colour = p.colors[c] || p.colors[0];
+      const price = priceOf(p, Math.min(o, p.opts.length - 1), deal);
+      count += cart[k];
+      total += cart[k] * price;
+      const meta = [p.colors.length > 1 ? colour.name : "", optLabel(p, Math.min(o, p.opts.length - 1)), deal ? "по акции" : ""].filter(Boolean).join(" · ");
+      return `
+        <div class="cart-item">
+          <div class="cart-item__img">${render(p, Math.min(c, p.colors.length - 1))}</div>
+          <div>
+            <b>${p.name}</b>
+            <small>${meta}</small>
+            <small>${fmt(price)}</small>
+            <div class="qty">
+              <button data-qty="${k}" data-d="-1" aria-label="Меньше">−</button>
+              <span>${cart[k]}</span>
+              <button data-qty="${k}" data-d="1" aria-label="Больше">+</button>
+            </div>
+          </div>
+          <button class="remove" data-remove="${k}" aria-label="Удалить">
+            <svg viewBox="0 0 24 24"><path d="M5 7h14M10 11v6M14 11v6M7 7l1 12h8l1-12M9 7V4h6v3"/></svg>
+          </button>
+        </div>`;
+    }).join("");
+    $("#cartItems").innerHTML = keys.length ? html : `<div class="cart__empty"><p>В корзине пока пусто</p></div>`;
     const countEl = $("#cartCount");
     countEl.textContent = count;
     countEl.classList.toggle("has-items", count > 0);
     $("#cartTotal").textContent = fmt(total);
-
-    $("#cartItems").innerHTML = ids.length
-      ? ids.map((id) => {
-          const p = byId[id];
-          return `
-            <div class="cart-item">
-              <div class="cart-item__img">${art[p.type]({ ...p, id: "c-" + p.id })}</div>
-              <div>
-                <b>${p.name}</b>
-                <small>${fmt(p.price)}</small>
-                <div class="qty">
-                  <button data-qty="${id}" data-d="-1" aria-label="Меньше">−</button>
-                  <span>${cart[id]}</span>
-                  <button data-qty="${id}" data-d="1" aria-label="Больше">+</button>
-                </div>
-              </div>
-              <button class="remove" data-remove="${id}" aria-label="Удалить">
-                <svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
-              </button>
-            </div>`;
-        }).join("")
-      : `<div class="cart__empty"><div>🛍️</div><p>Корзина пока пуста</p></div>`;
-    $("#checkout").disabled = !ids.length;
-    $("#checkout").style.opacity = ids.length ? 1 : 0.5;
+    $("#checkout").disabled = !keys.length;
   }
   renderCart();
 
   $("#cartItems").addEventListener("click", (e) => {
     const q = e.target.closest("[data-qty]");
     if (q) {
-      cart[q.dataset.qty] = Math.max(0, (cart[q.dataset.qty] || 0) + Number(q.dataset.d));
-      if (!cart[q.dataset.qty]) delete cart[q.dataset.qty];
+      const k = q.dataset.qty;
+      cart[k] = (cart[k] || 0) + Number(q.dataset.d);
+      if (cart[k] <= 0) delete cart[k];
       saveCart();
     }
     const r = e.target.closest("[data-remove]");
-    if (r) {
-      delete cart[r.dataset.remove];
-      saveCart();
-    }
+    if (r) { delete cart[r.dataset.remove]; saveCart(); }
   });
-
   const openCart = () => { cartEl.classList.add("is-open"); overlay.classList.add("is-open"); };
   const closeCart = () => { cartEl.classList.remove("is-open"); overlay.classList.remove("is-open"); };
   cartBtn.addEventListener("click", openCart);
@@ -405,248 +654,108 @@
     cart = {};
     saveCart();
     closeCart();
-    toast("🎉 Спасибо! Заказ оформлен — мы скоро свяжемся с вами");
-    confetti();
+    toast("Заказ оформлен. Мы позвоним для подтверждения");
   });
 
-  /* ================= QUICK VIEW MODAL ================= */
+  /* ================= PRODUCT MODAL ================= */
   const modal = $("#modal");
-  function openModal(id) {
+  const modalState = { id: null, color: 0, opt: 0 };
+  function openModal(id, colorIdx = 0) {
     const p = byId[id];
     if (!p) return;
-    const swatches = [p.a, p.b, "#1b1b24", "#e8e8f0"];
+    Object.assign(modalState, { id, color: colorIdx, opt: 0 });
     $("#modalContent").innerHTML = `
-      <div class="modal__media" style="--c:${p.a}">${art[p.type]({ ...p, id: "m-" + p.id })}</div>
+      <div class="modal__media"><div class="render" id="modalRender">${render(p, colorIdx)}</div></div>
       <div class="modal__info">
         <span class="card__brand">${p.brand}</span>
         <h3>${p.name}</h3>
-        <span class="card__rating"><b>★ ${p.rating}</b> · ${p.reviews.toLocaleString("ru-RU")} отзывов</span>
-        <ul>
-          ${p.specs.split(" · ").map((s) => `<li>${s}</li>`).join("")}
-          <li>Официальная гарантия 1 год</li>
-          <li>Бесплатная доставка за 2 часа</li>
-        </ul>
-        <div class="colors">${swatches.map((s, i) => `<button style="--sw:${s}" class="${i === 0 ? "is-active" : ""}" aria-label="Цвет"></button>`).join("")}</div>
-        <div class="price"><strong>${fmt(p.price)}</strong>${p.old ? `<s>${fmt(p.old)}</s>` : ""}</div>
-        <button class="btn btn--primary" data-add="${p.id}">Добавить в корзину</button>
+        ${p.colors.length > 1 ? `
+          <div class="modal__label">Цвет: <b id="modalColorName">${p.colors[colorIdx].name}</b></div>
+          <div class="modal__swatches">${p.colors.map((c, k) =>
+            `<button class="swatch${k === colorIdx ? " is-active" : ""}" style="--sw:${c.hex}" data-m-color="${k}" aria-label="${c.name}"></button>`).join("")}</div>` : ""}
+        ${p.opts.length > 1 ? `
+          <div class="modal__label">Конфигурация</div>
+          <div class="options">${p.opts.map((o, k) => `<button class="${k === 0 ? "is-active" : ""}" data-m-opt="${k}">${o[0]}</button>`).join("")}</div>` : ""}
+        <ul class="spec-list">${p.specs.map((s) => `<li>${s}</li>`).join("")}</ul>
+        <div class="price price--lg"><strong id="modalPrice">${fmt(p.opts[0][1])}</strong>${p.old ? `<s>${fmt(p.old)}</s>` : ""}</div>
+        <button class="btn btn--primary" data-add="${p.id}" data-modal="1">Добавить в корзину</button>
       </div>`;
     modal.classList.add("is-open");
+    if (finePointer && !reducedMotion) {
+      const media = $(".modal__media", modal);
+      const r3d = $("#modalRender");
+      media.addEventListener("pointermove", (e) => {
+        const r = media.getBoundingClientRect();
+        r3d.style.transform = `rotateY(${((e.clientX - r.left) / r.width - 0.5) * 30}deg) rotateX(${-((e.clientY - r.top) / r.height - 0.5) * 14}deg)`;
+      });
+      media.addEventListener("pointerleave", () => { r3d.style.transform = ""; });
+    }
   }
   const closeModal = () => modal.classList.remove("is-open");
   $("#modalClose").addEventListener("click", closeModal);
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-    const sw = e.target.closest(".colors button");
-    if (sw) $$(".colors button", modal).forEach((b) => b.classList.toggle("is-active", b === sw));
+    if (e.target === modal) return closeModal();
+    const p = byId[modalState.id];
+    const mc = e.target.closest("[data-m-color]");
+    if (mc) {
+      modalState.color = +mc.dataset.mColor;
+      $$("[data-m-color]", modal).forEach((s) => s.classList.toggle("is-active", s === mc));
+      $("#modalColorName").textContent = p.colors[modalState.color].name;
+      const box = $("#modalRender");
+      box.innerHTML = render(p, modalState.color);
+      box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
+    }
+    const mo = e.target.closest("[data-m-opt]");
+    if (mo) {
+      modalState.opt = +mo.dataset.mOpt;
+      $$("[data-m-opt]", modal).forEach((s) => s.classList.toggle("is-active", s === mo));
+      $("#modalPrice").textContent = fmt(p.opts[modalState.opt][1]);
+    }
   });
   addEventListener("keydown", (e) => {
     if (e.key === "Escape") { closeModal(); closeCart(); search.classList.remove("is-open"); }
   });
 
-  /* ================= REVIEWS ================= */
-  const reviewHtml = reviews.map((r) => `
-    <div class="review">
-      <div class="review__stars">★★★★★</div>
-      <p>«${r.text}»</p>
-      <div class="review__author">
-        <span class="review__avatar">${r.name[0]}</span>
-        <div><b>${r.name}</b><small>${r.city}</small></div>
-      </div>
-    </div>`).join("");
-  $("#reviewsTrack").innerHTML = reviewHtml + reviewHtml;
-
-  /* ================= REVEAL ON SCROLL ================= */
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      if (!en.isIntersecting) return;
-      en.target.classList.add("is-visible");
-      io.unobserve(en.target);
-    });
-  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-  $$(".reveal").forEach((el, i) => {
-    if (!el.style.getPropertyValue("--d") && el.parentElement.classList.contains("features")) {
-      el.style.setProperty("--d", (i % 4) * 0.1 + "s");
-    }
-    io.observe(el);
-  });
-  // hero elements stagger
-  $$(".hero .reveal").forEach((el, i) => el.style.setProperty("--d", i * 0.12 + "s"));
-
-  /* ================= COUNTERS ================= */
-  const countIo = new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      if (!en.isIntersecting) return;
-      const el = en.target;
-      const target = +el.dataset.count;
-      const suffix = el.dataset.suffix || "+";
-      const start = performance.now();
-      const dur = 2000;
-      const step = (t) => {
-        const k = Math.min(1, (t - start) / dur);
-        const eased = 1 - Math.pow(1 - k, 4);
-        el.textContent = Math.round(target * eased).toLocaleString("ru-RU") + suffix;
-        if (k < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-      countIo.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-  $$("[data-count]").forEach((el) => countIo.observe(el));
-
-  /* ================= TYPED WORDS ================= */
-  const typed = $("#typed");
-  const words = ["вдохновляет", "удивляет", "работает на вас", "меняет всё"];
-  let wi = 0, ci = words[0].length, deleting = true;
-  function typeLoop() {
-    const w = words[wi];
-    if (deleting) {
-      ci--;
-      if (ci === 0) { deleting = false; wi = (wi + 1) % words.length; }
-    } else {
-      ci++;
-      if (ci === words[wi].length) { deleting = true; typed.textContent = words[wi]; return setTimeout(typeLoop, 2200); }
-    }
-    typed.textContent = (deleting ? w : words[wi]).slice(0, ci) || "​";
-    setTimeout(typeLoop, deleting ? 45 : 85);
-  }
-  if (!reducedMotion) setTimeout(typeLoop, 2600);
-
-  /* ================= PHONE CLOCK ================= */
-  const phoneTime = $("#phoneTime");
-  const phoneDate = $(".phone__date");
-  const tickClock = () => {
-    const d = new Date();
-    phoneTime.textContent = d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-    const s = d.toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
-    phoneDate.textContent = s[0].toUpperCase() + s.slice(1);
-  };
-  tickClock();
-  setInterval(tickClock, 10000);
-
-  /* ================= COUNTDOWN ================= */
-  const dealKey = "volta-deal-end";
+  /* ================= DEAL ================= */
+  $("#dealVisual").innerHTML = render(byId[DEAL.id], 0);
+  const dealKey = "volta-deal-end-v2";
   let dealEnd = store.get(dealKey, 0);
   if (!dealEnd || dealEnd < Date.now()) {
-    dealEnd = Date.now() + ((3 * 24 + 7) * 3600 + 42 * 60) * 1000;
+    dealEnd = Date.now() + ((2 * 24 + 9) * 3600 + 25 * 60) * 1000;
     store.set(dealKey, dealEnd);
   }
   const units = Object.fromEntries($$("#countdown b").map((b) => [b.dataset.unit, b]));
   const pad = (n) => String(n).padStart(2, "0");
   function tickCountdown() {
-    let diff = Math.max(0, dealEnd - Date.now()) / 1000;
-    const vals = {
-      d: Math.floor(diff / 86400),
-      h: Math.floor((diff % 86400) / 3600),
-      m: Math.floor((diff % 3600) / 60),
-      s: Math.floor(diff % 60),
-    };
+    const s = Math.max(0, dealEnd - Date.now()) / 1000;
+    const vals = { d: Math.floor(s / 86400), h: Math.floor((s % 86400) / 3600), m: Math.floor((s % 3600) / 60), s: Math.floor(s % 60) };
     for (const k in vals) {
       const v = pad(vals[k]);
       if (units[k].textContent !== v) {
         units[k].textContent = v;
-        units[k].classList.remove("tick");
-        void units[k].offsetWidth;
-        units[k].classList.add("tick");
+        units[k].classList.remove("tick"); void units[k].offsetWidth; units[k].classList.add("tick");
       }
     }
   }
   tickCountdown();
   setInterval(tickCountdown, 1000);
 
-  /* ================= 3D TILT ================= */
-  if (finePointer && !reducedMotion) {
-    $$("[data-tilt]").forEach((el) => {
-      const area = el.parentElement;
-      area.addEventListener("pointermove", (e) => {
-        const r = area.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        el.style.transform = `rotateY(${x * 24}deg) rotateX(${-y * 24}deg)`;
-      });
-      area.addEventListener("pointerleave", () => { el.style.transform = ""; });
-    });
+  /* ================= SCROLL REVEAL ================= */
+  $$(".section__head, .deal, .service__item, .newsletter").forEach((el) => el.classList.add("reveal"));
 
-    // magnetic buttons
-    $$(".magnetic").forEach((btn) => {
-      btn.addEventListener("pointermove", (e) => {
-        const r = btn.getBoundingClientRect();
-        const x = e.clientX - r.left - r.width / 2;
-        const y = e.clientY - r.top - r.height / 2;
-        btn.style.transform = `translate(${x * 0.25}px, ${y * 0.35}px)`;
-      });
-      btn.addEventListener("pointerleave", () => { btn.style.transform = ""; });
-    });
-
-    // cursor glow
-    const glow = $(".cursor-glow");
-    let gx = innerWidth / 2, gy = innerHeight / 2, tx = gx, ty = gy;
-    addEventListener("pointermove", (e) => { tx = e.clientX; ty = e.clientY; }, { passive: true });
-    (function loop() {
-      gx += (tx - gx) * 0.12;
-      gy += (ty - gy) * 0.12;
-      glow.style.transform = `translate(${gx - 250}px, ${gy - 250}px)`;
-      requestAnimationFrame(loop);
-    })();
-
-    // parallax blobs
-    const blobs = $$(".blob");
-    addEventListener("pointermove", (e) => {
-      const x = e.clientX / innerWidth - 0.5, y = e.clientY / innerHeight - 0.5;
-      blobs.forEach((b, i) => { b.style.translate = `${x * (i + 1) * 30}px ${y * (i + 1) * 30}px`; });
-    }, { passive: true });
-  } else {
-    $(".cursor-glow").style.display = "none";
-  }
-
-  /* ================= RIPPLE ================= */
-  document.addEventListener("pointerdown", (e) => {
-    const btn = e.target.closest(".btn");
-    if (!btn) return;
-    const r = btn.getBoundingClientRect();
-    const size = Math.max(r.width, r.height);
-    const s = document.createElement("span");
-    s.className = "ripple";
-    s.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
-    btn.appendChild(s);
-    setTimeout(() => s.remove(), 700);
-  });
-
-  /* ================= NEWSLETTER ================= */
+  /* ================= NEWSLETTER / TOAST ================= */
   $("#newsletter").addEventListener("submit", (e) => {
     e.preventDefault();
     e.target.reset();
-    toast("✉️ Готово! Промокод VOLTA10 отправлен на почту");
+    toast("Готово. Промокод VOLTA10 придёт на почту");
   });
-
-  /* ================= TOAST ================= */
   const toastEl = $("#toast");
   let toastTimer;
   function toast(msg) {
     toastEl.textContent = msg;
     toastEl.classList.add("is-visible");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toastEl.classList.remove("is-visible"), 2600);
-  }
-
-  /* ================= CONFETTI ================= */
-  function confetti() {
-    if (reducedMotion) return;
-    const colors = ["#7c5cff", "#00d4ff", "#ff4fd8", "#2ee59d", "#ffb347"];
-    for (let i = 0; i < 80; i++) {
-      const c = document.createElement("span");
-      const size = 6 + Math.random() * 8;
-      c.style.cssText = `position:fixed;z-index:500;left:50%;top:40%;width:${size}px;height:${size * 0.6}px;background:${colors[i % colors.length]};border-radius:2px;pointer-events:none`;
-      document.body.appendChild(c);
-      const angle = Math.random() * Math.PI * 2;
-      const dist = 150 + Math.random() * 300;
-      c.animate(
-        [
-          { transform: "translate(0,0) rotate(0)", opacity: 1 },
-          { transform: `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist + 300}px) rotate(${Math.random() * 720}deg)`, opacity: 0 },
-        ],
-        { duration: 1400 + Math.random() * 800, easing: "cubic-bezier(.2,.7,.4,1)" }
-      ).onfinish = () => c.remove();
-    }
+    toastTimer = setTimeout(() => toastEl.classList.remove("is-visible"), 2400);
   }
 
   $("#year").textContent = new Date().getFullYear();

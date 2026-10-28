@@ -2,34 +2,27 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VOLTA — магазин электроники</title>
-  <meta name="description" content="VOLTA — смартфоны, ноутбуки, планшеты, наушники и гаджеты с быстрой доставкой и официальной гарантией." />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Магазин VOLTA</title>
+  <meta name="description" content="VOLTA — iPhone, Samsung Galaxy, Google Pixel, MacBook, iPad и аксессуары с официальной гарантией и доставкой за 2 часа." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%237c5cff'/><path d='M18 4 8 18h7l-2 10 10-14h-7z' fill='white'/></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23111'/><path d='M18 5 9 18h6l-2 9 9-13h-6z' fill='white'/></svg>" />
 </head>
 <body>
-  <div class="cursor-glow" aria-hidden="true"></div>
-  <div class="progress" aria-hidden="true"></div>
-
-  <!-- HEADER -->
   <header class="header" id="header">
     <div class="container header__inner">
-      <a href="#" class="logo" aria-label="VOLTA">
-        <span class="logo__mark">
-          <svg viewBox="0 0 24 24"><path d="M14 2 5 14h6l-2 8 9-12h-6z" /></svg>
-        </span>
+      <a href="#top" class="logo" aria-label="VOLTA, на главную">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2 5 14h6l-2 8 9-12h-6z" /></svg>
         VOLTA
       </a>
 
       <nav class="nav" id="nav">
         <a href="#catalog">Каталог</a>
-        <a href="#deals">Акции</a>
-        <a href="#features">Сервис</a>
-        <a href="#reviews">Отзывы</a>
+        <a href="#deal">Акция</a>
+        <a href="#service">Сервис</a>
         <a href="#contacts">Контакты</a>
       </nav>
 
@@ -38,11 +31,10 @@
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         </button>
         <button class="icon-btn" id="themeBtn" aria-label="Сменить тему">
-          <svg class="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-          <svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
         </button>
         <button class="icon-btn cart-btn" id="cartBtn" aria-label="Корзина">
-          <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 2H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
           <span class="cart-btn__count" id="cartCount">0</span>
         </button>
         <button class="burger" id="burger" aria-label="Меню"><span></span><span></span></button>
@@ -50,208 +42,126 @@
     </div>
     <div class="search" id="search">
       <div class="container">
-        <input type="search" id="searchInput" placeholder="Найти смартфон, ноутбук, наушники…" autocomplete="off" />
+        <input type="search" id="searchInput" placeholder="iPhone 17 Pro, Galaxy, MacBook…" autocomplete="off" aria-label="Поиск по каталогу" />
       </div>
     </div>
   </header>
 
-  <main>
+  <main id="top">
     <!-- HERO -->
     <section class="hero">
-      <div class="hero__bg" aria-hidden="true">
-        <span class="blob blob--1"></span>
-        <span class="blob blob--2"></span>
-        <span class="blob blob--3"></span>
-        <div class="grid-lines"></div>
-      </div>
-
       <div class="container hero__inner">
         <div class="hero__text">
-          <span class="badge reveal"><span class="dot"></span> Новинки осени 2026 уже в продаже</span>
-          <h1 class="hero__title reveal">
-            Техника, которая
-            <span class="gradient-text" id="typed">вдохновляет</span>
-          </h1>
-          <p class="hero__lead reveal">
-            Смартфоны, ноутбуки, планшеты и аксессуары от ведущих брендов.
-            Официальная гарантия, доставка за 2 часа и рассрочка 0%.
-          </p>
-          <div class="hero__cta reveal">
-            <a href="#catalog" class="btn btn--primary magnetic">
-              Перейти в каталог
-              <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
-            <a href="#deals" class="btn btn--ghost magnetic">Смотреть акции</a>
-          </div>
-          <div class="hero__stats reveal">
-            <div><strong data-count="12000">0</strong><span>товаров</span></div>
-            <div><strong data-count="350000">0</strong><span>довольных клиентов</span></div>
-            <div><strong data-count="98" data-suffix="%">0</strong><span>положительных отзывов</span></div>
+          <span class="kicker">Новинка</span>
+          <h1 id="heroName">iPhone 17 Pro</h1>
+          <p class="hero__lead">Алюминиевый корпус, система камер Pro с тремя модулями 48 Мп и чип A19 Pro. В наличии во всех цветах.</p>
+          <div class="hero__colors" id="heroColors" role="radiogroup" aria-label="Цвет"></div>
+          <p class="hero__color-name" id="heroColorName"></p>
+          <div class="hero__buy">
+            <div class="hero__price">от <strong id="heroPrice">119 990 ₽</strong></div>
+            <button class="btn btn--primary" id="heroAdd">Купить</button>
+            <button class="btn btn--ghost" id="heroMore">Подробнее</button>
           </div>
         </div>
-
         <div class="hero__visual" id="heroVisual">
-          <div class="orbit" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="phone tilt" data-tilt>
-            <div class="phone__frame">
-              <div class="phone__island"></div>
-              <div class="phone__screen">
-                <div class="phone__time" id="phoneTime">12:00</div>
-                <div class="phone__date">Среда, 28 октября</div>
-                <div class="phone__widgets">
-                  <div class="widget widget--wide"><span>🔋 Заряд</span><b>100%</b><i class="bar"><em></em></i></div>
-                  <div class="widget"><span>☀️</span><b>+14°</b></div>
-                  <div class="widget"><span>🎧</span><b>Play</b></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="float-card float-card--1">
-            <span class="float-card__icon">🚚</span>
-            <div><b>Доставка за 2 часа</b><small>по городу бесплатно</small></div>
-          </div>
-          <div class="float-card float-card--2">
-            <span class="float-card__icon">⭐</span>
-            <div><b>4.9 из 5</b><small>12 000+ оценок</small></div>
-          </div>
-        </div>
-      </div>
-
-      <a href="#brands" class="scroll-hint" aria-label="Прокрутить вниз"><span></span></a>
-    </section>
-
-    <!-- BRANDS MARQUEE -->
-    <section class="brands" id="brands">
-      <div class="marquee">
-        <div class="marquee__track">
-          <span>NOVA</span><span>✦</span><span>PIXELON</span><span>✦</span><span>ZENTRIX</span><span>✦</span><span>AURA</span><span>✦</span><span>QUANTA</span><span>✦</span><span>LUMEN</span><span>✦</span><span>ORBITA</span><span>✦</span><span>VERTEX</span><span>✦</span>
-          <span>NOVA</span><span>✦</span><span>PIXELON</span><span>✦</span><span>ZENTRIX</span><span>✦</span><span>AURA</span><span>✦</span><span>QUANTA</span><span>✦</span><span>LUMEN</span><span>✦</span><span>ORBITA</span><span>✦</span><span>VERTEX</span><span>✦</span>
+          <div class="hero__stage" id="heroStage"></div>
+          <div class="hero__shadow" aria-hidden="true"></div>
         </div>
       </div>
     </section>
 
-    <!-- CATEGORIES -->
-    <section class="section" id="categories">
-      <div class="container">
-        <div class="section__head reveal">
-          <span class="eyebrow">Категории</span>
-          <h2>Выберите своё устройство</h2>
-        </div>
-        <div class="categories" id="categoryCards"></div>
-      </div>
+    <!-- BRANDS -->
+    <section class="brands" aria-label="Бренды">
+      <div class="container brands__row" id="brands"></div>
     </section>
 
     <!-- CATALOG -->
     <section class="section" id="catalog">
       <div class="container">
-        <div class="section__head section__head--row reveal">
-          <div>
-            <span class="eyebrow">Каталог</span>
-            <h2>Хиты продаж</h2>
-          </div>
+        <div class="section__head">
+          <h2>Каталог</h2>
+          <p class="muted">Официальная гарантия на каждое устройство</p>
+        </div>
+        <div class="toolbar">
           <div class="filters" id="filters" role="tablist"></div>
+          <select id="sort" aria-label="Сортировка">
+            <option value="popular">По популярности</option>
+            <option value="price-asc">Сначала дешевле</option>
+            <option value="price-desc">Сначала дороже</option>
+            <option value="new">Сначала новинки</option>
+          </select>
         </div>
-        <div class="toolbar reveal">
-          <span id="resultInfo"></span>
-          <label class="select">
-            <select id="sort">
-              <option value="popular">По популярности</option>
-              <option value="price-asc">Сначала дешевле</option>
-              <option value="price-desc">Сначала дороже</option>
-              <option value="rating">По рейтингу</option>
-            </select>
-          </label>
-        </div>
+        <p class="result-info" id="resultInfo"></p>
         <div class="products" id="products"></div>
-        <p class="empty" id="empty" hidden>Ничего не найдено. Попробуйте изменить запрос 🙂</p>
+        <p class="empty" id="empty" hidden>Ничего не найдено. Попробуйте другой запрос.</p>
       </div>
     </section>
 
     <!-- DEAL -->
-    <section class="section" id="deals">
+    <section class="section" id="deal">
       <div class="container">
-        <div class="deal reveal">
-          <div class="deal__glow" aria-hidden="true"></div>
+        <div class="deal">
           <div class="deal__text">
-            <span class="eyebrow eyebrow--light">Предложение недели</span>
-            <h2>Ноутбук Zentrix Book Pro 16 со скидкой&nbsp;25%</h2>
-            <p>Процессор нового поколения, экран 3.2K 120 Гц и до 22 часов автономной работы. Успейте до конца акции.</p>
+            <span class="kicker">Предложение недели</span>
+            <h2>MacBook Air 13 M4</h2>
+            <p class="muted">Чип M4, 16 ГБ памяти и до 18 часов работы. Скидка 15% до конца акции.</p>
             <div class="countdown" id="countdown">
-              <div><b data-unit="d">00</b><span>дней</span></div>
-              <div><b data-unit="h">00</b><span>часов</span></div>
-              <div><b data-unit="m">00</b><span>минут</span></div>
-              <div><b data-unit="s">00</b><span>секунд</span></div>
+              <div><b data-unit="d">00</b><span>дн</span></div>
+              <div><b data-unit="h">00</b><span>ч</span></div>
+              <div><b data-unit="m">00</b><span>мин</span></div>
+              <div><b data-unit="s">00</b><span>сек</span></div>
             </div>
-            <div class="deal__price">
-              <strong>149 990 ₽</strong><s>199 990 ₽</s>
-            </div>
-            <button class="btn btn--light magnetic" data-add="zentrix-book-pro">В корзину</button>
-          </div>
-          <div class="deal__visual">
-            <div class="laptop tilt" data-tilt>
-              <div class="laptop__screen"><div class="laptop__ui"><i></i><i></i><i></i><i></i></div></div>
-              <div class="laptop__base"></div>
+            <div class="deal__buy">
+              <div class="price price--lg"><strong>93 490 ₽</strong><s>109 990 ₽</s></div>
+              <button class="btn btn--primary" data-add="macbook-air-13-m4" data-deal="1">В корзину</button>
             </div>
           </div>
+          <div class="deal__visual" id="dealVisual"></div>
         </div>
       </div>
     </section>
 
-    <!-- FEATURES -->
-    <section class="section" id="features">
+    <!-- SERVICE -->
+    <section class="section" id="service">
       <div class="container">
-        <div class="section__head reveal">
-          <span class="eyebrow">Почему VOLTA</span>
-          <h2>Сервис, о котором не нужно думать</h2>
+        <div class="section__head">
+          <h2>Сервис</h2>
         </div>
-        <div class="features">
-          <article class="feature reveal">
-            <div class="feature__icon">⚡</div>
-            <h3>Экспресс-доставка</h3>
-            <p>Привезём заказ за 2 часа или в удобный интервал. Бесплатно от 5 000 ₽.</p>
-          </article>
-          <article class="feature reveal">
-            <div class="feature__icon">🛡️</div>
+        <div class="service">
+          <div class="service__item">
+            <svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg>
+            <h3>Доставка за 2 часа</h3>
+            <p>Бесплатно по городу при заказе от 5 000 ₽.</p>
+          </div>
+          <div class="service__item">
+            <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
             <h3>Официальная гарантия</h3>
-            <p>Только сертифицированная техника. Гарантия производителя до 3 лет.</p>
-          </article>
-          <article class="feature reveal">
-            <div class="feature__icon">💳</div>
+            <p>Сертифицированная техника, гарантия производителя от года.</p>
+          </div>
+          <div class="service__item">
+            <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg>
             <h3>Рассрочка 0%</h3>
-            <p>Оформление онлайн за 5 минут, без переплат и первого взноса.</p>
-          </article>
-          <article class="feature reveal">
-            <div class="feature__icon">🔄</div>
+            <p>До 24 месяцев без первого взноса. Решение за 5 минут.</p>
+          </div>
+          <div class="service__item">
+            <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg>
             <h3>Trade-in</h3>
-            <p>Сдайте старое устройство и получите скидку до 40% на новое.</p>
-          </article>
+            <p>Сдайте старое устройство и получите скидку на новое.</p>
+          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- REVIEWS -->
-    <section class="section" id="reviews">
-      <div class="container">
-        <div class="section__head reveal">
-          <span class="eyebrow">Отзывы</span>
-          <h2>Нам доверяют</h2>
-        </div>
-      </div>
-      <div class="reviews">
-        <div class="reviews__track" id="reviewsTrack"></div>
       </div>
     </section>
 
     <!-- NEWSLETTER -->
     <section class="section">
       <div class="container">
-        <div class="newsletter reveal">
+        <div class="newsletter">
           <div>
-            <h2>Скидка 10% на первый заказ</h2>
-            <p>Подпишитесь на рассылку и узнавайте о новинках и акциях первыми.</p>
+            <h2>−10% на первый заказ</h2>
+            <p class="muted">Пришлём промокод и будем сообщать о новинках.</p>
           </div>
           <form class="newsletter__form" id="newsletter">
-            <input type="email" placeholder="Ваш e-mail" required aria-label="E-mail" />
+            <input type="email" id="newsletterEmail" placeholder="Ваш e-mail" required aria-label="E-mail" />
             <button class="btn btn--primary" type="submit">Подписаться</button>
           </form>
         </div>
@@ -259,40 +169,38 @@
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="footer" id="contacts">
     <div class="container footer__grid">
       <div>
-        <a href="#" class="logo">
-          <span class="logo__mark"><svg viewBox="0 0 24 24"><path d="M14 2 5 14h6l-2 8 9-12h-6z" /></svg></span>
+        <a href="#top" class="logo">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2 5 14h6l-2 8 9-12h-6z" /></svg>
           VOLTA
         </a>
-        <p class="muted">Магазин современной электроники. Работаем с 2014 года.</p>
+        <p class="muted">Магазин электроники с 2014 года.</p>
       </div>
       <div>
         <h4>Каталог</h4>
-        <a href="#catalog">Смартфоны</a>
-        <a href="#catalog">Ноутбуки</a>
-        <a href="#catalog">Планшеты</a>
-        <a href="#catalog">Аудио</a>
+        <a href="#catalog" data-goto="phone">Смартфоны</a>
+        <a href="#catalog" data-goto="laptop">Ноутбуки</a>
+        <a href="#catalog" data-goto="tablet">Планшеты</a>
+        <a href="#catalog" data-goto="audio">Аудио</a>
       </div>
       <div>
         <h4>Покупателям</h4>
-        <a href="#features">Доставка и оплата</a>
-        <a href="#features">Гарантия</a>
-        <a href="#features">Trade-in</a>
-        <a href="#features">Рассрочка</a>
+        <a href="#service">Доставка и оплата</a>
+        <a href="#service">Гарантия</a>
+        <a href="#service">Trade-in</a>
       </div>
       <div>
         <h4>Контакты</h4>
-        <a href="tel:88001234567">8 800 123-45-67</a>
-        <a href="mailto:hello@volta.shop">hello@volta.shop</a>
-        <span class="muted">Ежедневно 9:00 — 22:00</span>
+        <span>8 800 123-45-67</span>
+        <span>hello@volta.shop</span>
+        <span class="muted">Ежедневно 9:00–22:00</span>
       </div>
     </div>
     <div class="container footer__bottom">
-      <span>© <span id="year"></span> VOLTA. Все права защищены.</span>
-      <span class="muted">Демонстрационный сайт</span>
+      <span>© <span id="year"></span> VOLTA</span>
+      <span class="muted">Демонстрационный сайт. Цены ориентировочные.</span>
     </div>
   </footer>
 
@@ -312,8 +220,8 @@
     </div>
   </aside>
 
-  <!-- QUICK VIEW -->
-  <div class="modal" id="modal" role="dialog" aria-modal="true">
+  <!-- PRODUCT MODAL -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Товар">
     <div class="modal__box">
       <button class="icon-btn modal__close" id="modalClose" aria-label="Закрыть">
         <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
@@ -322,7 +230,7 @@
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status"></div>
 
   <script src="js/main.js"></script>
 </body>
