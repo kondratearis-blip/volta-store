@@ -21,30 +21,6 @@
   // CSS scroll-driven reveals are replaced by GSAP ones
   $$(".reveal").forEach((el) => el.classList.remove("reveal"));
 
-  /* ================= SMOOTH SCROLL ================= */
-  let lenis = null;
-  if (window.Lenis && finePointer) {
-    lenis = new window.Lenis({ duration: 1.15, smoothWheel: true });
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((t) => lenis.raf(t * 1000));
-    gsap.ticker.lagSmoothing(0);
-    document.addEventListener("click", (e) => {
-      const a = e.target.closest('a[href^="#"]');
-      if (!a) return;
-      const id = a.getAttribute("href");
-      const target = id === "#top" ? 0 : $(id);
-      if (target === null) return;
-      e.preventDefault();
-      lenis.scrollTo(target, { offset: -72, duration: 1.4 });
-    });
-    if (window.VOLTA) window.VOLTA.scrollTo = (el, opts = {}) => lenis.scrollTo(el, { offset: -72, duration: 1.4, ...opts });
-    // freeze page scroll while cart or modal is open
-    const overlays = [$("#cart"), $("#modal")];
-    new MutationObserver(() => {
-      overlays.some((el) => el.classList.contains("is-open")) ? lenis.stop() : lenis.start();
-    }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class"] });
-  }
-
   /* ================= HELPERS ================= */
   function split(el) {
     const text = el.textContent.trim().replace(/\s+/g, " ");
@@ -66,8 +42,8 @@
 
   const intro = gsap.timeline({ defaults: { ease: "expo.out" } });
   intro
-    .to(counter, { v: 100, duration: 1.1, ease: "power2.inOut", onUpdate: () => ($("#preCount").textContent = Math.round(counter.v)) })
-    .to("#preBar", { scaleX: 1, duration: 1.1, ease: "power2.inOut" }, 0)
+    .to(counter, { v: 100, duration: 0.6, ease: "power2.inOut", onUpdate: () => ($("#preCount").textContent = Math.round(counter.v)) })
+    .to("#preBar", { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, 0)
     .to(".preloader__inner", { yPercent: -140, duration: 0.55, ease: "power3.in" }, "+=0.05")
     .to("#preloader", { clipPath: "inset(0% 0% 100% 0%)", duration: 0.9, ease: "expo.inOut" }, "-=0.15")
     .set("#preloader", { display: "none" })

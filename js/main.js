@@ -59,9 +59,7 @@
       <circle cx="${x}" cy="${y}" r="${r * 0.86}" fill="#0a0b0f"/>
       <circle cx="${x}" cy="${y}" r="${r * 0.62}" fill="url(#${u}l)"/>
       <circle cx="${x}" cy="${y}" r="${r * 0.3}" fill="#05060a"/>
-      <circle cx="${x - r * 0.22}" cy="${y - r * 0.26}" r="${r * 0.14}" fill="#fff" opacity=".55">
-        <animate attributeName="opacity" values=".35;.9;.35" dur="${(3 + Math.random() * 2).toFixed(1)}s" repeatCount="indefinite"/>
-      </circle>
+      <circle cx="${x - r * 0.22}" cy="${y - r * 0.26}" r="${r * 0.14}" fill="#fff" opacity=".55"/>
     </g>`;
   }
   const flash = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#f4ecd6" stroke="rgba(0,0,0,.25)" stroke-width="1"/>`;
@@ -289,7 +287,7 @@
       </g>`;
   }
 
-  function render(p, colorIdx = 0) {
+  function render(p, colorIdx = 0, withSheen = false) {
     const c = p.colors[colorIdx].hex;
     const u = "r" + uidSeed++;
     let svg;
@@ -297,7 +295,7 @@
     else if (p.kind === "tablet" || p.kind === "tabletPro") svg = renders.tablet(c, u, p.kind === "tabletPro");
     else svg = renders[p.kind](c, u);
     const sh = SHEEN[p.kind];
-    return sh ? svg.replace(/<\/svg>\s*$/, sheen(u, sh) + "</svg>") : svg;
+    return sh && withSheen ? svg.replace(/<\/svg>\s*$/, sheen(u, sh) + "</svg>") : svg;
   }
 
   /* ================= 3D PHONES ================= */
@@ -317,17 +315,17 @@
     return `<svg viewBox="0 0 200 400">${defs(u, c)}
       <defs>
         <clipPath id="${u}sc"><rect x="16" y="16" width="168" height="368" rx="${rx - 9}"/></clipPath>
-        <filter id="${u}bl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22"/></filter>
+        <radialGradient id="${u}g1"><stop offset="0" stop-color="${shade(c, 0.25)}"/><stop offset="1" stop-color="${shade(c, 0.25)}" stop-opacity="0"/></radialGradient>
+        <radialGradient id="${u}g2"><stop offset="0" stop-color="${c}"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>
+        <radialGradient id="${u}g3"><stop offset="0" stop-color="#7a5cff" stop-opacity=".8"/><stop offset="1" stop-color="#7a5cff" stop-opacity="0"/></radialGradient>
       </defs>
       <rect x="8" y="8" width="184" height="384" rx="${rx}" fill="url(#${u}e)"/>
       <rect x="11" y="11" width="178" height="378" rx="${rx - 3}" fill="#050507"/>
       <g clip-path="url(#${u}sc)">
         <rect x="16" y="16" width="168" height="368" fill="${shade(c, -0.7)}"/>
-        <g filter="url(#${u}bl)">
-          <circle cx="60" cy="90" r="70" fill="${shade(c, 0.2)}"><animate attributeName="cy" values="90;300;90" dur="14s" repeatCount="indefinite"/></circle>
-          <circle cx="150" cy="300" r="80" fill="${c}"><animate attributeName="cx" values="150;50;150" dur="11s" repeatCount="indefinite"/></circle>
-          <circle cx="160" cy="120" r="50" fill="#7a5cff" opacity=".7"><animate attributeName="cy" values="120;220;120" dur="9s" repeatCount="indefinite"/></circle>
-        </g>
+        <circle cx="60" cy="90" r="110" fill="url(#${u}g1)"><animate attributeName="cy" values="90;300;90" dur="14s" repeatCount="indefinite"/></circle>
+        <circle cx="150" cy="300" r="120" fill="url(#${u}g2)"><animate attributeName="cx" values="150;50;150" dur="11s" repeatCount="indefinite"/></circle>
+        <circle cx="160" cy="120" r="85" fill="url(#${u}g3)"><animate attributeName="cy" values="120;220;120" dur="9s" repeatCount="indefinite"/></circle>
         <text class="d3-date" x="100" y="78" text-anchor="middle" font-family="Onest, sans-serif" font-size="11" fill="#fff" opacity=".85">${nowDate()}</text>
         <text class="d3-time" x="100" y="128" text-anchor="middle" font-family="Onest, sans-serif" font-size="52" font-weight="600" fill="#fff">${nowTime()}</text>
         <rect x="28" y="286" width="68" height="68" rx="18" fill="#fff" fill-opacity=".16"/>
@@ -350,13 +348,22 @@
     return `<div class="d3" style="--r:${(rx / 184) * 100}% / ${(rx / 384) * 100}%;--edge:${shade(c, -0.25)};--edge2:${shade(c, 0.25)}">
       <div class="d3__spin">
         ${layers}
-        <div class="d3__face d3__back">${render(p, colorIdx)}</div>
+        <div class="d3__face d3__back">${render(p, colorIdx, true)}</div>
         <div class="d3__face d3__front">${screenSvg(p, colorIdx)}</div>
       </div>
     </div>`;
   }
   // 3D model where we have one, flat render otherwise
-  const visual = (p, colorIdx = 0) => (D3_RADIUS[p.kind] ? device3d(p, colorIdx) : render(p, colorIdx));
+  const visual = (p, colorIdx = 0) => (D3_RADIUS[p.kind] ? device3d(p, colorIdx) : render(p, colorIdx, true));
+
+  // pause SVG and 3D animations that are off screen
+  const offscreen = new IntersectionObserver((entries) => {
+    entries.forEach(({ target, isIntersecting }) => {
+      if (target.classList.contains("d3")) target.classList.toggle("is-off", !isIntersecting);
+      else if (target.pauseAnimations) isIntersecting ? target.unpauseAnimations() : target.pauseAnimations();
+    });
+  }, { rootMargin: "100px" });
+  const watchAnimations = (root) => $$(".d3, svg", root).forEach((el) => offscreen.observe(el));
   setInterval(() => {
     $$(".d3-time").forEach((t) => (t.textContent = nowTime()));
     $$(".d3-date").forEach((t) => (t.textContent = nowDate()));
@@ -524,6 +531,7 @@
   const heroStage = $("#heroStage");
   function paintHero(animate) {
     heroStage.innerHTML = visual(hero, heroColor);
+    watchAnimations(heroStage);
     $("#heroVisual").style.setProperty("--tint", hero.colors[heroColor].hex);
     $("#heroColorName").textContent = hero.colors[heroColor].name;
     if (animate) { heroStage.classList.remove("swap"); void heroStage.offsetWidth; heroStage.classList.add("swap"); }
@@ -637,6 +645,7 @@
         </div>
       </article>`;
     }).join("");
+    watchAnimations(productsEl);
   }
   renderProducts();
 
@@ -650,6 +659,7 @@
       $$(".swatch", card).forEach((s) => s.classList.toggle("is-active", s === sw));
       const box = $(".render", card);
       box.innerHTML = render(byId[id], cardColor[id]);
+      watchAnimations(box);
       card.style.setProperty("--tint", byId[id].colors[cardColor[id]].hex);
       box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
       return;
@@ -837,6 +847,7 @@
 
   /* ================= DEAL ================= */
   $("#dealVisual").innerHTML = render(byId[DEAL.id], 0);
+  watchAnimations($("#dealVisual"));
   const dealKey = "volta-deal-end-v2";
   let dealEnd = store.get(dealKey, 0);
   if (!dealEnd || dealEnd < Date.now()) {
@@ -885,6 +896,7 @@
       </article>`;
   }).join("");
 
+  watchAnimations($("#showcaseTrack"));
   window.VOLTA = { setHeroColor, heroColorCount: hero.colors.length };
 
   /* ================= SCROLL REVEAL ================= */
