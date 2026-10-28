@@ -59,7 +59,9 @@
       <circle cx="${x}" cy="${y}" r="${r * 0.86}" fill="#0a0b0f"/>
       <circle cx="${x}" cy="${y}" r="${r * 0.62}" fill="url(#${u}l)"/>
       <circle cx="${x}" cy="${y}" r="${r * 0.3}" fill="#05060a"/>
-      <circle cx="${x - r * 0.22}" cy="${y - r * 0.26}" r="${r * 0.14}" fill="#fff" opacity=".55"/>
+      <circle cx="${x - r * 0.22}" cy="${y - r * 0.26}" r="${r * 0.14}" fill="#fff" opacity=".55">
+        <animate attributeName="opacity" values=".35;.9;.35" dur="${(3 + Math.random() * 2).toFixed(1)}s" repeatCount="indefinite"/>
+      </circle>
     </g>`;
   }
   const flash = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#f4ecd6" stroke="rgba(0,0,0,.25)" stroke-width="1"/>`;
@@ -149,8 +151,13 @@
         <rect x="38" y="10" width="244" height="160" rx="9" fill="#08090c"/>
         <rect x="44" y="16" width="232" height="148" rx="4" fill="url(#${u}d)"/>
         <g clip-path="url(#${u}c)">
-          <circle cx="110" cy="70" r="70" fill="${shade(w, 0.4)}" opacity=".55"/>
-          <circle cx="230" cy="140" r="60" fill="${shade(w, -0.35)}" opacity=".45"/>
+          <circle cx="110" cy="70" r="70" fill="${shade(w, 0.4)}" opacity=".55">
+            <animate attributeName="cx" values="110;190;110" dur="11s" repeatCount="indefinite"/>
+            <animate attributeName="cy" values="70;110;70" dur="13s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="230" cy="140" r="60" fill="${shade(w, -0.35)}" opacity=".45">
+            <animate attributeName="cx" values="230;120;230" dur="12s" repeatCount="indefinite"/>
+          </circle>
         </g>
         <rect x="44" y="16" width="232" height="10" fill="rgba(0,0,0,.25)"/>
         <rect x="146" y="16" width="28" height="7" rx="3.5" fill="#08090c"/>
@@ -175,7 +182,7 @@
         <rect x="34" y="52" width="172" height="146" rx="52" fill="url(#${u}b)"/>
         <rect x="34" y="52" width="172" height="146" rx="52" fill="url(#${u}s)"/>
         <path d="M36 104h168" stroke="${shade(c, -0.18)}" stroke-width="2"/>
-        <circle cx="120" cy="134" r="3.5" fill="#2ecc71"/>
+        <circle cx="120" cy="134" r="3.5" fill="#2ecc71"><animate attributeName="opacity" values="1;.15;1" dur="2.2s" repeatCount="indefinite"/></circle>
         <rect x="104" y="186" width="32" height="6" rx="3" fill="${shade(c, -0.3)}"/>
       </svg>`;
     },
@@ -190,6 +197,10 @@
         <rect x="160" y="128" width="62" height="104" rx="30" fill="url(#${u}s)"/>
         <rect x="60" y="140" width="18" height="80" rx="9" fill="${dark}" opacity=".7"/>
         <rect x="162" y="140" width="18" height="80" rx="9" fill="${dark}" opacity=".7"/>
+        ${[0, 1, 2, 3].map((i) => `<rect x="${188 + i * 7}" y="160" width="4" height="40" rx="2" fill="${isLight(c) ? "#2a2c33" : "#fff"}" opacity=".55">
+          <animate attributeName="height" values="10;40;16;30;10" dur="${1 + i * 0.17}s" repeatCount="indefinite"/>
+          <animate attributeName="y" values="175;160;172;165;175" dur="${1 + i * 0.17}s" repeatCount="indefinite"/>
+        </rect>`).join("")}
       </svg>`;
     },
     watchSquare(c, u) {
@@ -199,8 +210,14 @@
         <rect x="20" y="54" width="120" height="152" rx="38" fill="url(#${u}e)"/>
         <rect x="27" y="61" width="106" height="138" rx="32" fill="#050608"/>
         <text x="80" y="122" text-anchor="middle" font-family="Onest, sans-serif" font-size="30" font-weight="600" fill="#fff">10:09</text>
-        <circle cx="80" cy="156" r="16" fill="none" stroke="#ff375f" stroke-width="5" stroke-dasharray="70 120" transform="rotate(-90 80 156)"/>
-        <circle cx="80" cy="156" r="9" fill="none" stroke="#9cff3a" stroke-width="4" stroke-dasharray="38 80" transform="rotate(-90 80 156)"/>
+        <circle cx="80" cy="156" r="16" fill="none" stroke="#ff375f" stroke-opacity=".25" stroke-width="5"/>
+        <circle cx="80" cy="156" r="16" fill="none" stroke="#ff375f" stroke-width="5" stroke-linecap="round" stroke-dasharray="70 120" transform="rotate(-90 80 156)">
+          <animate attributeName="stroke-dasharray" values="0 120;80 120;80 120" keyTimes="0;.45;1" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="80" cy="156" r="9" fill="none" stroke="#9cff3a" stroke-opacity=".25" stroke-width="4"/>
+        <circle cx="80" cy="156" r="9" fill="none" stroke="#9cff3a" stroke-width="4" stroke-linecap="round" stroke-dasharray="38 80" transform="rotate(-90 80 156)">
+          <animate attributeName="stroke-dasharray" values="0 80;42 80;42 80" keyTimes="0;.55;1" dur="5s" repeatCount="indefinite"/>
+        </circle>
         <rect x="138" y="96" width="9" height="26" rx="4" fill="${shade(c, -0.2)}"/>
       </svg>`;
     },
@@ -211,7 +228,9 @@
         <circle cx="90" cy="130" r="74" fill="url(#${u}e)"/>
         <circle cx="90" cy="130" r="64" fill="#050608"/>
         <text x="90" y="138" text-anchor="middle" font-family="Onest, sans-serif" font-size="30" font-weight="600" fill="#fff">10:09</text>
-        <circle cx="90" cy="130" r="56" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-dasharray="200 400" transform="rotate(-90 90 130)"/>
+        <circle cx="90" cy="130" r="56" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="120 400">
+          <animateTransform attributeName="transform" type="rotate" from="-90 90 130" to="270 90 130" dur="6s" repeatCount="indefinite"/>
+        </circle>
         <rect x="160" y="104" width="10" height="20" rx="4" fill="${shade(c, -0.2)}"/>
         <rect x="160" y="136" width="10" height="20" rx="4" fill="${shade(c, -0.2)}"/>
       </svg>`;
@@ -224,6 +243,8 @@
         <path d="M86 30C60 30 30 60 26 120l-6 220c0 12 8 20 20 20h46z" fill="url(#${u}s)"/>
         <rect x="22" y="168" width="64" height="7" fill="#121318"/><rect x="22" y="186" width="64" height="7" fill="#121318"/>
         <rect x="134" y="168" width="64" height="7" fill="#121318"/><rect x="134" y="186" width="64" height="7" fill="#121318"/>
+        <rect x="84" y="40" width="3" height="320" fill="#5aa8ff"><animate attributeName="opacity" values=".15;.9;.15" dur="3s" repeatCount="indefinite"/></rect>
+        <rect x="133" y="40" width="3" height="320" fill="#5aa8ff"><animate attributeName="opacity" values=".15;.9;.15" dur="3s" repeatCount="indefinite"/></rect>
         <rect x="104" y="60" width="12" height="4" rx="2" fill="#5aa8ff"/>
       </svg>`;
     },
@@ -234,7 +255,8 @@
         <rect x="62" y="24" width="6" height="152" fill="#4aa8ff"/><rect x="292" y="24" width="6" height="152" fill="#ff5a5f"/>
         <rect x="68" y="20" width="224" height="160" rx="8" fill="#111216"/>
         <rect x="78" y="30" width="204" height="140" rx="4" fill="url(#${u}d)"/>
-        <circle cx="140" cy="90" r="46" fill="#ffd166" opacity=".5"/><circle cx="230" cy="130" r="40" fill="#06d6a0" opacity=".45"/>
+        <circle cx="140" cy="90" r="46" fill="#ffd166" opacity=".5"><animate attributeName="cx" values="140;220;140" dur="7s" repeatCount="indefinite"/></circle>
+        <circle cx="230" cy="130" r="40" fill="#06d6a0" opacity=".45"><animate attributeName="cy" values="130;70;130" dur="6s" repeatCount="indefinite"/></circle>
         <circle cx="36" cy="60" r="13" fill="#15161a"/><circle cx="36" cy="60" r="9" fill="#33353d"/>
         <g fill="#15161a"><circle cx="36" cy="112" r="6"/><circle cx="36" cy="136" r="6"/><circle cx="24" cy="124" r="6"/><circle cx="48" cy="124" r="6"/></g>
         <circle cx="324" cy="126" r="13" fill="#15161a"/><circle cx="324" cy="126" r="9" fill="#33353d"/>
@@ -243,13 +265,102 @@
     },
   };
 
+  // light sweep across the body: [x, y, w, h, rx, viewBox width]
+  const SHEEN = {
+    iphonePro: [8, 8, 184, 384, 36, 200], iphoneAir: [8, 8, 184, 384, 36, 200], iphone: [8, 8, 184, 384, 36, 200],
+    galaxyUltra: [8, 8, 184, 384, 22, 200], galaxyFold: [8, 8, 184, 384, 20, 200], galaxyFlip: [8, 8, 184, 384, 30, 200],
+    pixel: [8, 8, 184, 384, 40, 200], xiaomi: [8, 8, 184, 384, 30, 200],
+    tablet: [8, 8, 264, 364, 28, 280], tabletPro: [8, 8, 264, 364, 28, 280],
+    laptop: [44, 16, 232, 148, 4, 320], earbuds: [34, 52, 172, 146, 52, 240],
+    watchSquare: [27, 61, 106, 138, 32, 160], ps5: [20, 30, 180, 330, 20, 220], switch2: [78, 30, 204, 140, 4, 360],
+  };
+  function sheen(u, [x, y, w, h, rx, vw]) {
+    const delay = (Math.random() * 5).toFixed(2);
+    return `<defs>
+        <clipPath id="${u}cp"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"/></clipPath>
+        <linearGradient id="${u}sh" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <g clip-path="url(#${u}cp)" pointer-events="none">
+        <rect x="-90" y="${y - 40}" width="${w * 0.35}" height="${h + 80}" fill="url(#${u}sh)" transform="skewX(-16)">
+          <animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;${vw + 260} 0;${vw + 260} 0" keyTimes="0;.32;1" dur="6s" begin="${delay}s" repeatCount="indefinite"/>
+        </rect>
+      </g>`;
+  }
+
   function render(p, colorIdx = 0) {
     const c = p.colors[colorIdx].hex;
     const u = "r" + uidSeed++;
-    if (p.kind === "laptop") return renders.laptop(c, u, p.wall);
-    if (p.kind === "tablet" || p.kind === "tabletPro") return renders.tablet(c, u, p.kind === "tabletPro");
-    return renders[p.kind](c, u);
+    let svg;
+    if (p.kind === "laptop") svg = renders.laptop(c, u, p.wall);
+    else if (p.kind === "tablet" || p.kind === "tabletPro") svg = renders.tablet(c, u, p.kind === "tabletPro");
+    else svg = renders[p.kind](c, u);
+    const sh = SHEEN[p.kind];
+    return sh ? svg.replace(/<\/svg>\s*$/, sheen(u, sh) + "</svg>") : svg;
   }
+
+  /* ================= 3D PHONES ================= */
+  const D3_RADIUS = { iphonePro: 36, iphoneAir: 36, iphone: 36, galaxyUltra: 22, pixel: 40, xiaomi: 30 };
+  const nowTime = () => new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+  const nowDate = () => {
+    const s = new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
+    return s[0].toUpperCase() + s.slice(1);
+  };
+  function screenSvg(p, colorIdx) {
+    const c = p.colors[colorIdx].hex;
+    const u = "s" + uidSeed++;
+    const rx = D3_RADIUS[p.kind];
+    const island = p.kind.startsWith("iphone")
+      ? `<rect x="72" y="26" width="56" height="16" rx="8" fill="#000"/>`
+      : `<circle cx="100" cy="32" r="6" fill="#000"/>`;
+    return `<svg viewBox="0 0 200 400">${defs(u, c)}
+      <defs>
+        <clipPath id="${u}sc"><rect x="16" y="16" width="168" height="368" rx="${rx - 9}"/></clipPath>
+        <filter id="${u}bl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22"/></filter>
+      </defs>
+      <rect x="8" y="8" width="184" height="384" rx="${rx}" fill="url(#${u}e)"/>
+      <rect x="11" y="11" width="178" height="378" rx="${rx - 3}" fill="#050507"/>
+      <g clip-path="url(#${u}sc)">
+        <rect x="16" y="16" width="168" height="368" fill="${shade(c, -0.7)}"/>
+        <g filter="url(#${u}bl)">
+          <circle cx="60" cy="90" r="70" fill="${shade(c, 0.2)}"><animate attributeName="cy" values="90;300;90" dur="14s" repeatCount="indefinite"/></circle>
+          <circle cx="150" cy="300" r="80" fill="${c}"><animate attributeName="cx" values="150;50;150" dur="11s" repeatCount="indefinite"/></circle>
+          <circle cx="160" cy="120" r="50" fill="#7a5cff" opacity=".7"><animate attributeName="cy" values="120;220;120" dur="9s" repeatCount="indefinite"/></circle>
+        </g>
+        <text class="d3-date" x="100" y="78" text-anchor="middle" font-family="Onest, sans-serif" font-size="11" fill="#fff" opacity=".85">${nowDate()}</text>
+        <text class="d3-time" x="100" y="128" text-anchor="middle" font-family="Onest, sans-serif" font-size="52" font-weight="600" fill="#fff">${nowTime()}</text>
+        <rect x="28" y="286" width="68" height="68" rx="18" fill="#fff" fill-opacity=".16"/>
+        <rect x="104" y="286" width="68" height="68" rx="18" fill="#fff" fill-opacity=".16"/>
+        <rect x="40" y="326" width="44" height="5" rx="2.5" fill="#fff" fill-opacity=".35"/>
+        <rect x="40" y="326" width="0" height="5" rx="2.5" fill="#3ccf8a"><animate attributeName="width" values="0;44;44" keyTimes="0;.6;1" dur="4s" repeatCount="indefinite"/></rect>
+        <text x="40" y="314" font-family="Onest, sans-serif" font-size="13" font-weight="600" fill="#fff">100%</text>
+        <text x="116" y="314" font-family="Onest, sans-serif" font-size="13" font-weight="600" fill="#fff">+14°</text>
+        <text x="116" y="334" font-family="Onest, sans-serif" font-size="9" fill="#fff" opacity=".8">Москва</text>
+        <rect x="70" y="370" width="60" height="4" rx="2" fill="#fff" opacity=".7"/>
+      </g>
+      ${island}
+      <rect x="11" y="11" width="178" height="378" rx="${rx - 3}" fill="url(#${u}s)" opacity=".5"/>
+    </svg>`;
+  }
+  function device3d(p, colorIdx) {
+    const c = p.colors[colorIdx].hex;
+    const rx = D3_RADIUS[p.kind];
+    const layers = [-5, -3.5, -2, -0.5, 1, 2.5, 4].map((z) => `<i style="--z:${z}px"></i>`).join("");
+    return `<div class="d3" style="--r:${(rx / 184) * 100}% / ${(rx / 384) * 100}%;--edge:${shade(c, -0.25)};--edge2:${shade(c, 0.25)}">
+      <div class="d3__spin">
+        ${layers}
+        <div class="d3__face d3__back">${render(p, colorIdx)}</div>
+        <div class="d3__face d3__front">${screenSvg(p, colorIdx)}</div>
+      </div>
+    </div>`;
+  }
+  // 3D model where we have one, flat render otherwise
+  const visual = (p, colorIdx = 0) => (D3_RADIUS[p.kind] ? device3d(p, colorIdx) : render(p, colorIdx));
+  setInterval(() => {
+    $$(".d3-time").forEach((t) => (t.textContent = nowTime()));
+    $$(".d3-date").forEach((t) => (t.textContent = nowDate()));
+  }, 15000);
 
   /* ================= DATA ================= */
   const categories = [
@@ -412,7 +523,8 @@
   let heroColor = 0;
   const heroStage = $("#heroStage");
   function paintHero(animate) {
-    heroStage.innerHTML = render(hero, heroColor);
+    heroStage.innerHTML = visual(hero, heroColor);
+    $("#heroVisual").style.setProperty("--tint", hero.colors[heroColor].hex);
     $("#heroColorName").textContent = hero.colors[heroColor].name;
     if (animate) { heroStage.classList.remove("swap"); void heroStage.offsetWidth; heroStage.classList.add("swap"); }
   }
@@ -508,7 +620,7 @@
       const ci = cardColor[p.id] || 0;
       const tagCls = p.tag?.startsWith("−") ? " tag--sale" : p.tag === "Новинка" ? " tag--new" : "";
       return `
-      <article class="card" style="--d:${Math.min(i, 8) * 0.04}s" data-id="${p.id}">
+      <article class="card" style="--d:${Math.min(i, 8) * 0.04}s;--tint:${p.colors[ci].hex}" data-id="${p.id}">
         ${p.tag ? `<span class="tag${tagCls}">${p.tag}</span>` : ""}
         <button class="fav${favs.has(p.id) ? " is-active" : ""}" data-fav="${p.id}" aria-label="В избранное">${heartSvg}</button>
         <div class="card__media" data-open="${p.id}"><div class="render">${render(p, ci)}</div></div>
@@ -538,6 +650,7 @@
       $$(".swatch", card).forEach((s) => s.classList.toggle("is-active", s === sw));
       const box = $(".render", card);
       box.innerHTML = render(byId[id], cardColor[id]);
+      card.style.setProperty("--tint", byId[id].colors[cardColor[id]].hex);
       box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
       return;
     }
@@ -671,7 +784,7 @@
     if (!p) return;
     Object.assign(modalState, { id, color: colorIdx, opt: 0 });
     $("#modalContent").innerHTML = `
-      <div class="modal__media"><div class="render" id="modalRender">${render(p, colorIdx)}</div></div>
+      <div class="modal__media"><div class="render" id="modalRender">${visual(p, colorIdx)}</div></div>
       <div class="modal__info">
         <span class="card__brand">${p.brand}</span>
         <h3>${p.name}</h3>
@@ -708,7 +821,7 @@
       $$("[data-m-color]", modal).forEach((s) => s.classList.toggle("is-active", s === mc));
       $("#modalColorName").textContent = p.colors[modalState.color].name;
       const box = $("#modalRender");
-      box.innerHTML = render(p, modalState.color);
+      box.innerHTML = visual(p, modalState.color);
       box.classList.remove("swap"); void box.offsetWidth; box.classList.add("swap");
     }
     const mo = e.target.closest("[data-m-opt]");
@@ -759,7 +872,7 @@
     const p = byId[id];
     return `
       <article class="slide" style="--tint:${p.colors[ci].hex}">
-        <div class="slide__media" data-open="${id}" data-cursor="Открыть"><div class="slide__render${p.kind === "laptop" || p.kind === "headphones" ? " slide__render--wide" : ""}">${render(p, ci)}</div></div>
+        <div class="slide__media" data-open="${id}"><div class="slide__render${p.kind === "laptop" || p.kind === "headphones" ? " slide__render--wide" : ""}">${visual(p, ci)}</div></div>
         <div class="slide__info">
           <span class="slide__label">${label}</span>
           <h3>${p.name}</h3>

@@ -72,7 +72,7 @@
     .to("#preloader", { clipPath: "inset(0% 0% 100% 0%)", duration: 0.9, ease: "expo.inOut" }, "-=0.15")
     .set("#preloader", { display: "none" })
     .to(".hero__visual", { clipPath: "inset(0% 0% 0% 0% round 32px)", duration: 1.3, ease: "expo.inOut" }, "-=0.55")
-    .from("#heroStage svg", { scale: 0.55, rotateY: -140, y: 140, duration: 1.8 }, "-=0.8")
+    .from("#heroStage .d3", { scale: 0.55, y: 160, opacity: 0, duration: 1.8 }, "-=0.8")
     .to(heroChars, { yPercent: 0, rotate: 0, duration: 1.1, stagger: 0.03 }, "-=1.6")
     .to([".hero .kicker", ".hero__lead", ".hero__colors", ".hero__color-name", ".hero__buy"], { y: 0, opacity: 1, duration: 0.9, stagger: 0.07 }, "-=1.1")
     .to(".header", { yPercent: 0, duration: 0.9 }, "-=1")
@@ -172,7 +172,6 @@
   const productsEl = $("#products");
   const prepCards = (cards) => cards.forEach((c) => {
     if (!c.querySelector(".glare")) c.insertAdjacentHTML("beforeend", '<span class="glare"></span>');
-    $(".card__media", c)?.setAttribute("data-cursor", "Смотреть");
   });
   const initial = $$(".card", productsEl);
   prepCards(initial);
@@ -277,34 +276,6 @@
         gsap.to(el, { x: 0, y: 0, duration: 0.9, ease: "elastic.out(1, 0.4)" });
       });
     });
-  }
-
-  /* ================= CUSTOM CURSOR ================= */
-  if (finePointer) {
-    root.classList.add("has-cursor");
-    const cursor = $("#cursor"), dot = $("#cursorDot"), label = $("#cursorLabel");
-    const cx = gsap.quickTo(cursor, "x", { duration: 0.45, ease: "power3.out" });
-    const cy = gsap.quickTo(cursor, "y", { duration: 0.45, ease: "power3.out" });
-    const dx = gsap.quickTo(dot, "x", { duration: 0.08 });
-    const dy = gsap.quickTo(dot, "y", { duration: 0.08 });
-    gsap.set([cursor, dot], { opacity: 0 });
-    addEventListener("pointermove", (e) => {
-      gsap.set(cursor, { x: e.clientX, y: e.clientY });
-      gsap.set(dot, { x: e.clientX, y: e.clientY });
-      gsap.to([cursor, dot], { opacity: 1, duration: 0.3 });
-    }, { once: true });
-    addEventListener("pointermove", (e) => { cx(e.clientX); cy(e.clientY); dx(e.clientX); dy(e.clientY); }, { passive: true });
-    document.addEventListener("pointerover", (e) => {
-      const labelled = e.target.closest("[data-cursor]");
-      const interactive = e.target.closest("a, button, select, input, label");
-      cursor.classList.toggle("is-label", !!labelled);
-      cursor.classList.toggle("is-hover", !labelled && !!interactive);
-      label.textContent = labelled ? labelled.dataset.cursor : "";
-    });
-    addEventListener("pointerdown", () => cursor.classList.add("is-down"));
-    addEventListener("pointerup", () => cursor.classList.remove("is-down"));
-    document.addEventListener("pointerleave", () => gsap.to([cursor, dot], { opacity: 0, duration: 0.2 }));
-    document.addEventListener("pointerenter", () => gsap.to([cursor, dot], { opacity: 1, duration: 0.2 }));
   }
 
   addEventListener("load", () => ScrollTrigger.refresh());
