@@ -4,226 +4,172 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Магазин VOLTA</title>
-  <meta name="description" content="VOLTA — iPhone, Samsung Galaxy, Google Pixel, MacBook, iPad и аксессуары с официальной гарантией и доставкой за 2 часа." />
+  <meta name="description" content="VOLTA — iPhone, Samsung Galaxy, Google Pixel, MacBook, iPad и аксессуары. Рассрочка 0%, доставка за 2 часа." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
-  <script>
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      document.documentElement.classList.add("has-motion");
-      setTimeout(function () { if (!window.VOLTA_MOTION) document.documentElement.classList.remove("has-motion"); }, 4000);
-    }
-  </script>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%23111'/><path d='M18 5 9 18h6l-2 9 9-13h-6z' fill='white'/></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%236a3cf5'/><path d='M18 5 9 18h6l-2 9 9-13h-6z' fill='white'/></svg>" />
 </head>
 <body>
-  <div class="preloader" id="preloader" aria-hidden="true">
-    <div class="preloader__inner">
-      <span class="preloader__logo">VOLTA</span>
-      <span class="preloader__count" id="preCount">0</span>
-    </div>
-    <div class="preloader__bar"><i id="preBar"></i></div>
-  </div>
-  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
-
-  <header class="header" id="header">
-    <div class="container header__inner">
-      <a href="#top" class="logo" aria-label="VOLTA, на главную">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2 5 14h6l-2 8 9-12h-6z" /></svg>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container header__row">
+      <a href="#" class="logo" data-home aria-label="VOLTA, на главную">
+        <span class="logo__mark"><svg viewBox="0 0 24 24"><path d="M14 2 5 14h6l-2 8 9-12h-6z" /></svg></span>
         VOLTA
       </a>
-
-      <nav class="nav" id="nav">
-        <a href="#catalog">Каталог</a>
-        <a href="#deal">Акция</a>
-        <a href="#service">Сервис</a>
-        <a href="#contacts">Контакты</a>
-      </nav>
-
+      <a href="#catalog" class="catalog-btn" data-home-anchor>
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+        Каталог
+      </a>
+      <label class="searchbar">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="searchInput" placeholder="Поиск: iPhone 17, Galaxy, MacBook…" autocomplete="off" aria-label="Поиск по каталогу" />
+      </label>
       <div class="header__actions">
-        <button class="icon-btn" id="searchBtn" aria-label="Поиск">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        </button>
         <button class="icon-btn" id="themeBtn" aria-label="Сменить тему">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
         </button>
-        <button class="icon-btn cart-btn" id="cartBtn" aria-label="Корзина">
-          <svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-          <span class="cart-btn__count" id="cartCount">0</span>
+        <button class="icon-btn" data-show-favs aria-label="Избранное">
+          <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.7-8.8C2 7.9 4.2 4.5 7.6 4.5c1.9 0 3.3 1 4.4 2.5 1.1-1.5 2.5-2.5 4.4-2.5 3.4 0 5.6 3.4 4.3 6.7C19 15.6 12 20 12 20z"/></svg>
+          <span class="badge" data-fav-count hidden>0</span>
         </button>
-        <button class="burger" id="burger" aria-label="Меню"><span></span><span></span></button>
-      </div>
-    </div>
-    <div class="search" id="search">
-      <div class="container">
-        <input type="search" id="searchInput" placeholder="iPhone 17 Pro, Galaxy, MacBook…" autocomplete="off" aria-label="Поиск по каталогу" />
+        <button class="icon-btn" data-open-cart aria-label="Корзина">
+          <svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+          <span class="badge" data-cart-count hidden>0</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <main id="top">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="container hero__inner">
-        <div class="hero__text">
-          <span class="kicker">Новинка</span>
-          <h1 id="heroName">iPhone 17 Pro</h1>
-          <p class="hero__lead">Алюминиевый корпус, система камер Pro с тремя модулями 48 Мп и чип A19 Pro. В наличии во всех цветах.</p>
-          <div class="hero__colors" id="heroColors" role="radiogroup" aria-label="Цвет"></div>
-          <p class="hero__color-name" id="heroColorName"></p>
-          <div class="hero__buy">
-            <div class="hero__price">от <strong id="heroPrice">119 990 ₽</strong></div>
-            <button class="btn btn--primary" id="heroAdd">Купить</button>
-            <button class="btn btn--ghost" id="heroMore">Подробнее</button>
-          </div>
-        </div>
-        <div class="hero__visual" id="heroVisual">
-          <div class="hero__stage" id="heroStage"></div>
-          <div class="hero__shadow" aria-hidden="true"></div>
-        </div>
+  <!-- HOME -->
+  <main id="home">
+    <!-- stories -->
+    <section class="container stories" aria-label="Истории" id="stories"></section>
+
+    <!-- promo banners -->
+    <section class="container">
+      <div class="promos" id="promos"></div>
+      <div class="dots" id="promoDots"></div>
+    </section>
+
+    <!-- categories -->
+    <section class="container section">
+      <div class="section__head"><h2>Категории</h2></div>
+      <div class="tiles" id="tiles"></div>
+    </section>
+
+    <!-- catalog -->
+    <section class="container section" id="catalog">
+      <div class="section__head">
+        <h2 id="catalogTitle">Хиты продаж</h2>
+        <select id="sort" aria-label="Сортировка">
+          <option value="popular">Популярные</option>
+          <option value="price-asc">Сначала дешевле</option>
+          <option value="price-desc">Сначала дороже</option>
+          <option value="new">Новинки</option>
+        </select>
+      </div>
+      <div class="chips" id="chips" role="tablist"></div>
+      <div class="grid" id="products"></div>
+      <div class="empty" id="empty" hidden>
+        <p>Ничего не нашлось</p>
+        <button class="btn btn--soft" id="resetFilters">Сбросить фильтры</button>
       </div>
     </section>
 
-    <!-- BRANDS -->
-    <section class="brands" aria-label="Бренды">
-      <div class="container brands__row" id="brands"></div>
-    </section>
-
-    <!-- SHOWCASE -->
-    <section class="showcase" id="showcase">
-      <div class="container showcase__head">
-        <span class="kicker">Флагманы</span>
-        <h2>Лучшее в&nbsp;каждом классе</h2>
-      </div>
-      <div class="showcase__viewport">
-        <div class="showcase__track" id="showcaseTrack"></div>
-      </div>
-    </section>
-
-    <!-- TICKER -->
-    <div class="ticker" aria-hidden="true">
-      <div class="ticker__track" id="ticker">
-        <span>Доставка за 2 часа</span><i>●</i><span>Trade-in до −40%</span><i>●</i><span>Рассрочка 0%</span><i>●</i><span>Официальная гарантия</span><i>●</i>
-        <span>Доставка за 2 часа</span><i>●</i><span>Trade-in до −40%</span><i>●</i><span>Рассрочка 0%</span><i>●</i><span>Официальная гарантия</span><i>●</i>
-      </div>
-    </div>
-
-    <!-- CATALOG -->
-    <section class="section" id="catalog">
-      <div class="container">
-        <div class="section__head">
-          <h2>Каталог</h2>
-          <p class="muted">Официальная гарантия на каждое устройство</p>
+    <!-- installment calculator -->
+    <section class="container section" id="installment">
+      <div class="calc card">
+        <div class="calc__text">
+          <span class="pill">Рассрочка 0%</span>
+          <h2>Посчитайте платёж</h2>
+          <p class="muted">Без переплат и первого взноса. Решение за 5 минут, оформление онлайн.</p>
         </div>
-        <div class="toolbar">
-          <div class="filters" id="filters" role="tablist"></div>
-          <select id="sort" aria-label="Сортировка">
-            <option value="popular">По популярности</option>
-            <option value="price-asc">Сначала дешевле</option>
-            <option value="price-desc">Сначала дороже</option>
-            <option value="new">Сначала новинки</option>
-          </select>
-        </div>
-        <p class="result-info" id="resultInfo"></p>
-        <div class="products" id="products"></div>
-        <p class="empty" id="empty" hidden>Ничего не найдено. Попробуйте другой запрос.</p>
-      </div>
-    </section>
-
-    <!-- DEAL -->
-    <section class="section" id="deal">
-      <div class="container">
-        <div class="deal">
-          <div class="deal__text">
-            <span class="kicker">Предложение недели</span>
-            <h2>MacBook Air 13 M4</h2>
-            <p class="muted">Чип M4, 16 ГБ памяти и до 18 часов работы. Скидка 15% до конца акции.</p>
-            <div class="countdown" id="countdown">
-              <div><b data-unit="d">00</b><span>дн</span></div>
-              <div><b data-unit="h">00</b><span>ч</span></div>
-              <div><b data-unit="m">00</b><span>мин</span></div>
-              <div><b data-unit="s">00</b><span>сек</span></div>
-            </div>
-            <div class="deal__buy">
-              <div class="price price--lg"><strong>93 490 ₽</strong><s>109 990 ₽</s></div>
-              <button class="btn btn--primary" data-add="macbook-air-13-m4" data-deal="1">В корзину</button>
-            </div>
+        <div class="calc__form">
+          <label class="calc__label" for="calcAmount">Сумма покупки</label>
+          <div class="calc__amount"><output id="calcAmountOut">120 000 ₽</output></div>
+          <input type="range" id="calcAmount" min="10000" max="300000" step="1000" value="120000" />
+          <div class="calc__label">Срок</div>
+          <div class="segmented" id="calcTerm" role="radiogroup">
+            <button data-term="6" role="radio">6 мес</button>
+            <button data-term="12" role="radio">12 мес</button>
+            <button data-term="24" class="is-active" role="radio">24 мес</button>
           </div>
-          <div class="deal__visual" id="dealVisual"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SERVICE -->
-    <section class="section" id="service">
-      <div class="container">
-        <div class="section__head">
-          <h2>Сервис</h2>
-        </div>
-        <div class="service">
-          <div class="service__item">
-            <svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg>
-            <h3>Доставка за 2 часа</h3>
-            <p>Бесплатно по городу при заказе от 5 000 ₽.</p>
-          </div>
-          <div class="service__item">
-            <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
-            <h3>Официальная гарантия</h3>
-            <p>Сертифицированная техника, гарантия производителя от года.</p>
-          </div>
-          <div class="service__item">
-            <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg>
-            <h3>Рассрочка 0%</h3>
-            <p>До 24 месяцев без первого взноса. Решение за 5 минут.</p>
-          </div>
-          <div class="service__item">
-            <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg>
-            <h3>Trade-in</h3>
-            <p>Сдайте старое устройство и получите скидку на новое.</p>
+          <div class="calc__result">
+            <div><span class="muted">Ежемесячный платёж</span><strong id="calcMonthly">5 000 ₽</strong></div>
+            <div><span class="muted">Переплата</span><strong>0 ₽</strong></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- NEWSLETTER -->
-    <section class="section">
-      <div class="container">
-        <div class="newsletter">
-          <div>
-            <h2>−10% на первый заказ</h2>
-            <p class="muted">Пришлём промокод и будем сообщать о новинках.</p>
-          </div>
-          <form class="newsletter__form" id="newsletter">
-            <input type="email" id="newsletterEmail" placeholder="Ваш e-mail" required aria-label="E-mail" />
-            <button class="btn btn--primary" type="submit">Подписаться</button>
-          </form>
+    <!-- benefits -->
+    <section class="container section" id="service">
+      <div class="section__head"><h2>Почему VOLTA</h2></div>
+      <div class="benefits">
+        <div class="benefit card">
+          <span class="benefit__icon" style="--tile:var(--t-blue)"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg></span>
+          <div><h3>Доставка за 2 часа</h3><p class="muted">Бесплатно от 5 000 ₽</p></div>
         </div>
+        <div class="benefit card">
+          <span class="benefit__icon" style="--tile:var(--t-green)"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div><h3>Официальная гарантия</h3><p class="muted">От года на всю технику</p></div>
+        </div>
+        <div class="benefit card">
+          <span class="benefit__icon" style="--tile:var(--t-violet)"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg></span>
+          <div><h3>Рассрочка 0–0–24</h3><p class="muted">Без переплат и взноса</p></div>
+        </div>
+        <div class="benefit card">
+          <span class="benefit__icon" style="--tile:var(--t-orange)"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/></svg></span>
+          <div><h3>Trade-in</h3><p class="muted">Скидка до 40% за старое</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- faq -->
+    <section class="container section" id="faq">
+      <div class="section__head"><h2>Вопросы и ответы</h2></div>
+      <div class="faq card">
+        <details>
+          <summary>Как быстро привезут заказ?</summary>
+          <p>По городу — за 2 часа с момента подтверждения. В другие города — от 1 до 5 дней.</p>
+        </details>
+        <details>
+          <summary>Можно ли вернуть технику?</summary>
+          <p>Да, в течение 14 дней, если устройство не активировано и сохранена упаковка.</p>
+        </details>
+        <details>
+          <summary>Как оформить рассрочку?</summary>
+          <p>Добавьте товар в корзину и выберите «Частями». Нужен только паспорт, решение приходит за 5 минут.</p>
+        </details>
+        <details>
+          <summary>Техника оригинальная?</summary>
+          <p>Да. Мы работаем с официальными дистрибьюторами, на каждое устройство действует гарантия производителя.</p>
+        </details>
       </div>
     </section>
   </main>
 
+  <!-- PRODUCT PAGE -->
+  <main id="product" class="product" hidden></main>
+
+  <!-- FOOTER -->
   <footer class="footer" id="contacts">
     <div class="container footer__grid">
       <div>
-        <a href="#top" class="logo">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2 5 14h6l-2 8 9-12h-6z" /></svg>
+        <a href="#" class="logo" data-home>
+          <span class="logo__mark"><svg viewBox="0 0 24 24"><path d="M14 2 5 14h6l-2 8 9-12h-6z" /></svg></span>
           VOLTA
         </a>
         <p class="muted">Магазин электроники с 2014 года.</p>
       </div>
       <div>
-        <h4>Каталог</h4>
-        <a href="#catalog" data-goto="phone">Смартфоны</a>
-        <a href="#catalog" data-goto="laptop">Ноутбуки</a>
-        <a href="#catalog" data-goto="tablet">Планшеты</a>
-        <a href="#catalog" data-goto="audio">Аудио</a>
-      </div>
-      <div>
         <h4>Покупателям</h4>
-        <a href="#service">Доставка и оплата</a>
-        <a href="#service">Гарантия</a>
-        <a href="#service">Trade-in</a>
+        <a href="#service" data-home-anchor>Доставка и гарантия</a>
+        <a href="#installment" data-home-anchor>Рассрочка</a>
+        <a href="#faq" data-home-anchor>Вопросы и ответы</a>
       </div>
       <div>
         <h4>Контакты</h4>
@@ -232,46 +178,61 @@
         <span class="muted">Ежедневно 9:00–22:00</span>
       </div>
     </div>
-    <div class="container">
-      <div class="footer__word" id="footerWord" aria-hidden="true">VOLTA</div>
-    </div>
-    <div class="container footer__bottom">
+    <div class="container footer__bottom muted">
       <span>© <span id="year"></span> VOLTA</span>
-      <span class="muted">Демонстрационный сайт. Цены ориентировочные.</span>
+      <span>Демонстрационный сайт. Цены ориентировочные.</span>
     </div>
   </footer>
 
-  <!-- CART -->
-  <div class="overlay" id="overlay"></div>
-  <aside class="cart" id="cart" aria-label="Корзина">
-    <div class="cart__head">
+  <!-- MOBILE TAB BAR -->
+  <nav class="tabbar" aria-label="Навигация">
+    <a href="#" data-home class="is-active" data-tab="home">
+      <svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Главная
+    </a>
+    <a href="#catalog" data-home-anchor data-tab="catalog">
+      <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>Каталог
+    </a>
+    <button data-show-favs data-tab="favs">
+      <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-8.7-8.8C2 7.9 4.2 4.5 7.6 4.5c1.9 0 3.3 1 4.4 2.5 1.1-1.5 2.5-2.5 4.4-2.5 3.4 0 5.6 3.4 4.3 6.7C19 15.6 12 20 12 20z"/></svg>Избранное
+    </button>
+    <button data-open-cart data-tab="cart">
+      <svg viewBox="0 0 24 24"><path d="M5 7h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Корзина
+      <span class="badge" data-cart-count hidden>0</span>
+    </button>
+  </nav>
+
+  <!-- CART SHEET -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="sheet" id="cart" aria-label="Корзина" aria-hidden="true">
+    <div class="sheet__grip"></div>
+    <div class="sheet__head">
       <h3>Корзина</h3>
-      <button class="icon-btn" id="cartClose" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
-      </button>
+      <button class="icon-btn" data-close-cart aria-label="Закрыть"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-    <div class="cart__items" id="cartItems"></div>
-    <div class="cart__foot">
-      <div class="cart__total"><span>Итого</span><strong id="cartTotal">0 ₽</strong></div>
+    <div class="sheet__body" id="cartItems"></div>
+    <div class="sheet__foot">
+      <div class="segmented" id="payMode" role="radiogroup">
+        <button data-pay="full" class="is-active" role="radio">Сразу</button>
+        <button data-pay="parts" role="radio">Частями</button>
+      </div>
+      <div class="sheet__total"><span id="totalLabel">Итого</span><strong id="cartTotal">0 ₽</strong></div>
       <button class="btn btn--primary btn--block" id="checkout">Оформить заказ</button>
     </div>
   </aside>
 
-  <!-- PRODUCT MODAL -->
-  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Товар">
-    <div class="modal__box">
-      <button class="icon-btn modal__close" id="modalClose" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
-      </button>
-      <div class="modal__content" id="modalContent"></div>
-    </div>
+  <!-- STORY VIEWER -->
+  <div class="story" id="story" hidden>
+    <div class="story__bars" id="storyBars"></div>
+    <button class="story__close" id="storyClose" aria-label="Закрыть"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="story__slide" id="storySlide"></div>
+    <button class="story__nav story__nav--prev" id="storyPrev" aria-label="Назад"></button>
+    <button class="story__nav story__nav--next" id="storyNext" aria-label="Дальше"></button>
   </div>
 
   <div class="toast" id="toast" role="status"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/motion.js"></script>
+  <script src="js/devices.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
