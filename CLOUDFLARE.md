@@ -7,7 +7,25 @@
 GitHub подключается **прямо к этому Worker'у**: новый проект и перенос домена не нужны, сайт не останавливается.
 Проверено 21.11.2026: Worker, собранный из этого репозитория, байт в байт совпадает с рабочей версией 44.
 
-## Подключение (один раз, ~2 минуты)
+## Выкладка из сессии Claude (основной способ)
+
+В облачном окружении Claude сохранён API-токен Cloudflare (подставляется в запросы к api.cloudflare.com сам,
+в репозитории его нет). Нужные права токена: Account → Workers Scripts → **Edit**, Zone (kokoro.com.kg) → Workers Routes → **Edit**,
+Zone → DNS → Edit, Zone → Zone → Read.
+
+```bash
+npm install
+npm run check                                   # сборка без выкладки
+CLOUDFLARE_API_TOKEN=proxy-injected npm run deploy   # выкладка на kokoro.com.kg
+```
+
+`proxy-injected` — заглушка: настоящий токен подставляет прокси окружения. Откат — `npx wrangler rollback`
+или kokoro-kgz → Deployments → Rollback в Cloudflare.
+
+## Автовыкладка из GitHub (по желанию, ~2 минуты)
+
+Чтобы сайт обновлялся сам при каждом изменении в ветке, без Claude. Нужен вход в GitHub через окно Cloudflare —
+это можете сделать только вы.
 
 1. Cloudflare → **Workers & Pages** → **kokoro-kgz** → **Settings** → раздел **Build** → **Connect**.
 2. Выберите **GitHub**. Если Cloudflare попросит — установите приложение Cloudflare на GitHub и дайте ему доступ

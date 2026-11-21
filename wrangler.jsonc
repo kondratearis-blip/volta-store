@@ -3,6 +3,7 @@
 // или Cloudflare Workers Builds из GitHub (см. CLOUDFLARE.md).
 {
   "name": "kokoro-kgz",
+  "account_id": "727b98ebd861f96377ed4f91f7722ddd",
   // Код запускается только для /tg/* (бот курьеров) и по таймеру; всё остальное — статика из site/
   "main": "worker/index.js",
   "compatibility_date": "2026-10-19",
