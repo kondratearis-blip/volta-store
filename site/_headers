@@ -1,12 +1,14 @@
 # Заголовки Cloudflare Pages. Восстановлены 21.11.2026 по ответам рабочего сайта kokoro.com.kg
 # (оригинальный файл с компьютера разработки в репозиторий не попал — сверьте, если он найдётся).
 # Новый внешний сервис (карты, аналитика) не заработает, пока его адрес не добавлен в Content-Security-Policy.
+# «! Access-Control-Allow-Origin» убирает заголовок, который Pages ставит сам: рабочий сайт его не отдаёт.
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://sbqkzfytezlunhukfdzz.supabase.co https://tile.openstreetmap.org https://tiles.openfreemap.org; font-src 'self'; connect-src 'self' https://sbqkzfytezlunhukfdzz.supabase.co https://tiles.openfreemap.org https://nominatim.openstreetmap.org https://photon.komoot.io https://routing.openstreetmap.de https://valhalla1.openstreetmap.de; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(self)
+  ! Access-Control-Allow-Origin
 
 /admin
   X-Robots-Tag: noindex, nofollow
