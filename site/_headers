@@ -1,29 +1,86 @@
-# Заголовки Cloudflare Pages. Восстановлены 21.11.2026 по ответам рабочего сайта kokoro.com.kg
-# (оригинальный файл с компьютера разработки в репозиторий не попал — сверьте, если он найдётся).
-# Новый внешний сервис (карты, аналитика) не заработает, пока его адрес не добавлен в Content-Security-Policy.
-# «! Access-Control-Allow-Origin» убирает заголовок, который Pages ставит сам: рабочий сайт его не отдаёт.
+# Заголовки сайта — одинаково читаются Netlify и Cloudflare (Workers, статика). Собраны 31.10.2026 заново по ответам живого сайта (исходный файл не скачивается),
+# с одним изменением: 'wasm-unsafe-eval' в script-src — нужен распознаванию чеков (Tesseract, WebAssembly)
+# в панели менеджера. Он разрешает только WebAssembly, не eval в JavaScript.
+# HSTS здесь нет: на *.netlify.app его ставит сам Netlify, домены *.workers.dev браузеры и так открывают только по HTTPS.
+# Для своего домена HSTS и «Always Use HTTPS» включаются в Cloudflare: SSL/TLS → Edge Certificates
+# (scripts/deploy-cloudflare.mjs на своём домене проверяет и то и другое).
+# В консоли панели при запуске распознавания бывает ошибка CSP про «data:application/octet-stream» —
+# это ядро Tesseract пробует быстрый путь загрузки; запасной срабатывает сам, распознавание работает.
+# Карта (specs/006-map): тайлы OpenStreetMap (img-src), поиск адреса Nominatim и подсказки Photon (connect-src), геопозиция только своих
+# страниц — «Я сейчас здесь» в форме заказа и «Где я» у курьера (Permissions-Policy geolocation=(self))
+# Сумма доставки (specs/007-delivery-price): расстояние до кухни по дорогам — серверы FOSSGIS: OSRM на routing.openstreetmap.de,
+# запасной Valhalla на valhalla1.openstreetmap.de (connect-src). Демо-сервер router.project-osrm.org убран 04.11.2026 — только некоммерческий
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://sbqkzfytezlunhukfdzz.supabase.co https://tile.openstreetmap.org https://tiles.openfreemap.org; font-src 'self'; connect-src 'self' https://sbqkzfytezlunhukfdzz.supabase.co https://tiles.openfreemap.org https://nominatim.openstreetmap.org https://photon.komoot.io https://routing.openstreetmap.de https://valhalla1.openstreetmap.de; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(self)
-  ! Access-Control-Allow-Origin
+
+/admin.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
 
 /admin
   X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
+
+# Страница курьера — как панель: не в поиске, всегда свежая
+/courier.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
 
 /courier
   X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
+
+# Продукты кухни для шефа (specs/011) — так же; в robots.txt не вписана нарочно: там её адрес увидел бы любой
+/kitchen.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
 
 /kitchen
   X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
+
+# Экран кухни (specs/018) — со входом менеджера точки, как панель: не в поиске, всегда свежий
+/cook.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
 
 /cook
   X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
+
+# Описания «приложений» для значка на главном экране (specs/012): всегда свежие — Chrome сам подхватит правки;
+# служебные — так же не в поиске, как их страницы
+/site.webmanifest
+  Cache-Control: public, max-age=0, must-revalidate
+
+/admin.webmanifest
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate
+
+/kitchen.webmanifest
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Страницы: на своём домене Cloudflare сам вставляет в HTML счётчик посещений (Web Analytics),
+# а строгий CSP его всё равно запрещает — в консоли ошибки. no-transform запрещает менять страницу
+# по пути к покупателю; остальное — как Cloudflare и Netlify отдают HTML по умолчанию
+/
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
+
+# Service worker офлайн-экрана (specs/025): всегда свежий; офлайн-экран — не в поиске
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
 
 /offline
   X-Robots-Tag: noindex
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
 
 /assets/img/*
   Cache-Control: public, max-age=604800

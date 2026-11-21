@@ -3,8 +3,8 @@
 Рабочая система KOKORO (kokoro.com.kg): сайт для гостей, панель менеджера, приложение курьера, экран кухни,
 страница продуктов шефа и база Supabase со всей логикой.
 
-> **Откуда этот код.** 21.11.2026 снят с рабочего сайта kokoro.com.kg и рабочей базы Supabase:
-> на GitHub до этого лежала только ранняя версия от 27.10 (она осталась в истории этой ветки).
+> **Откуда этот код.** 21.11.2026 снят с рабочего сайта kokoro.com.kg, Cloudflare Worker `kokoro-kgz` (версия 44)
+> и рабочей базы Supabase: на GitHub до этого лежала только ранняя версия от 27.10 (она осталась в истории этой ветки).
 > Полный исходник проекта был на компьютере разработки и в GitHub не отправлялся — см. «Чего здесь нет».
 
 ## Что где
@@ -21,6 +21,14 @@
 `api.js` — запросы к базе; `supabase-lite.js` — мини-клиент Supabase; `config.js` — адрес базы и публичный ключ;
 `map.js`, `maps.js` — карты (Leaflet + OpenFreeMap) и ссылки в 2GIS; `chat.js` — окно чата.
 `assets/vendor/` — сторонние библиотеки (GSAP, Leaflet, MapLibre, Tesseract) — не править.
+`site/_headers` — заголовки безопасности и кеширования (оригинальный файл, снят с Cloudflare).
+
+### Сервер — `worker/index.js`, `wrangler.jsonc`
+
+Сайт работает как Cloudflare Worker `kokoro-kgz`. Кроме раздачи `site/`, в нём три задачи:
+- `/tg/hook` — бот курьеров @kkurierr_bot: подключение и трансляция места; секрет Telegram проверяет база (`kokoro_tg_update`);
+- раз в минуту — автоназначение свободных заказов курьерам (`kokoro_dispatch`);
+- раз в 10 минут — погода у кухонь (api.met.no) → база сама включает «Идёт дождь» (`kokoro_weather_update`, секрет `WEATHER_SECRET` в Cloudflare).
 
 ### База — `supabase/`
 
@@ -45,9 +53,9 @@
 
 ## Публикация
 
-Сайт работает на **Cloudflare** (папка `site/`, заголовки безопасности — `site/_headers`).
-Раньше выкладывали с компьютера разработки (`scripts/deploy.mjs`, в репозиторий не попал).
-Как подключить этот репозиторий, чтобы изменения выкладывались сами, — пошагово в **[CLOUDFLARE.md](CLOUDFLARE.md)**.
+Сайт — Cloudflare Worker `kokoro-kgz` с доменом kokoro.com.kg. Выкладка — `npx wrangler deploy` из корня репозитория
+(настройки в `wrangler.jsonc`). Раньше выкладывали с компьютера разработки (`scripts/deploy-cloudflare.mjs`, в репозиторий не попал).
+Как подключить GitHub, чтобы изменения выкладывались сами, — пошагово в **[CLOUDFLARE.md](CLOUDFLARE.md)**.
 
 Новый внешний сервис (карты, аналитика, API) заработает только после добавления его адреса в `Content-Security-Policy` в `site/_headers`.
 
@@ -56,10 +64,11 @@
 Код ссылается на файлы, которых нет ни на сайте, ни в GitHub:
 
 - `specs/007…026` — описания задач и решений (дизайн, приложение для магазинов `specs/025`, курьеры, кухня, чаты);
-- `scripts/` — `deploy.mjs`, `serve.mjs`, проверки `check-admin.mjs`, `check-cook.mjs`, `check-sql.mjs`, `test-client.mjs`, `test-receipt-check.mjs`;
+- `scripts/` — `deploy-cloudflare.mjs`, `serve.mjs`, проверки `check-admin.mjs`, `check-cook.mjs`, `check-sql.mjs`, `test-client.mjs`, `test-receipt-check.mjs`
+  (здесь `scripts/serve.mjs` — новый, упрощённый);
 - `supabase/*.sql` — исходные миграции с комментариями (`couriers.sql`, `kitchen.sql`, `auto-dispatch.sql`, `mini-app.sql`, `rain.sql` …).
   Их итог целиком сохранён в `supabase/schema.sql`, но комментарии и порядок изменений — только там;
-- серверные части снаружи сайта: приём сообщений Telegram-бота (`kokoro_tg_update`) и отчёты о погоде
-  (`kokoro_weather_update`) присылает какой-то внешний обработчик — вероятно, Cloudflare Worker. Его код снаружи не виден.
+- `.env` с копией `WEATHER_SECRET` (сам секрет — в Cloudflare, в репозиторий его класть нельзя).
 
-Если тот компьютер доступен — отправьте папку проекта целиком в этот репозиторий, ничего не потеряется.
+С того компьютера выкладывали ещё 21.11.2026 утром (версия 44) — значит, он доступен.
+Отправьте папку проекта целиком в этот репозиторий (без `.env`), ничего не потеряется.

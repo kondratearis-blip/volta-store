@@ -1,0 +1,22 @@
+// Cloudflare Worker «kokoro-kgz» — сайт kokoro.com.kg. Восстановлен 21.11.2026 по настройкам рабочей версии 44
+// (оригинальный файл с компьютера разработки в репозиторий не попал). Выкладка: npx wrangler deploy
+// или Cloudflare Workers Builds из GitHub (см. CLOUDFLARE.md).
+{
+  "name": "kokoro-kgz",
+  // Код запускается только для /tg/* (бот курьеров) и по таймеру; всё остальное — статика из site/
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-19",
+  "assets": {
+    "directory": "./site",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/tg/*"]
+  },
+  // Раз в минуту: автоназначение заказов курьерам; каждые 10 минут — погода у кухонь (секрет WEATHER_SECRET
+  // хранится в Cloudflare → Worker → Settings → Variables and Secrets и при выкладке не стирается)
+  "triggers": { "crons": ["* * * * *"] },
+  "routes": [{ "pattern": "kokoro.com.kg", "custom_domain": true }],
+  "workers_dev": true,
+  "preview_urls": false
+}
