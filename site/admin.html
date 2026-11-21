@@ -5,21 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Заказы — KOKORO</title>
   <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#EC4B04">
   <link rel="icon" href="assets/img/favicon-48.png" sizes="48x48" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+  <!-- Значок «Заказы» на главном экране (specs/012): на Android в меню Chrome — «Установить приложение» -->
+  <link rel="manifest" href="admin.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="Заказы">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/admin.css">
+  <!-- Окно чата по заказу (specs/018) — общее с сайтом покупателя и страницей курьера -->
+  <link rel="stylesheet" href="assets/css/chat.css">
+  <!-- Вид «как приложение покупателя» (раскладка панели 16.11.2026). Порядок важен: тема покупателя (токены, кнопки, поля —
+       общий файл, для панели его не меняем), затем всё про панель. admin.css и base.css остаются общими с курьером и кухней -->
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/admin-theme.css">
 </head>
 <body class="admin">
   <header class="admin__top">
     <div class="wrap admin__bar">
       <a class="admin__logo" href="./" aria-label="KOKORO — открыть сайт"><span class="logo-mask" aria-hidden="true"></span></a>
-      <nav class="tabs" data-tabs hidden>
-        <button type="button" data-tab="orders" aria-pressed="true">Заказы <span class="tabs__count" data-new-count></span></button>
-        <button type="button" data-tab="settings" aria-pressed="false">Настройки</button>
-      </nav>
+      <!-- Чья панель (specs/013): точка «Кулиева» / «Кок-Жар» или владелец — обе точки -->
+      <p class="admin__who" data-who hidden></p>
       <button class="btn btn--small btn--ghost-light" type="button" data-signout hidden>Выйти</button>
     </div>
   </header>
+  <!-- Вкладки стоят вне шапки: на телефоне это парящая панель внизу экрана, под большим пальцем, а у шапки «матовое стекло»
+       (backdrop-filter) — внутри неё position: fixed считался бы от шапки, а не от экрана. На компьютере та же панель лежит
+       поверх шапки, сразу за логотипом (admin-theme.css). admin.js ищет её по [data-tabs] -->
+  <nav class="tabs" data-tabs aria-label="Разделы панели" hidden>
+    <button type="button" data-tab="orders" aria-pressed="true">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4v-17Z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg>
+      <span class="tabs__label">Заказы</span> <span class="tabs__count" data-new-count></span></button>
+    <button type="button" data-tab="money" aria-pressed="false" title="Чеки и выручка">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10.5h18M7 15h3"/></svg>
+      <span class="tabs__label">Касса</span></button>
+    <button type="button" data-tab="reports" aria-pressed="false" title="Выручка, курьеры, время доставки, опоздания">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 20v-8M12 20V4M19 20v-5"/></svg>
+      <span class="tabs__label">Отчёты</span></button>
+    <button type="button" data-tab="settings" aria-pressed="false">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg>
+      <span class="tabs__label">Настройки</span></button>
+  </nav>
 
   <main class="wrap admin__main">
     <section class="card login" data-login hidden aria-labelledby="login-title">
@@ -30,48 +56,243 @@
         <p class="error" data-login-error role="alert"></p>
         <button class="btn btn--block" type="submit">Войти</button>
       </form>
-    </section>
-
-    <section data-pane="orders" hidden>
-      <div class="toolbar">
-        <input class="input toolbar__date" type="date" data-day aria-label="Дата">
-        <div class="chips" data-filters></div>
-        <button class="chip" type="button" data-sound aria-pressed="true">🔔 Звук</button>
-      </div>
-      <form class="waquick" data-wa-quick>
-        <label class="visually-hidden" for="wa-quick-phone">Номер для WhatsApp</label>
-        <input class="input" id="wa-quick-phone" name="phone" type="tel" inputmode="tel" placeholder="Номер, например 0700 123 456" autocomplete="off">
-        <button class="btn btn--small btn--wa" type="submit">Написать в WhatsApp</button>
+      <!-- Второй шаг: код из приложения-аутентификатора -->
+      <form data-mfa-form hidden>
+        <p>Откройте приложение-аутентификатор на телефоне и введите 6 цифр для KOKORO.</p>
+        <label class="field"><span>Код из приложения</span><input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+        <p class="error" data-mfa-error role="alert"></p>
+        <button class="btn btn--block" type="submit">Войти</button>
       </form>
-      <p class="admin__hint" data-orders-status aria-live="polite"></p>
-      <div class="orders" data-orders></div>
+      <!-- Для входа нужен код, а приложение ещё не подключено -->
+      <div data-mfa-login-enroll hidden></div>
+      <!-- На этом устройстве работает шеф: панель здесь не открывается (specs/011) -->
+      <div data-chef-device hidden>
+        <p>На этом устройстве открыта страница шефа, поэтому панель здесь не работает. Войдите со своего телефона.</p>
+        <p class="admin__hint">Это ваше устройство, а страницу шефа открывали для проверки —
+          <button class="linkbtn" type="button" data-chef-device-leave>закрыть её здесь и войти</button>.</p>
+      </div>
+      <p class="admin__hint login__who" data-login-who hidden>Вход: <b data-login-email></b> ·
+        <button class="linkbtn" type="button" data-login-other>Другой аккаунт</button>.
+        Нет доступа к приложению на телефоне — обратитесь к владельцу сайта.</p>
     </section>
 
+    <!-- Вкладка «Заказы» (раскладка 16.11.2026) — две зоны: главная (дата и выручка дня, фильтры, заказы) и «Смена» (приём
+         заказов, курьеры и карта, инструменты). От 1100 px они стоят рядом, «Смена» — липкой колонкой справа; на телефоне
+         видна одна, по переключателю «Заказы | Смена» (data-half, admin.js). Срочные плашки и точка владельца — над обеими -->
+
+    <section class="ordpane" data-pane="orders" data-half="orders" hidden>
+      <h1 class="visually-hidden">Заказы</h1>
+      <!-- Две точки (specs/013): общий «Принимаем заказы» выключен — сайт закрыт для обеих точек. Владельцу — «Открыть сайт» -->
+      <div class="siteoff" data-site-closed role="status" hidden></div>
+      <!-- Оплаченные заказы с другой даты, которые ждут принятия (specs/010): по ним панель сигналит раз в минуту -->
+      <div class="waiting" data-waiting role="status" hidden></div>
+      <!-- Браузер не даёт звучать, пока на странице не нажали (открыли без входа, вкладка перезагрузилась) -->
+      <button class="unlock" type="button" data-sound-unlock hidden>🔇 Браузер выключил звук панели. Нажмите здесь или в любом месте, чтобы сигнал о заказах заработал</button>
+      <!-- Экран не удержать (браузер не умеет или энергосбережение) — что сделать вручную -->
+      <p class="admin__hint awake-note" data-awake-note aria-live="polite"></p>
+      <!-- Звук или «Экран не гаснет» выключили в «Смене» — видно с любой половинки: иначе сигнал о новом заказе молчит, а на экране
+           заказов этого не видно (показывает admin-theme.css по aria-pressed кнопок; «Включить» нажимает ту же кнопку — admin.js) -->
+      <div class="quiet" data-quiet>
+        <p class="quiet__row quiet__row--sound"><span>🔕 Звук панели выключен — новый заказ придёт без сигнала</span>
+          <button class="btn btn--small quiet__on" type="button" data-quiet-on="sound">Включить звук</button></p>
+        <p class="quiet__row quiet__row--awake"><span>🌙 Экран может погаснуть — сигнал не услышите</span>
+          <button class="btn btn--small quiet__on" type="button" data-quiet-on="awake">Не гасить экран</button></p>
+      </div>
+
+      <!-- Телефон: что на экране — заказы или «Смена». На «Смене» — красная точка и подпись, если какая-то точка остановила
+           приём (точка — и когда сайт закрыт), и «дождь», если включена надбавка: оператор видит это, не переключаясь
+           (:has в admin-theme.css) -->
+      <div class="halves" data-halves role="group" aria-label="Что показать: заказы или смену">
+        <button class="halves__btn" type="button" data-half-pick="orders" aria-pressed="true"><span class="halves__name">Заказы</span></button>
+        <button class="halves__btn" type="button" data-half-pick="shift" aria-pressed="false">
+          <span class="halves__name">Смена<span class="halves__dot" aria-hidden="true"></span></span>
+          <span class="halves__flags"><span class="halves__flag halves__flag--off">приём остановлен</span><span class="halves__flag halves__flag--rain">🌧<span class="halves__rainword"> дождь</span></span></span>
+        </button>
+      </div>
+
+      <div class="ordgrid">
+        <!-- Владелец: какую точку смотреть. Стоит над обеими зонами и видна на обеих половинках: от неё зависят и заказы
+             с выручкой, и курьеры с картой на «Смене» -->
+        <div class="chips" data-branch-pick role="group" aria-label="Точка" hidden></div>
+        <div class="ordmain" data-zone="orders">
+          <div class="toolbar ordbar">
+            <input class="input toolbar__date" type="date" data-day aria-label="Дата">
+            <p class="dayrev" data-day-revenue aria-live="polite"></p>
+            <div class="chips filters" data-filters></div>
+          </div>
+          <p class="admin__hint" data-orders-status aria-live="polite"></p>
+          <p class="admin__saved moved" data-moved aria-live="polite"></p>
+          <div class="orders" data-orders></div>
+        </div>
+
+        <aside class="shift" data-zone="shift" aria-label="Смена">
+          <section class="panel" aria-labelledby="shift-intake">
+            <h2 class="panel__title" id="shift-intake">Приём заказов</h2>
+            <!-- Приём заказов на сайте: остановить и возобновить одним нажатием, тут же — время доставки (сохраняется сразу
+                 при выборе), предел заказов курьера и «дождь». Полосы рисует admin.js: у точки — одна своя, у владельца —
+                 по точке, до двух точек — одна общая -->
+            <div class="intakes" data-intakes></div>
+          </section>
+          <section class="panel" aria-labelledby="shift-couriers">
+            <h2 class="panel__title" id="shift-couriers">Курьеры</h2>
+            <!-- Курьеры: на смене ли (specs/015), где каждый (по Telegram или со страницы курьера, пока он везёт заказы) и
+                 сколько у него заказов; у владельца — курьеры выбранной точки и «обе точки» (specs/014) -->
+            <div class="crs" data-couriers-strip hidden></div>
+            <button class="tool" type="button" data-ops-toggle aria-pressed="false">🗺 Карта</button>
+            <!-- Карта: курьеры на смене и незакрытые заказы дня (точка покупателя или примерно по адресу) -->
+            <div class="ops-map" data-ops-map hidden>
+              <div class="map ops-map__el" data-ops-map-el role="region" aria-label="Карта курьеров и заказов"></div>
+              <p class="admin__hint" data-ops-note></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="shift-tools">
+            <h2 class="panel__title" id="shift-tools">Инструменты</h2>
+            <div class="tools">
+              <button class="tool" type="button" data-sound aria-pressed="true">🔔 Звук</button>
+              <button class="tool" type="button" data-awake aria-pressed="true">☀️ Экран не гаснет</button>
+              <!-- Экран кухни (specs/018): «готовим → готово к выдаче» на планшете у кухни, вход — тот же, что в панели -->
+              <a class="tool tool--link" href="/cook" target="_blank" rel="noopener" data-cook-link>🍳 Экран кухни</a>
+            </div>
+            <form class="waquick" data-wa-quick>
+              <label class="visually-hidden" for="wa-quick-phone">Номер для WhatsApp</label>
+              <input class="input" id="wa-quick-phone" name="phone" type="tel" inputmode="tel" placeholder="Номер, например 0700 123 456" autocomplete="off">
+              <button class="btn btn--small btn--wa" type="submit">Написать в WhatsApp</button>
+            </form>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section data-pane="money" hidden>
+      <div class="toolbar">
+        <div class="chips" data-branch-pick role="group" aria-label="Точка" hidden></div>
+        <input class="input toolbar__date" type="month" data-month aria-label="Месяц">
+        <button class="chip" type="button" data-zip-month hidden>Скачать все чеки за месяц (zip)</button>
+      </div>
+      <h1 class="visually-hidden">Касса: чеки и выручка</h1>
+      <div class="moneysum" data-money-sum></div>
+      <p class="admin__hint" data-money-status aria-live="polite"></p>
+      <div class="ledger" data-ledger></div>
+    </section>
+
+    <!-- Отчёты (specs/018): выручка по точкам, курьеры, среднее время доставки, опоздания. Считает база: менеджер видит свою
+         точку, владелец — все -->
+    <section data-pane="reports" hidden aria-labelledby="reports-title">
+      <h1 class="visually-hidden" id="reports-title">Отчёты</h1>
+      <div class="toolbar report__bar">
+        <div class="chips" data-report-range role="group" aria-label="Период отчёта">
+          <button class="chip" type="button" data-range="today" aria-pressed="true">Сегодня</button>
+          <button class="chip" type="button" data-range="yesterday" aria-pressed="false">Вчера</button>
+          <button class="chip" type="button" data-range="week" aria-pressed="false">7 дней</button>
+          <button class="chip" type="button" data-range="custom" aria-pressed="false">Свой период</button>
+        </div>
+        <form class="report__custom" data-report-custom hidden>
+          <label class="report__date"><span>с</span><input class="input" type="date" name="from" required></label>
+          <label class="report__date"><span>по</span><input class="input" type="date" name="to" required></label>
+          <button class="btn btn--small" type="submit">Показать</button>
+        </form>
+      </div>
+      <p class="admin__hint report__status" data-report-status aria-live="polite"></p>
+      <div class="report" data-report></div>
+    </section>
+
+    <!-- «Настройки» — три карточки: заказы, курьеры, безопасность (на широком экране — рядом). Обёртка и каждая карточка
+         помечены data-pane: admin.js прячет и показывает вкладку по этому атрибуту, а по первой из них узнаёт, открыта ли она -->
+    <div class="setgrid" data-pane="settings" hidden>
     <section class="card settings" data-pane="settings" hidden>
       <h1 class="card__title">Настройки заказов</h1>
       <form data-settings-form>
-        <label class="check"><input type="checkbox" name="accepting_orders"> <span>Принимать заказы на сайте</span></label>
-        <label class="field"><span>Текст, когда заказы закрыты</span><input name="closed_message" maxlength="300"></label>
+        <!-- Две точки (specs/013): приём и время доставки — на полосах «Заказов», у каждой точки свои; цену и доставку
+             меняет только владелец -->
+        <p class="settings__note" id="settings-note" data-settings-note hidden></p>
+        <label class="check" data-common-intake><input type="checkbox" name="accepting_orders"> <span>Принимать заказы на сайте</span></label>
         <div class="settings__row">
-          <label class="field"><span>Цена комбо, сом</span><input name="combo_price" type="number" min="1" required></label>
-          <label class="field"><span>Доставка, сом <i>(0 — бесплатно)</i></span><input name="delivery_fee" type="number" min="0" required></label>
+          <label class="field"><span>Цена комбо, сом</span><input name="combo_price" type="number" min="1" required aria-describedby="settings-note"></label>
+          <label class="field"><span>Доставка в сумме по QR, сом <i>(0 — платят курьеру по тарифу)</i></span><input name="delivery_fee" type="number" min="0" required aria-describedby="settings-note"></label>
+          <label class="field" data-wait-field hidden><span>Время доставки для покупателей</span><select name="wait_minutes"></select></label>
         </div>
-        <div class="qrset">
-          <img class="qrset__img" data-qr-preview alt="QR-код для оплаты" hidden>
-          <div class="qrset__body">
-            <p class="qrset__title">QR-код для оплаты</p>
-            <p class="admin__hint" data-qr-state>Клиенты увидят его после оформления заказа.</p>
-            <label class="btn btn--small btn--ghost qrset__btn">Загрузить QR-код<input class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" data-qr-file></label>
+        <div class="fixed">
+          <p class="fixed__lead">QR-код и тексты про оплату меняет только владелец сайта — из панели их поменять нельзя.</p>
+          <div class="qrset">
+            <img class="qrset__img" data-qr-preview alt="QR-код для оплаты" hidden>
+            <div class="qrset__body">
+              <p class="qrset__title">QR-код для оплаты</p>
+              <p class="admin__hint">Клиенты видят его после оформления заказа.</p>
+            </div>
           </div>
+          <div class="fixed__item"><p class="fixed__label">Чеки сверяются с получателем</p><p class="fixed__text" data-fixed-recipient></p></div>
+          <div class="fixed__item"><p class="fixed__label">Подсказка под QR-кодом</p><p class="fixed__text" data-fixed="note"></p></div>
+          <div class="fixed__item"><p class="fixed__label">Текст, когда заказы закрыты</p><p class="fixed__text" data-fixed="closedMessage"></p></div>
+          <div class="fixed__item"><p class="fixed__label">Сообщение клиенту в WhatsApp (кнопка «О заказе»)</p><p class="fixed__text" data-fixed="whatsappTemplate"></p></div>
         </div>
-        <label class="field"><span>Подсказка под QR-кодом</span><textarea name="payment_note" rows="3" maxlength="500"></textarea></label>
-        <label class="field"><span>Сообщение клиенту в WhatsApp</span><textarea name="whatsapp_template" rows="6" maxlength="1000"></textarea></label>
-        <p class="admin__hint">Подстановки: {number} — номер заказа, {name}, {qty} — сколько комбо, {total} — сумма, {address}, {time}, {payment}</p>
         <p class="error" data-settings-error role="alert"></p>
-        <button class="btn" type="submit">Сохранить</button>
+        <button class="btn" type="submit" data-settings-submit>Сохранить</button>
         <span class="admin__saved" data-settings-saved></span>
       </form>
     </section>
+
+    <!-- Курьеры: у каждого свой код входа на страницу курьера; код показывается один раз. С specs/015 база сама назначает
+         принятые заказы курьерам на смене (с specs/014 курьер может и сам взять свободный), менеджер назначает только при
+         необходимости -->
+    <section class="card settings" data-pane="settings" data-couriers-admin hidden aria-labelledby="couriers-title">
+      <h2 class="card__title" id="couriers-title">Курьеры</h2>
+      <!-- Подсказки свёрнуты: список курьеров и кнопки — сразу на экране; сами тексты прежние -->
+      <details class="how">
+        <summary>Как это работает</summary>
+        <div class="how__body">
+      <p class="admin__hint">У каждого курьера свой вход на страницу курьера: одноразовый код из 6 цифр («Код для входа», действует
+        72 часа, после входа сгорает) или, запасной, ссылка («Новая ссылка»). Код и ссылка показываются один раз — отправьте их
+        курьеру в WhatsApp. Курьер больше не работает —
+        «Удалить»: он пропадёт из списка, а его заказы за прошлые дни останутся в отчётах.</p>
+      <p class="admin__hint">Принятые заказы база назначает курьерам сама: заказ появляется на странице курьера, он забирает пакет на кухне
+        и нажимает «Забрал — еду» — заказ «В пути», покупатель видит курьера на карте. В карточке такого заказа — «Назначен
+        автоматически». Ваше дело — принять заказ. Назначайте курьера сами, только если нужно: курьер не может взять заказ
+        или его надо отдать другому. Сколько заказов курьер держит за раз — на «Заказах», в полосе приёма точки. Заказ без
+        курьера, заказ, который курьер долго не забирает, и слишком долгая доставка подсвечиваются в списке красным.</p>
+      <p class="admin__hint" data-courier-rules>Заказ уходит курьеру, только когда вы его приняли («Подтверждён» или «Готовится») и его пора везти:
+        оплаченный ночью — с 12:00, «ко времени» — за время доставки до назначенного часа. База назначает его курьеру на смене
+        у кухни: курьеру этой точки или «обе точки», который сейчас не везёт заказ «В пути» и держит меньше заказов, чем предел
+        точки, — сначала тому, у кого заказов меньше. Некому назначить — заказ ждёт в «Свободных», курьер может взять его сам.
+        Ваше ручное назначение база не снимает. Через 4 часа никем не взятый заказ у курьеров пропадает — назначьте курьера
+        сами, такой заказ подсвечен красным.</p>
+        </div>
+      </details>
+      <div class="crs-list" data-courier-list></div>
+      <div class="crs-code" data-courier-code hidden aria-live="polite"></div>
+      <form class="crs-add" data-courier-add>
+        <label class="field"><span>Имя нового курьера</span><input name="name" maxlength="40" autocomplete="off" required></label>
+        <button class="btn" type="submit">Добавить</button>
+      </form>
+      <p class="error" data-courier-error role="alert"></p>
+    </section>
+
+    <section class="card settings security" data-pane="settings" hidden aria-labelledby="security-title">
+      <h2 class="card__title" id="security-title">Безопасность входа</h2>
+      <div class="sec__block">
+        <p class="sec__title">Двухфакторный вход</p>
+        <p class="admin__hint" data-mfa-state>Проверяем…</p>
+        <div data-mfa-settings-enroll></div>
+      </div>
+      <form class="sec__block" data-password-form>
+        <p class="sec__title">Сменить пароль</p>
+        <p class="admin__hint">После смены на всех других устройствах вход сбросится.</p>
+        <label class="field"><span>Новый пароль <i>(от 12 символов)</i></span><input name="password" type="password" autocomplete="new-password" minlength="12" required></label>
+        <label class="field"><span>Ещё раз</span><input name="repeat" type="password" autocomplete="new-password" minlength="12" required></label>
+        <p class="error" data-password-error role="alert"></p>
+        <button class="btn" type="submit">Сменить пароль</button>
+        <span class="admin__saved" data-password-saved></span>
+      </form>
+      <div class="sec__block">
+        <p class="sec__title">Место в базе</p>
+        <p class="admin__hint" data-usage>—</p>
+      </div>
+      <div class="sec__block">
+        <p class="sec__title">Выйти на всех устройствах</p>
+        <p class="admin__hint">«Выйти» вверху закрывает панель только на этом устройстве. Эта кнопка закроет её везде, где вошли под этим входом, — если потеряли телефон или входили с чужого. Если пароль мог узнать посторонний, смените его выше: это тоже выкинет все устройства.</p>
+        <button class="btn btn--ghost" type="button" data-signout-all>Выйти на всех устройствах</button>
+      </div>
+    </section>
+    </div>
   </main>
 
   <script type="module" src="assets/js/admin.js"></script>

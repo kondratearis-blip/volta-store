@@ -4,138 +4,586 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>KOKORO — заказать комбо с доставкой в Бишкеке</title>
-  <meta name="description" content="Комбо KOKORO с доставкой: 25 хрустящих крыльев, 1 кг деревенской картошки, 3 фирменных соуса и 1 л колы. Халал. Закажите на сайте.">
-  <meta name="theme-color" content="#2B1308">
+  <meta name="description" content="Комбо KOKORO с доставкой: 25 хрустящих крыльев, 1 кг деревенской картошки, 3 фирменных соуса и 1 л колы. Халал. Заказы круглосуточно, доставка с 12:00 до 00:00.">
+  <meta name="theme-color" content="#EC4B04">
+  <meta name="format-detection" content="telephone=no">
   <link rel="icon" href="assets/img/favicon-48.png" sizes="48x48" type="image/png">
   <link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+  <!-- Значок на главном экране как у приложения (specs/012): на Android в меню Chrome — «Установить приложение» -->
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="KOKORO">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
   <meta property="og:site_name" content="KOKORO">
   <meta property="og:title" content="KOKORO — закажите комбо с доставкой">
-  <meta property="og:description" content="25 крыльев, 1 кг картошки, 3 соуса и 1 л колы. Халал. Заказ — прямо на сайте.">
-  <meta property="og:image" content="assets/img/og.jpg">
+  <meta property="og:description" content="25 крыльев, 1 кг картошки, 3 соуса и 1 л колы. Халал. Заказы круглосуточно, доставка с 12:00 до 00:00.">
+  <!-- Основной адрес — kokoro.com.kg: превью ссылок и поисковики берут его, даже если открыли старый адрес -->
+  <link rel="canonical" href="https://kokoro.com.kg/">
+  <meta property="og:url" content="https://kokoro.com.kg/">
+  <meta property="og:image" content="https://kokoro.com.kg/assets/img/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="preload" href="assets/fonts/unbounded-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Шрифт не предзагружаем: на iPhone и Mac текст рисует системный San Francisco, Inter скачивается только на Android и Windows -->
+  <!-- Цена и приём заказов приходят из базы: соединение и все модули грузим сразу, а не цепочкой -->
+  <link rel="preconnect" href="https://sbqkzfytezlunhukfdzz.supabase.co" crossorigin>
+  <link rel="modulepreload" href="assets/js/order.js">
+  <link rel="modulepreload" href="assets/js/api.js">
+  <link rel="modulepreload" href="assets/js/data.js">
+  <link rel="modulepreload" href="assets/js/maps.js">
+  <link rel="modulepreload" href="assets/js/map.js">
+  <link rel="modulepreload" href="assets/js/config.js">
+  <link rel="modulepreload" href="assets/js/supabase-lite.js">
+  <!-- Мини-приложение (specs/018): оболочка, языки RU/KG, «Мои адреса» и «Мои заказы», чат по заказу -->
+  <link rel="modulepreload" href="assets/js/app.js">
+  <link rel="modulepreload" href="assets/js/i18n.js">
+  <link rel="modulepreload" href="assets/js/history.js">
+  <link rel="modulepreload" href="assets/js/chat.js">
+  <!-- boot.js — до стилей: класс js, язык и признак «в приложении» нужны до отрисовки, а шрифт Inter (Android, Windows) он
+       просит сразу. CSS ему не нужен; файлом, а не встроенным скриптом (CSP) -->
+  <script src="assets/js/boot.js"></script>
+  <!-- Порядок важен: общая основа → тема приложения (specs/025) → чат (общий с панелью) → оформление → оболочка -->
   <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/chat.css">
   <link rel="stylesheet" href="assets/css/order.css">
+  <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
-  <header class="topbar">
+  <!-- Значки-линии приложения: один набор, одна толщина (theme.css → .ico). Вставляются <use href="#i-…"> -->
+  <svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+    <symbol id="i-bucket" viewBox="0 0 24 24"><path d="M5.2 9h13.6l-1.5 10.3a2 2 0 0 1-2 1.7H8.7a2 2 0 0 1-2-1.7L5.2 9Z"/><path d="M3.8 9h16.4"/><path d="M8.5 9c.2-3 1.5-4.8 3.5-4.8S15.3 6 15.5 9"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2.4-1.6-2.4 1.6-1.2-.8-1.200.8-2.4-1.6L6 20.5v-17Z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s7-6.3 7-11.5a7 7 0 1 0-14 0c0 5.2 7 11.5 7 11.5Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 14-4.5l2 2"/><path d="M20 4v4.5h-4.5"/><path d="M20 13a8 8 0 0 1-14 4.5l-2-2"/><path d="M4 20v-4.5h4.5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1Z"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M3.5 11 20.5 3.5 13 20.5l-2.3-7.2L3.5 11Z"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3.5V15M8 7.5l4-4 4 4"/><path d="M5 12.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6.5"/></symbol>
+    <symbol id="i-install" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M12 7v7M9.3 11.5 12 14.2l2.7-2.7"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.2 6.8h.01"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 20.5 5.3 16A8.5 8.5 0 1 1 8.5 19L4 20.5Z"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 3h12l1 18H5L6 3Z"/><path d="M9 7a3 3 0 0 0 6 0"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></symbol>
+    <symbol id="i-moped" viewBox="0 0 24 24"><circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M8.5 17h7M4 13l2-5h5l2 5M13 8h3l2.5 6.5"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M5.5 7l1 12a2 2 0 0 0 2 1.8h7a2 2 0 0 0 2-1.8l1-12M9 7V4.5h6V7"/></symbol>
+    <symbol id="i-nonet" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M5 12.5a10 10 0 0 1 3.5-2.3M19 12.5a10 10 0 0 0-5.5-2.9M8.5 16a5 5 0 0 1 7 0"/><path d="M12 19.5h.01"/></symbol>
+  </svg>
+  <!-- Живой фон под карточками: два мягких «огонька» (app.css → .ambient; медленно плывут — motion.js) -->
+  <div class="ambient" aria-hidden="true"><i class="ambient__glow ambient__glow--sun"></i><i class="ambient__glow ambient__glow--ember"></i></div>
+  <a class="skiplink" href="#main" data-i18n>К содержимому</a>
+
+  <!-- Шапка приложения — цвета фирменного ведра: логотип, способ получения и адрес, язык (app.js) -->
+  <header class="topbar appbar" data-appbar>
     <div class="wrap topbar__inner">
       <a class="topbar__logo" href="./" aria-label="KOKORO"><span class="logo-mask" aria-hidden="true"></span></a>
-      <a class="topbar__phone" href="tel:+996707581771" data-brand-phone>+996 707 581 771</a>
+      <!-- Подпись для экранного диктора (способ и адрес целиком) собирает app.js -->
+      <button class="modechip" type="button" data-mode-chip aria-haspopup="dialog" aria-label="Способ получения и адрес: Доставка">
+        <span class="modechip__mode" data-mode-chip-mode>Доставка</span>
+        <span class="modechip__addr" data-mode-chip-addr>Укажите адрес</span>
+      </button>
+      <div class="langswitch" role="group" aria-label="Язык" data-i18n-attr="aria-label" data-lang>
+        <button type="button" data-lang-set="ru" aria-pressed="true" lang="ru">RU</button>
+        <button type="button" data-lang-set="ky" aria-pressed="false" lang="ky">KG</button>
+      </div>
+      <a class="topbar__phone" href="tel:+996707331103" data-brand-phone>+996 707 331 103</a>
     </div>
   </header>
 
-  <main class="wrap page">
-    <section class="combo" aria-labelledby="combo-title">
+  <!-- Панель вкладок: на телефоне — внизу под большим пальцем, на компьютере — в шапке справа (app.css). Вкладки переключают
+       экраны [data-screen]; кнопка «Назад» телефона возвращает в «Меню» (app.js) -->
+  <nav class="tabbar" aria-label="Разделы" data-i18n-attr="aria-label" data-tabbar data-active="menu">
+    <span class="tabbar__thumb" aria-hidden="true"></span>
+    <button class="tabbar__tab" type="button" data-tab="menu" aria-current="page"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bucket"/></svg><span data-i18n>Меню</span></button>
+    <button class="tabbar__tab" type="button" data-tab="orders"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-receipt"/></svg><span data-i18n>Заказы</span><span class="tabbar__dot" data-profile-dot hidden></span></button>
+    <button class="tabbar__tab" type="button" data-tab="points"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-pin"/></svg><span data-i18n>Точки</span></button>
+    <button class="tabbar__tab" type="button" data-tab="profile"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-user"/></svg><span data-i18n>Профиль</span></button>
+  </nav>
+
+  <!-- Нет интернета: заказ и статус не обновятся — говорим сразу (app.js по событиям online/offline) -->
+  <p class="netbar" data-offline role="status" hidden><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-nonet"/></svg><span data-i18n>Нет интернета — проверьте связь</span></p>
+  <!-- Есть активный заказ — плашка ведёт на экран заказа (app.js по событию kokoro:track) -->
+  <button class="activebar" type="button" data-active-order hidden></button>
+
+  <main class="wrap page app" id="main">
+    <div class="app__menu" data-menu>
+
+    <!-- Экран «Меню» -->
+    <div class="screen screen--menu" data-screen="menu" tabindex="-1">
+      <div class="screen__cap">
+        <!-- Доставка или самовывоз — прямо на главной: переключает тот же способ, что в оформлении (радиокнопки формы, app.js) -->
+        <div class="homeseg" role="group" aria-label="Способ получения" data-i18n-attr="aria-label" data-home-mode data-active="delivery">
+          <span class="homeseg__thumb" aria-hidden="true"></span>
+          <button class="homeseg__btn" type="button" data-home-mode-set="delivery" aria-pressed="true"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-moped"/></svg><span data-i18n>Доставка</span></button>
+          <button class="homeseg__btn" type="button" data-home-mode-set="pickup" aria-pressed="false"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bag"/></svg><span data-i18n>Самовывоз</span></button>
+        </div>
+      </div>
+      <div class="screen__body">
+        <!-- Сколько ждать сейчас — то же, что под кнопкой заказа (order.js пишет в [data-wait-hint], app.js повторяет здесь) -->
+        <p class="eta" data-home-eta><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg><span data-home-eta-text>Сейчас привозим примерно за 1,5 часа.</span></p>
+
+        <!-- «Как в прошлый раз»: последний заказ с этого телефона — одним нажатием в оформление (history.js, app.js) -->
+        <section class="reorder" aria-labelledby="reorder-title" data-reorder>
+          <span class="reorder__icon" aria-hidden="true"><svg class="ico" focusable="false"><use href="#i-repeat"/></svg></span>
+          <div class="reorder__text">
+            <p class="reorder__title" id="reorder-title" data-i18n>Как в прошлый раз</p>
+            <p class="reorder__what" data-reorder-what></p>
+          </div>
+          <button class="btn btn--small reorder__btn" type="button" data-reorder-go data-i18n>Повторить</button>
+        </section>
+
+    <section class="combo product" aria-labelledby="combo-title" data-product>
       <figure class="combo__photo">
-        <img src="assets/img/hero-poster.jpg" width="540" height="810" alt="Хрустящие крылья KOKORO в фирменном ведре">
-        <p class="combo__halal">Халал</p>
+        <button class="combo__zoom" type="button" data-product-open aria-haspopup="dialog" aria-label="Подробнее о комбо" data-i18n-attr="aria-label">
+          <img src="assets/img/hero-poster.jpg" width="540" height="810" alt="Хрустящие крылья KOKORO в фирменном ведре" data-i18n-attr="alt" fetchpriority="high" data-product-photo>
+        </button>
+        <p class="combo__halal" data-i18n>Халал</p>
+        <span class="combo__more" aria-hidden="true"><svg class="ico" focusable="false"><use href="#i-expand"/></svg></span>
       </figure>
       <div class="combo__info">
-        <h1 class="combo__title" id="combo-title">Комбо KOKORO</h1>
-        <ul class="combo__list" data-combo-list></ul>
-        <p class="combo__price"><b data-price>1400</b> сом за всё</p>
+        <h1 class="combo__title" id="combo-title" data-i18n>Комбо KOKORO</h1>
+        <!-- Тот же состав, что в data.js (combo.items): виден сразу, до загрузки скриптов; совпадение проверяет test-client.mjs -->
+        <ul class="combo__list" data-combo-list><li><b>25</b><span>хрустящих крыльев</span></li><li><b>1 кг</b><span>деревенской картошки</span></li><li><b>3</b><span>больших фирменных соуса</span></li><li><b>1 л</b><span>Coca-Cola</span></li></ul>
+        <div class="combo__buy">
+          <p class="combo__price"><b data-price>1400</b> <span data-i18n>сом за всё</span></p>
+          <!-- Тот же счётчик, что в оформлении: order.js слушает все [data-qty] и пишет во все [data-qty-value] -->
+          <div class="stepper stepper--menu">
+            <button type="button" data-qty="-1" aria-label="Меньше" data-i18n-attr="aria-label">−</button>
+            <output data-qty-value aria-live="polite">1</output>
+            <button type="button" data-qty="1" aria-label="Больше" data-i18n-attr="aria-label">+</button>
+          </div>
+        </div>
+        <!-- Часы доставки — те же, что в data.js (hours.label); совпадение проверяет test-client.mjs.
+             Приём заказов выключен в панели — «круглосуточно» не пишем, остаются только часы доставки -->
+        <p class="combo__hours"><span data-hours-open>Заказы принимаем <b>круглосуточно</b>, доставляем</span><span data-hours-closed hidden>Доставляем</span> <b data-hours>с 12:00 до 00:00</b></p>
       </div>
     </section>
 
+    <!-- «Добавить к заказу» — появится, когда в data.js → extras будут позиции (сейчас пусто: только комбо) -->
+    <section class="extras" aria-labelledby="extras-title" data-extras hidden>
+      <h2 class="extras__title" id="extras-title" data-i18n>Добавить к заказу</h2>
+      <div class="extras__list" data-extras-list></div>
+    </section>
+
+    <section class="howto" aria-labelledby="howto-title">
+      <h2 class="howto__title" id="howto-title" data-i18n>Как это работает</h2>
+      <ol class="howto__list">
+        <li><span class="howto__icon" aria-hidden="true"><svg class="ico" focusable="false"><use href="#i-bag"/></svg><span class="howto__num">1</span></span><span data-i18n>Оформите заказ</span></li>
+        <li><span class="howto__icon" aria-hidden="true"><svg class="ico" focusable="false"><use href="#i-qr"/></svg><span class="howto__num">2</span></span><span data-i18n>Оплатите по QR</span></li>
+        <li><span class="howto__icon" aria-hidden="true"><svg class="ico" focusable="false"><use href="#i-moped"/></svg><span class="howto__num">3</span></span><span data-i18n>Следите за курьером</span></li>
+      </ol>
+    </section>
+      </div>
+    </div>
+
+    <!-- Экран «Заказы»: что заказывали с этого телефона (history.js); заказ в работе открывается, любой — повторяется -->
+    <section class="screen" data-screen="orders" aria-labelledby="orders-title" tabindex="-1" hidden>
+      <div class="screen__cap"><h1 class="screen__title" id="orders-title" data-i18n>Заказы</h1></div>
+      <div class="screen__body">
+        <div class="profile__pane" data-history></div>
+        <p class="profile__note" data-i18n>Список заказов и адреса хранятся только на этом телефоне. Сами заказы — имя, телефон, адрес, чек — хранятся у KOKORO, чтобы их доставить.</p>
+      </div>
+    </section>
+
+    <!-- Экран «Точки»: две кухни — позвонить, проложить маршрут, забрать заказ самому (карточки собирает app.js из data.js) -->
+    <section class="screen" data-screen="points" aria-labelledby="points-title" tabindex="-1" hidden>
+      <div class="screen__cap"><h1 class="screen__title" id="points-title" data-i18n>Точки</h1></div>
+      <div class="screen__body">
+        <div data-points></div>
+        <section class="block" aria-labelledby="hours-title">
+          <h2 class="block__title" id="hours-title" data-i18n>Доставка по Бишкеку</h2>
+          <p class="block__text"><span data-i18n>Привозим</span> <b data-hours>с 12:00 до 00:00</b>. <span data-i18n>Сумму доставки сайт посчитает по вашему адресу — её отдаёте курьеру при получении.</span></p>
+        </section>
+      </div>
+    </section>
+
+    <!-- Экран «Профиль»: адреса (history.js), приложение на главный экран, поделиться, связь -->
+    <section class="screen" data-screen="profile" aria-labelledby="profile-title" tabindex="-1" hidden>
+      <div class="screen__cap"><h1 class="screen__title" id="profile-title" data-i18n>Профиль</h1></div>
+      <div class="screen__body">
+        <section class="block" aria-labelledby="addresses-title">
+          <h2 class="block__title" id="addresses-title" data-i18n>Мои адреса</h2>
+          <div class="profile__pane" data-addresses></div>
+        </section>
+        <section class="block" aria-labelledby="more-title">
+          <h2 class="block__title" id="more-title" data-i18n>KOKORO</h2>
+          <ul class="rows" role="list">
+            <li data-install-row hidden>
+              <button class="row" type="button" data-install><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-install"/></svg><span class="row__text"><b data-i18n>Установить на телефон</b><small data-install-hint data-i18n>Значок KOKORO на главном экране — заказ в одно нажатие</small></span><svg class="ico row__go" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></button>
+            </li>
+            <li>
+              <button class="row" type="button" data-share><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-share"/></svg><span class="row__text"><b data-i18n>Поделиться с друзьями</b><small data-share-hint data-i18n>Отправить ссылку на KOKORO</small></span><svg class="ico row__go" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></button>
+            </li>
+            <li>
+              <a class="row" href="https://www.instagram.com/kokoro.kgz/" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-camera"/></svg><span class="row__text"><b>@kokoro.kgz</b><small data-i18n>Мы в Instagram</small></span><svg class="ico row__go" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></a>
+            </li>
+          </ul>
+        </section>
+        <!-- Удалить свои данные с этого телефона (адреса, историю заказов, имя и телефон) — так требуют правила магазинов
+             приложений о личных данных (specs/025, app-store.md). Заказ в работе и неоплаченный заказ остаются: без них не видно
+             статуса и оплаты -->
+        <section class="block" aria-labelledby="privacy-title">
+          <h2 class="block__title" id="privacy-title" data-i18n>Мои данные</h2>
+          <ul class="rows" role="list">
+            <li>
+              <button class="row row--danger" type="button" data-forget aria-expanded="false" aria-controls="forget-box"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-trash"/></svg><span class="row__text"><b data-i18n>Удалить мои данные с телефона</b><small data-i18n>Адреса, история заказов, имя и телефон</small></span></button>
+            </li>
+          </ul>
+          <div class="forget" id="forget-box" data-forget-box role="alert" hidden>
+            <p data-forget-text>Удалить адреса, историю заказов, имя и телефон с этого телефона? Уже оформленные заказы остаются у KOKORO.</p>
+            <div class="forget__row">
+              <button class="btn btn--small forget__yes" type="button" data-forget-yes data-i18n>Да, удалить</button>
+              <button class="btn btn--small btn--ghost" type="button" data-forget-no data-i18n>Отмена</button>
+            </div>
+          </div>
+        </section>
+        <p class="profile__note" data-i18n>Список заказов и адреса хранятся только на этом телефоне. Сами заказы — имя, телефон, адрес, чек — хранятся у KOKORO, чтобы их доставить.</p>
+        <!-- Оферта, политика, доставка и возврат — когда опубликуем (data.js → legal.ready; без ИП, ИНН и адреса — нет) -->
+        <p class="footer__legal profile__legal" data-legal-links hidden></p>
+      </div>
+    </section>
+    </div>
+
+    <!-- Оформление и экран заказа: на телефоне — шторка снизу, на компьютере (от 1024 px) — правая колонка (app.css) -->
+    <div class="ordersheet" data-order-sheet>
+    <div class="ordersheet__backdrop" data-order-backdrop></div>
     <section class="card order" aria-labelledby="order-title" data-order-card>
+      <div class="ordersheet__bar">
+        <span class="sheet__handle" data-sheet-handle aria-hidden="true"></span>
+        <button class="sheet__close" type="button" data-order-close aria-label="Закрыть" data-i18n-attr="aria-label">×</button>
+      </div>
+      <div class="track" data-track hidden></div>
+      <!-- Пока заказ «В пути»: где курьер и точка доставки -->
+      <div class="map track__map" data-track-map hidden role="region" aria-label="Карта: где курьер" data-i18n-attr="aria-label"></div>
       <form data-order-form novalidate>
-        <p class="step">Шаг 1 из 2 · Доставка</p>
-        <h2 class="card__title" id="order-title">Оформить заказ</h2>
+        <p class="step"><span data-i18n>Шаг 1 из 2</span> · <span data-step-mode>Доставка</span></p>
+        <h2 class="card__title" id="order-title" data-i18n>Оформление заказа</h2>
         <p class="notice" data-closed hidden></p>
         <div class="resume" data-resume hidden>
-          <p>У вас есть неоплаченный заказ <b data-resume-num></b> на <b data-resume-total></b>.</p>
+          <p><span data-i18n>У вас есть неоплаченный заказ на</span> <b data-resume-total></b>.</p>
           <div class="resume__actions">
-            <button class="btn btn--small" type="button" data-resume-go>Перейти к оплате</button>
-            <button class="btn btn--small btn--ghost" type="button" data-resume-drop>Отменить его</button>
+            <button class="btn btn--small" type="button" data-resume-go data-i18n>Перейти к оплате</button>
+            <button class="btn btn--small btn--ghost" type="button" data-resume-drop data-i18n>Отменить его</button>
           </div>
         </div>
 
-        <div class="qty">
-          <span class="qty__label">Сколько комбо</span>
+        <!-- Группы формы — карточками: что заказываем → как получить → когда → контакты → сумма (specs/025) -->
+        <div class="qty fcard">
+          <span class="qty__label" data-i18n>Сколько комбо</span>
           <div class="stepper">
-            <button type="button" data-qty="-1" aria-label="Меньше">−</button>
+            <button type="button" data-qty="-1" aria-label="Меньше" data-i18n-attr="aria-label">−</button>
             <output data-qty-value aria-live="polite">1</output>
-            <button type="button" data-qty="1" aria-label="Больше">+</button>
+            <button type="button" data-qty="1" aria-label="Больше" data-i18n-attr="aria-label">+</button>
           </div>
         </div>
 
         <div class="grid">
-          <label class="field"><span>Имя</span><input name="name" autocomplete="name" maxlength="60" required></label>
-          <label class="field"><span>Телефон с WhatsApp</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="0700 123 456" maxlength="30" required></label>
-          <label class="field field--wide"><span>Адрес</span><input name="address" autocomplete="street-address" placeholder="Улица, дом" maxlength="200" required></label>
-          <div class="grid3 field--wide">
-            <label class="field"><span>Подъезд</span><input name="entrance" maxlength="20" inputmode="numeric"></label>
-            <label class="field"><span>Этаж</span><input name="floor" maxlength="20" inputmode="numeric"></label>
-            <label class="field"><span>Кв./офис</span><input name="apartment" maxlength="20"></label>
+          <div class="fcard field--wide">
+          <!-- Способ получения (specs/018): доставка или самовывоз с кухни точки. Радиокнопки выглядят сегментом -->
+          <fieldset class="seg field--wide" data-mode>
+            <legend class="visually-hidden" data-i18n>Способ получения</legend>
+            <label class="seg__opt"><input type="radio" name="fulfillment" value="delivery" checked><span data-i18n>Доставка</span></label>
+            <label class="seg__opt"><input type="radio" name="fulfillment" value="pickup"><span data-i18n>Самовывоз</span></label>
+          </fieldset>
+          <!-- Самовывоз: откуда заберёте. Точка, которая не принимает заказы, выключена (order.js); у каждой — ссылка на 2GIS -->
+          <fieldset class="pickup field--wide" data-pickup-box hidden>
+            <legend class="pickup__lead" data-i18n>Откуда заберёте</legend>
+            <div class="pickup__item">
+              <label class="pickup__opt"><input type="radio" name="pickup_branch" value="kulieva">
+                <span class="pickup__text"><span class="pickup__name" data-i18n>Кулиева</span><span class="pickup__addr"><span data-i18n>ул. Кулиева, 40</span> · <span data-i18n>Ош базар</span></span><span class="pickup__state" data-pickup-state="kulieva"></span></span></label>
+              <a class="pickup__map" href="https://2gis.kg/bishkek/search/%D0%91%D0%B8%D1%88%D0%BA%D0%B5%D0%BA%2C%20%D1%83%D0%BB.%20%D0%9A%D1%83%D0%BB%D0%B8%D0%B5%D0%B2%D0%B0%2C%2040" target="_blank" rel="noopener" data-pickup-map="kulieva" data-i18n>Открыть в 2GIS</a>
+            </div>
+            <div class="pickup__item">
+              <label class="pickup__opt"><input type="radio" name="pickup_branch" value="kokzhar">
+                <span class="pickup__text"><span class="pickup__name" data-i18n>Кок-Жар</span><span class="pickup__addr" data-i18n>ул. Кок-Жайык, 120а</span><span class="pickup__state" data-pickup-state="kokzhar"></span></span></label>
+              <a class="pickup__map" href="https://2gis.kg/bishkek/search/%D0%91%D0%B8%D1%88%D0%BA%D0%B5%D0%BA%2C%20%D1%83%D0%BB.%20%D0%9A%D0%BE%D0%BA-%D0%96%D0%B0%D0%B9%D1%8B%D0%BA%2C%20120%D0%B0" target="_blank" rel="noopener" data-pickup-map="kokzhar" data-i18n>Открыть в 2GIS</a>
+            </div>
+            <p class="pickup__note" data-pickup-note aria-live="polite"></p>
+          </fieldset>
+          <!-- Доставка: сохранённые адреса («Мои адреса», history.js), адрес, точка, подъезд/этаж/квартира, «до двери».
+               Самовывоз — блок скрыт, его поля не обязательны и в заказ не уходят -->
+          <div class="delivery field--wide" data-delivery-box>
+          <div class="saved" data-saved-addrs hidden></div>
+          <!-- Адрес с подсказками, как в 2GIS: начните писать — выберите свой дом из списка -->
+          <div class="field field--wide addr" data-addr>
+            <label class="addr__label" for="order-address" data-i18n>Адрес</label>
+            <input id="order-address" name="address" autocomplete="off" placeholder="Начните писать: улица, дом" data-i18n-attr="placeholder" maxlength="200" required
+              role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="order-address-list">
+            <div class="addr__pop" data-addr-pop hidden>
+              <ul class="addr__list" id="order-address-list" role="listbox" aria-label="Подсказки адреса" data-i18n-attr="aria-label" data-addr-list hidden></ul>
+              <p class="addr__credit"><span data-i18n>Адреса —</span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" tabindex="-1">© OpenStreetMap</a></p>
+            </div>
+            <p class="addr__hint" data-addr-hint aria-live="polite"></p>
+            <p class="visually-hidden" data-addr-status role="status"></p>
           </div>
-          <label class="field"><span>Когда привезти</span>
-            <select name="when" data-when>
-              <option value="asap">Как можно скорее</option>
-              <option value="time">Ко времени</option>
+          <!-- Точка доставки на карте — по желанию: курьер найдёт быстрее и выстроит маршрут -->
+          <div class="point field--wide" data-point>
+            <div class="point__row">
+              <button class="btn btn--small btn--ghost" type="button" data-point-open aria-expanded="false">📍 Отметить точку доставки на карте</button>
+              <span class="point__state" data-point-state aria-live="polite"></span>
+            </div>
+            <div class="point__box" data-point-box hidden>
+              <div class="map point__map" data-point-map role="region" aria-label="Карта: нажмите, где вас встретить, или передвиньте карту и нажмите «Точка — в центре карты»" data-i18n-attr="aria-label"></div>
+              <div class="point__row">
+                <button class="btn btn--small" type="button" data-point-here data-i18n>Я сейчас здесь</button>
+                <button class="btn btn--small btn--ghost" type="button" data-point-center data-i18n>Точка — в центре карты</button>
+                <button class="linkbtn" type="button" data-point-clear hidden data-i18n>Убрать точку</button>
+              </div>
+              <p class="point__hint" data-point-hint aria-live="polite">Нажмите на карте место, где вас встретить. Так курьер найдёт вас быстрее.</p>
+            </div>
+          </div>
+          <div class="grid3 field--wide">
+            <label class="field"><span data-i18n>Подъезд</span><input name="entrance" maxlength="20" inputmode="numeric"></label>
+            <label class="field"><span data-i18n>Этаж</span><input name="floor" maxlength="20" inputmode="numeric"></label>
+            <label class="field"><span data-i18n>Кв./офис</span><input name="apartment" maxlength="20"></label>
+          </div>
+          <!-- «До двери» +50 сом курьеру — только квартирам: без квартиры выключено (order.js); без отметки — до подъезда -->
+          <label class="check door" data-door>
+            <input type="checkbox" name="door" disabled>
+            <span class="check__text"><b data-door-title>До двери +50 сом</b><small data-door-hint>Только для квартир — укажите квартиру</small></span>
+          </label>
+          </div>
+          </div>
+          <div class="fcard fcard--cols field--wide">
+          <!-- Когда: «Побыстрее» или «Ко времени» — кнопки-сегмент управляют списком when (его читают проверки и форма) -->
+          <div class="field field--wide when">
+            <span id="when-label" data-i18n>Когда привезти</span>
+            <div class="seg seg--when" role="group" aria-labelledby="when-label">
+              <button class="seg__btn" type="button" data-when-pick="asap" aria-pressed="true"><span data-i18n>Побыстрее</span><small class="seg__sub" data-when-wait></small></button>
+              <button class="seg__btn" type="button" data-when-pick="time" aria-pressed="false"><span data-i18n>Ко времени</span><small class="seg__sub" data-i18n>сегодня или завтра</small></button>
+            </div>
+            <select class="visually-hidden" name="when" data-when tabindex="-1" aria-hidden="true">
+              <option value="asap" data-i18n>Как можно скорее</option>
+              <option value="time" data-i18n>Ко времени</option>
+            </select>
+          </div>
+          <!-- «Ко времени» — сегодня или завтра (анкета владельца): завтра — любое время с 12:00 до 00:00, сегодня — не раньше чем через 30 минут -->
+          <label class="field" data-day-field hidden><span data-i18n>День</span>
+            <select name="day">
+              <option value="today" data-i18n>Сегодня</option>
+              <option value="tomorrow" data-i18n>Завтра</option>
             </select>
           </label>
-          <label class="field" data-time-field hidden><span>Время</span><input name="time" type="time"></label>
-          <label class="field field--wide"><span>Комментарий <i>(по желанию)</i></span><textarea name="comment" rows="2" maxlength="500" placeholder="Домофон, ориентир, пожелания"></textarea></label>
+          <label class="field" data-time-field hidden><span><span data-i18n>Время</span> <i>(<span data-hours>с 12:00 до 00:00</span>)</i></span><input name="time" type="time" step="300"></label>
+          </div>
+          <div class="fcard fcard--cols field--wide">
+          <label class="field"><span data-i18n>Имя</span><input name="name" autocomplete="name" maxlength="60" required></label>
+          <label class="field"><span data-i18n>Телефон с WhatsApp</span><input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="0700 123 456" maxlength="30" required></label>
+          <label class="field field--wide"><span><span data-i18n>Комментарий</span> <i data-i18n>(по желанию)</i></span><textarea name="comment" rows="2" maxlength="500" placeholder="Домофон, ориентир, пожелания" data-i18n-attr="placeholder"></textarea></label>
           <label class="visually-hidden" aria-hidden="true">Не заполняйте<input name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
         </div>
 
-        <div class="sum">
+        <!-- Детали: комбо, доставка, «до двери», итого; отдельно — что сейчас по QR и что курьеру (specs/018). Самовывоз — без курьерских строк -->
+        <div class="sum fcard">
           <div><span>Комбо × <b data-sum-qty>1</b></span><span data-sum-items>1 400 сом</span></div>
-          <div><span>Доставка</span><span data-sum-delivery>уточнит менеджер</span></div>
-          <div class="sum__total"><span>Итого</span><span data-sum-total>1 400 сом</span></div>
+          <div data-sum-delivery-row><span data-i18n>Доставка</span><span data-sum-delivery>курьеру при получении</span></div>
+          <div data-sum-door hidden><span data-i18n>До двери</span><span data-sum-door-value>50 сом курьеру</span></div>
+          <div class="sum__all" data-sum-all-row><span data-i18n>Итого</span><span data-sum-all>1 400 сом</span></div>
+          <!-- Два разных платежа (13.11.2026, владелец: «чтобы было очень хорошо видно, что курьеру отдельно и за комбо отдельно»):
+               1 — комбо по QR сейчас, 2 — доставка курьеру при получении -->
+          <div class="sum__pay">
+            <div class="sum__total"><span class="sum__label"><b class="sum__step" aria-hidden="true">1</b><span><span data-i18n>К оплате по QR</span><small data-sum-qr-what>за комбо — сейчас</small></span></span><span data-sum-total>1 400 сом</span></div>
+            <div class="sum__courier" data-sum-courier hidden><span class="sum__label"><b class="sum__step" aria-hidden="true">2</b><span><span data-i18n>Курьеру при получении</span><small data-i18n>за доставку</small></span></span><span data-sum-courier-value></span></div>
+            <p class="sum__note" data-sum-note hidden data-i18n>Это два разных платежа: по QR — только комбо, доставку отдадите курьеру.</p>
+          </div>
         </div>
+        <div class="tariff" data-tariff></div>
 
-        <p class="error" data-form-error role="alert"></p>
-        <button class="btn btn--tray btn--block order__submit" type="submit" data-submit>Перейти к оплате</button>
-        <p class="order__hint">Оплата — по QR-коду на следующем шаге.</p>
+        <!-- Согласие на обработку данных — только когда опубликованы юридические тексты (data.js → legal.ready); тогда обязательно -->
+        <label class="check consent" data-consent hidden>
+          <input type="checkbox" name="consent">
+          <span class="check__text"><span data-i18n>Согласен на обработку персональных данных</span> · <a href="/privacy" target="_blank" rel="noopener" data-consent-link data-i18n>политика конфиденциальности</a></span>
+        </label>
+
+        <!-- Две точки (specs/013): приём остановила точка, которая возит по адресу покупателя (почему кнопка неактивна), или точка
+             не определилась, а принимает одна — просим отметить дом на карте. Отказ при оформлении: плашку прокручиваем к середине
+             экрана и ставим на неё фокус (tabindex), экранный диктор читает её сразу (alert) -->
+        <!-- Кнопка держится у нижнего края шторки, пока листают форму (order.css → .order__bar). Плашка «точка не принимает»
+             и ошибка формы — в той же полосе, прямо над кнопкой: причина всегда видна рядом с неактивной кнопкой -->
+        <div class="order__bar">
+          <p class="notice notice--branch" data-branch-closed role="alert" tabindex="-1" hidden></p>
+          <p class="error" id="order-error" data-form-error role="alert"></p>
+          <button class="btn btn--tray btn--block order__submit" type="submit" data-submit>Перейти к оплате</button>
+        </div>
+        <p class="order__hint"><span class="order__wait" data-wait-hint>Сейчас привозим примерно за 1,5 часа.</span> <span data-i18n>Оплата — по QR-коду на следующем шаге.</span></p>
       </form>
 
       <div class="paystep" data-pay hidden tabindex="-1">
-        <p class="step">Шаг 2 из 2 · Оплата</p>
-        <h2 class="card__title">Заказ <span data-pay-num></span></h2>
-        <p class="paystep__sum">К оплате: <b data-pay-total></b></p>
+        <p class="step" data-i18n>Шаг 2 из 2 · Оплата</p>
+        <h2 class="card__title" data-i18n>Оплата заказа</h2>
+        <p class="paystep__sum"><span data-i18n>К оплате:</span> <b data-pay-total></b></p>
+        <!-- Два платежа крупно: по QR — только комбо, доставку — курьеру (13.11.2026) -->
+        <div class="split" data-pay-split hidden>
+          <div class="split__card split__card--qr">
+            <p class="split__head"><b class="split__step" aria-hidden="true">1</b><span data-i18n>Сейчас по QR</span></p>
+            <p class="split__sum" data-split-qr></p>
+            <p class="split__what" data-split-qr-what></p>
+          </div>
+          <div class="split__card split__card--courier" data-split-courier-card>
+            <p class="split__head"><b class="split__step" aria-hidden="true">2</b><span data-i18n>Курьеру при получении</span></p>
+            <p class="split__sum" data-split-courier></p>
+            <p class="split__what"><span data-i18n>за доставку</span><span class="split__detail" data-split-courier-detail></span></p>
+          </div>
+          <p class="split__note" data-split-note data-i18n>По QR переводите только комбо. Доставку отдадите курьеру, когда он привезёт заказ.</p>
+        </div>
+        <p class="paystep__num" data-i18n>Номер заказа появится, как только вы отправите чек.</p>
+        <!-- Ночью и утром: заказ привезём после 12:00 — до оплаты, а не после (оформил в 23:50, платит в 00:05) -->
+        <p class="paystep__hours" data-pay-hours aria-live="polite" hidden></p>
+        <div class="tariff" data-tariff></div>
 
         <figure class="qr" data-qr hidden>
-          <img data-qr-img alt="QR-код для оплаты заказа">
-          <figcaption>С телефона: нажмите на QR-код и удерживайте, чтобы сохранить, затем в приложении банка выберите «Сканировать из галереи».</figcaption>
+          <img data-qr-img alt="QR-код для оплаты заказа" data-i18n-attr="alt">
+          <!-- С того же телефона QR не отсканировать: сохраняем картинку и копируем сумму одним нажатием (app.js, specs/025) -->
+          <div class="qr__actions">
+            <button class="btn btn--small btn--ghost" type="button" data-qr-save data-i18n>Сохранить QR</button>
+            <button class="btn btn--small btn--ghost" type="button" data-copy-sum data-i18n>Скопировать сумму</button>
+          </div>
+          <figcaption data-i18n>С телефона: нажмите на QR-код и удерживайте, чтобы сохранить, затем в приложении банка выберите «Сканировать из галереи».</figcaption>
         </figure>
-        <p class="notice" data-qr-missing hidden>QR-код для оплаты скоро появится. Напишите нам в WhatsApp — пришлём реквизиты.</p>
+        <p class="notice" data-qr-missing hidden data-i18n>QR-код для оплаты скоро появится. Напишите нам в WhatsApp — пришлём реквизиты.</p>
         <p class="paystep__note" data-pay-note></p>
 
         <label class="receipt" data-receipt-drop>
           <input class="visually-hidden" type="file" accept="image/*,application/pdf" data-receipt>
           <span class="receipt__preview" data-receipt-preview hidden></span>
-          <span class="receipt__hint" data-receipt-hint><b>Прикрепить чек</b><br>скриншот или фото оплаты, до 10 МБ</span>
+          <span class="receipt__hint" data-receipt-hint><b>Прикрепить чек</b><br>скриншот или фото оплаты, до 5 МБ</span>
         </label>
 
-        <p class="error" data-pay-error role="alert"></p>
-        <button class="btn btn--tray btn--block order__submit" type="button" data-send-receipt disabled>Отправить чек</button>
-        <button class="linkbtn" type="button" data-cancel>Отменить заказ</button>
+        <!-- Ошибка оплаты — в липкой полосе прямо над «Отправить чек»: так её не закрывает сама полоса -->
+        <div class="order__bar">
+          <p class="error" data-pay-error role="alert"></p>
+          <button class="btn btn--tray btn--block order__submit" type="button" data-send-receipt disabled>Отправить чек</button>
+        </div>
+        <button class="linkbtn" type="button" data-cancel data-i18n>Отменить заказ</button>
       </div>
 
+      <!-- Экран заказа (specs/018): номер, обратный отсчёт до обещанного времени, шкала ([data-track] выше), самовывоз, чат,
+           детали, оценка после доставки. Тексты и пометки прежнего «Заказ принят» — на месте (check-track) -->
       <div class="done" data-done hidden tabindex="-1">
-        <p class="done__label">Оплата получена · заказ принят</p>
+        <div class="done__top">
+          <button class="linkbtn done__back" type="button" data-order-back data-i18n>← Назад</button>
+        </div>
+        <p class="done__label" data-i18n>Чек получен · заказ принят</p>
         <p class="done__num" data-done-num></p>
-        <p>Сумма: <b data-done-total></b></p>
-        <p class="done__text">Менеджер проверит оплату и напишет вам в WhatsApp на номер <b data-done-phone></b>, чтобы подтвердить адрес и время доставки.</p>
-        <button class="btn btn--ghost btn--block" type="button" data-again>Сделать ещё заказ</button>
+        <!-- Кольцо: сколько осталось до обещанного времени (order_extra.promise_at), раз в 30 секунд; «ко времени» — сам час -->
+        <div class="ring" data-eta-ring hidden role="img">
+          <svg class="ring__svg" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+            <circle class="ring__track" cx="60" cy="60" r="52"/>
+            <circle class="ring__bar" cx="60" cy="60" r="52" pathLength="100" data-eta-ring-bar/>
+          </svg>
+          <p class="ring__center" aria-hidden="true"><b class="ring__value" data-eta-ring-value></b><span class="ring__unit" data-eta-ring-unit></span></p>
+        </div>
+        <p class="done__sum"><span data-i18n>Сумма:</span> <b data-done-total></b></p>
+        <!-- Два платежа крупно: комбо уже оплачено по QR, доставку — курьеру при получении (13.11.2026) -->
+        <div class="split" data-done-split hidden>
+          <div class="split__card split__card--qr">
+            <p class="split__head"><b class="split__step" aria-hidden="true">✓</b><span data-i18n>Оплачено по QR</span></p>
+            <p class="split__sum" data-split-qr></p>
+            <p class="split__what" data-split-qr-what></p>
+          </div>
+          <div class="split__card split__card--courier" data-split-courier-card>
+            <p class="split__head"><b class="split__step" aria-hidden="true">2</b><span data-i18n>Курьеру при получении</span></p>
+            <p class="split__sum" data-split-courier></p>
+            <p class="split__what"><span data-i18n>за доставку</span><span class="split__detail" data-split-courier-detail></span></p>
+          </div>
+        </div>
+        <p class="done__time" data-done-time></p>
+        <div class="pickupinfo" data-pickup-info hidden></div>
+        <p class="done__text"><span data-done-reach><span data-done-contact>Менеджер свяжется с вами в течение 20 минут — напишет в WhatsApp на номер</span> <b data-done-phone></b><span data-done-reach-tail>, чтобы подтвердить адрес и время доставки. </span></span><span data-done-courier><span data-i18n>Доставку оплатите курьеру при получении</span> — <span data-done-delivery>сумму назовёт менеджер</span>.</span><span data-done-where hidden></span></p>
+        <div class="done__actions">
+          <button class="btn btn--tray done__chat" type="button" data-chat-open hidden><span data-chat-open-label>💬 Написать в чат</span><span class="chat-dot" data-chat-badge hidden></span></button>
+          <a class="btn btn--ghost done__wa" href="https://wa.me/996707331103" target="_blank" rel="noopener" data-done-wa><svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3a2.9 2.9 0 0 0-.9 2.2c0 1.3.9 2.5 1.1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg><span data-i18n>Написать в WhatsApp</span></a>
+        </div>
+        <details class="details" data-details hidden>
+          <summary data-i18n>Детали заказа</summary>
+          <div class="details__body" data-details-body></div>
+        </details>
+        <p class="done__cancel" data-cancel-hint hidden data-i18n>Отменить или изменить заказ — напишите в чат</p>
+        <!-- Оценка после «Доставлен» / «Выдан» (order_rate): звёзды рисует order.js в [data-stars] (радиогруппа, стрелки клавиатуры) -->
+        <form class="rate" data-rate hidden novalidate>
+          <h2 class="rate__title" id="rate-title" data-i18n>Как вам заказ?</h2>
+          <div class="stars" data-stars="rating" role="radiogroup" aria-labelledby="rate-title"></div>
+          <div class="rate__courier" data-rate-courier hidden>
+            <p class="rate__label" id="rate-courier-title" data-i18n>Курьер</p>
+            <div class="stars" data-stars="courier_rating" role="radiogroup" aria-labelledby="rate-courier-title"></div>
+          </div>
+          <label class="field"><span data-i18n>Пару слов (по желанию)</span><textarea name="rating_comment" rows="2" maxlength="500"></textarea></label>
+          <p class="error" data-rate-error role="alert"></p>
+          <button class="btn btn--tray btn--block" type="submit" data-rate-send data-i18n>Отправить</button>
+        </form>
+        <p class="rate__thanks" data-rate-thanks hidden role="status" data-i18n>Спасибо за оценку!</p>
+        <button class="btn btn--ghost btn--block" type="button" data-again data-i18n>Сделать ещё заказ</button>
       </div>
     </section>
+    </div>
   </main>
 
+  <!-- Кнопка корзины над панелью вкладок (экран «Меню»): что в корзине и «Оформить» (app.js открывает шторку оформления) -->
+  <div class="cartbar" data-cartbar>
+    <button class="cartbar__btn" type="button" data-checkout-open aria-haspopup="dialog">
+      <span class="cartbar__qty" data-cartbar-qty>Комбо × 1</span>
+      <span class="cartbar__total" data-cartbar-total>1 400 сом</span>
+      <span class="cartbar__go">Оформить</span>
+    </button>
+  </div>
+
+  <!-- Шторка «Комбо KOKORO»: фото крупно, состав, счётчик (app.js). Верхняя полоса не прокручивается — за неё тянут вниз -->
+  <div class="sheet" data-sheet="product" hidden>
+    <div class="sheet__backdrop" data-sheet-close></div>
+    <section class="sheet__panel product-sheet" role="dialog" aria-modal="true" aria-labelledby="product-title" tabindex="-1">
+      <div class="sheet__top">
+        <span class="sheet__handle" data-sheet-handle aria-hidden="true"></span>
+        <button class="sheet__close" type="button" data-sheet-close aria-label="Закрыть" data-i18n-attr="aria-label">×</button>
+      </div>
+      <div class="sheet__body">
+        <figure class="product-sheet__media">
+          <img class="product-sheet__photo" src="assets/img/hero-poster.jpg" width="540" height="810" alt="Хрустящие крылья KOKORO в фирменном ведре" data-i18n-attr="alt" loading="lazy">
+          <p class="product-sheet__halal" data-i18n>Халал</p>
+        </figure>
+        <h2 class="product-sheet__title" id="product-title" data-i18n>Комбо KOKORO</h2>
+        <p class="product-sheet__lead" data-i18n>Подаём горячим в фирменном ведре</p>
+        <ul class="product-sheet__list" data-product-list></ul>
+        <div class="product-sheet__buy">
+          <div class="stepper">
+            <button type="button" data-qty="-1" aria-label="Меньше" data-i18n-attr="aria-label">−</button>
+            <output data-qty-value aria-live="polite">1</output>
+            <button type="button" data-qty="1" aria-label="Больше" data-i18n-attr="aria-label">+</button>
+          </div>
+          <button class="btn btn--tray product-sheet__add" type="button" data-product-add>Добавить · 1 400 сом</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Короткое сообщение внизу экрана («Ссылка скопирована») — app.js -->
+  <p class="toast" data-toast role="status" aria-live="polite" hidden></p>
+
+  <!-- Подвал — только на компьютере: на телефоне контакты и ссылки живут во вкладках «Точки» и «Профиль» -->
   <footer class="footer">
     <div class="wrap footer__inner">
       <span class="footer__logo logo-mask" role="img" aria-label="KOKORO"></span>
-      <p>Вопросы: <a href="tel:+996707581771">+996 707 581 771</a> · <a href="https://www.instagram.com/kokoro.kgz/" target="_blank" rel="noopener">@kokoro.kgz</a></p>
-      <p>Халал. Бишкек.</p>
+      <p><span data-i18n>Вопросы:</span> Кулиева — <a href="tel:+996501383101">+996 501 383 101</a>, Кок-Жар — <a href="tel:+996707331103">+996 707 331 103</a> · <a href="https://www.instagram.com/kokoro.kgz/" target="_blank" rel="noopener">@kokoro.kgz</a></p>
+      <p><span data-i18n>Халал. Бишкек. Доставка</span> <span data-hours>с 12:00 до 00:00</span>.</p>
+      <!-- Оферта, политика, доставка и возврат — когда опубликуем (data.js → legal.ready; без ИП, ИНН и адреса — нет) -->
+      <p class="footer__legal" data-legal-links hidden></p>
     </div>
   </footer>
 
   <script type="module" src="assets/js/order.js"></script>
+  <script type="module" src="assets/js/app.js"></script>
+  <!-- Анимации (GSAP 3.15, локальные файлы — CSP): украшение, не условие работы. Не загрузились — всё видно и работает -->
+  <script defer src="assets/vendor/gsap/gsap.min.js"></script>
+  <script defer src="assets/vendor/gsap/scrolltrigger.min.js"></script>
+  <script defer src="assets/vendor/gsap/flip.min.js"></script>
+  <script defer src="assets/vendor/gsap/draggable.min.js"></script>
+  <script defer src="assets/vendor/gsap/motionpathplugin.min.js"></script>
+  <script defer src="assets/vendor/gsap/customease.min.js"></script>
+  <script defer src="assets/vendor/gsap/splittext.min.js"></script>
+  <script type="module" src="assets/js/motion.js"></script>
 </body>
 </html>

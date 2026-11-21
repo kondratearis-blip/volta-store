@@ -1,0 +1,522 @@
+/* Оболочка приложения KOKORO (specs/025-app-redesign, «немного в стиле Apple»): матовая шапка, парящая панель вкладок,
+   экраны «Меню», «Заказы», «Точки», «Профиль» с крупными заголовками, кнопка корзины, шторки и место оформления на экране
+   (шторка до 1023 px, правая колонка от 1024 px). Токены и «кирпичи» — theme.css; всё внутри карточки заказа
+   [data-order-card] — order.css. Что двигает GSAP (motion.js), не получает CSS-transition на transform */
+
+/* ---------- Основа ---------- */
+:root {
+  --tabbar-bottom: max(var(--tabbar-gap), calc(var(--safe-bottom) - 8px)); --dock: calc(var(--tabbar-bottom) + var(--tabbar-h));
+  /* Высота «горячей» оранжевой зоны под шапкой: в ней — заголовок экрана белым. Плашка заказа и «нет интернета» её удлиняют */
+  --hot: calc(var(--appbar-h) + var(--safe-top) + 84px);
+}
+html.has-active-order { --hot: calc(var(--appbar-h) + var(--safe-top) + 146px); }
+html.is-offline { --hot: calc(var(--appbar-h) + var(--safe-top) + 124px); }
+html.has-active-order.is-offline { --hot: calc(var(--appbar-h) + var(--safe-top) + 186px); }
+/* Фон приложения: сверху — цвет фирменного ведра, ниже он тает в тёплый кремовый. Уезжает вместе со страницей. Задан корню
+   страницы, а не body: так он закрашивает и место под полосу прокрутки на компьютере */
+html {
+  scrollbar-gutter: stable; scroll-padding-top: calc(var(--appbar-h) + var(--safe-top) + 12px);
+  background:
+    linear-gradient(to bottom, var(--brand) 0, var(--brand) var(--hot), #FA8A45 calc(var(--hot) + 80px), #FFBF8A calc(var(--hot) + 190px), #FFE2C8 calc(var(--hot) + 310px), rgba(247, 243, 239, 0) calc(var(--hot) + 440px)) repeat-x,
+    var(--bg);
+}
+html.sheet-open { overflow: hidden; }
+body { background: none; }
+/* Два мягких «огонька» под карточками медленно плывут (motion.js) — фон живой, но не отвлекает; без анимаций — стоят.
+   Слой −1: над фоном страницы, под всем содержимым */
+.ambient { position: absolute; top: 0; left: 0; right: 0; z-index: -1; height: calc(var(--hot) + 560px); overflow: hidden; pointer-events: none; }
+/* Мягкие пятна — радиальным градиентом, без filter: blur и маски: так же выглядят, но слабый телефон не пересчитывает размытие */
+.ambient__glow { position: absolute; border-radius: 50%; }
+.ambient__glow--sun { right: -160px; top: calc(var(--hot) - 80px); width: 440px; height: 440px; background: radial-gradient(closest-side, rgba(255, 200, 0, .42), rgba(255, 200, 0, 0)); }
+.ambient__glow--ember { left: -190px; top: calc(var(--hot) + 40px); width: 480px; height: 480px; background: radial-gradient(closest-side, rgba(255, 138, 46, .32), rgba(255, 138, 46, 0)); }
+/* Установленное приложение (значок на экране, Play Маркет, App Store): страница не «оттягивается» и не обновляется жестом */
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+  html { overscroll-behavior-y: none; }
+}
+/* Приложение из магазина (класс ставит boot.js: Capacitor на iPhone, TWA на Android) — то же */
+html.in-app { overscroll-behavior-y: none; }
+body { min-height: 100svh; overflow-x: clip; }
+/* Низ экрана под парящими панелями мягко растворяется в фон — карточки не «упираются» в панель вкладок */
+body::after {
+  content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: calc(var(--z-tabbar) - 1); height: calc(var(--dock) + 36px); pointer-events: none;
+  background: linear-gradient(to top, var(--bg) 22%, rgba(247, 243, 239, 0));
+}
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+/* Как в приложении: долгое нажатие на фото, логотип и значки не открывает меню «Сохранить изображение». QR-код оплаты и чек —
+   не трогаем: QR сохраняют именно долгим нажатием */
+.combo__zoom img, .product-sheet__photo, .logo-mask, .ico, .tabbar, .appbar { -webkit-touch-callout: none; }
+.skiplink {
+  position: fixed; left: 12px; top: calc(var(--safe-top) + 8px); z-index: 100; padding: 10px 14px; border-radius: 12px;
+  background: var(--ink); color: #fff; font-weight: 600; text-decoration: none; transform: translateY(-200%);
+}
+.skiplink:focus { transform: none; }
+
+/* ---------- Шапка: логотип, способ получения и адрес, язык — на оранжевом (как ведро: белый знак на оранжевом). Сплошная:
+   размытие оранжевого по оранжевому не видно, а на слабом телефоне пересчитывается при каждой прокрутке ---------- */
+.topbar { background: var(--brand); color: #fff; }
+.appbar { position: sticky; top: 0; z-index: var(--z-appbar); padding-top: var(--safe-top); }
+.appbar .topbar__inner { display: flex; align-items: center; justify-content: flex-start; gap: 8px; height: var(--appbar-h); }
+.appbar .topbar__logo { flex: none; display: flex; align-items: center; min-height: 44px; color: #fff; transform-origin: 0 50%; }
+.appbar :focus-visible { outline-color: #fff; box-shadow: 0 0 0 5px rgba(0, 0, 0, .45); }
+.appbar .topbar__logo .logo-mask { width: 62px; }
+.appbar .topbar__phone { display: none; }
+
+.modechip {
+  position: relative; flex: 1 1 auto; min-width: 0; min-height: 44px;
+  display: flex; flex-direction: column; justify-content: center; gap: 0;
+  padding: 4px 32px 4px 12px; border: 0; border-radius: 12px;
+  background: rgba(255, 255, 255, .96); color: var(--ink); text-align: left; cursor: pointer;
+}
+.modechip::after {
+  content: ''; position: absolute; right: 14px; top: 50%; width: 7px; height: 7px;
+  border: solid var(--ink-2); border-width: 0 2px 2px 0; transform: translateY(-70%) rotate(45deg);
+}
+.modechip__mode { font-size: 11px; font-weight: 400; line-height: 1.25; color: var(--ink-2); white-space: nowrap; }
+.modechip__addr { font-size: 15px; font-weight: 600; line-height: 1.25; letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Прокрутили меню — шапка сжимается: способ и адрес в одну строку (motion.js) */
+.appbar.is-compact .modechip { flex-direction: row; align-items: center; justify-content: flex-start; gap: 6px; }
+.appbar.is-compact .modechip__mode { font-size: 13px; flex: none; }
+.appbar.is-compact .modechip__mode::after { content: ' ·'; }
+
+/* Язык — переключатель из двух половинок: тёмная дорожка на оранжевом (белый текст на ней — 5:1), выбранная — белой плашкой */
+.langswitch { flex: none; display: flex; padding: 0; border-radius: 12px; background: rgba(0, 0, 0, .2); }
+.langswitch button {
+  min-width: 44px; min-height: 44px; padding: 0 6px; border: 0; border-radius: 10px;
+  background: none; color: #fff; font: 600 13px/1 var(--text); cursor: pointer;
+}
+/* Цель нажатия — 44 px; белая плашка выбранного языка нарисована внутри с отступом 2 px от дорожки */
+.langswitch button[aria-pressed="true"] { background: #fff content-box; color: var(--ink); padding: 2px; border-radius: 12px; background-clip: content-box; box-shadow: none; }
+.langswitch button:focus-visible { outline-offset: -3px; }
+@media (hover: hover) {
+  .modechip:hover { background: #fff; }
+  .langswitch button:not([aria-pressed="true"]):hover { background: rgba(0, 0, 0, .12); }
+}
+
+/* ---------- Панель вкладок: на телефоне — парящая «капсула» внизу, под большим пальцем ---------- */
+.tabbar {
+  position: fixed; left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); bottom: var(--tabbar-bottom); z-index: var(--z-tabbar);
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 480px; height: var(--tabbar-h); margin-inline: auto; padding: 4px; border-radius: 999px;
+  background: var(--glass-solid); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .08), var(--shadow-float);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .tabbar { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+}
+.tabbar__tab {
+  grid-row: 1; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-width: 0; padding: 4px 2px 3px; border: 0; border-radius: 999px; background: none; color: var(--ink-2);
+  font: 500 11px/1.15 var(--text); letter-spacing: 0; cursor: pointer;
+}
+.tabbar__tab[data-tab="menu"] { grid-column: 1; }
+.tabbar__tab[data-tab="orders"] { grid-column: 2; }
+.tabbar__tab[data-tab="points"] { grid-column: 3; }
+.tabbar__tab[data-tab="profile"] { grid-column: 4; }
+.tabbar__tab > span[data-i18n] { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tabbar__tab[aria-current="page"] { color: var(--brand-press); font-weight: 600; }
+.tabbar__tab:focus-visible { outline-offset: -3px; border-radius: 999px; }
+/* «Пузырёк» под выбранной вкладкой переезжает (Flip, motion.js) */
+.tabbar__thumb { grid-row: 1; grid-column: 1; border-radius: 999px; background: rgba(120, 120, 128, .14); }
+.tabbar[data-active="orders"] .tabbar__thumb { grid-column: 2; }
+.tabbar[data-active="points"] .tabbar__thumb { grid-column: 3; }
+.tabbar[data-active="profile"] .tabbar__thumb { grid-column: 4; }
+/* Заказ в работе — точка на «Заказах» */
+.tabbar__dot { position: absolute; top: 7px; left: calc(50% + 9px); width: 9px; height: 9px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 2px #fff; }
+
+/* ---------- «Нет интернета» и плашка активного заказа: под шапкой, на любой вкладке ---------- */
+.netbar {
+  position: sticky; top: calc(var(--appbar-h) + var(--safe-top)); z-index: var(--z-active); margin: 0;
+  display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 6px var(--gutter);
+  background: var(--ink); color: #fff; font-size: 14px; font-weight: 500;
+}
+.netbar .ico { width: 18px; height: 18px; color: var(--sun); }
+/* Заказ в работе — тёмная «капсула» с живой точкой: видна на любом экране, ведёт на экран заказа */
+.activebar {
+  position: sticky; top: calc(var(--appbar-h) + var(--safe-top) + 8px); z-index: var(--z-active);
+  display: flex; align-items: center; gap: 10px; width: calc(100% - 2 * var(--gutter)); max-width: calc(1180px - 2 * var(--gutter)); min-height: 52px;
+  margin: 8px auto 0; padding: 8px 10px 8px 18px;
+  border: 0; border-radius: 999px; background: var(--ink); color: #fff; box-shadow: var(--shadow-float);
+  font: 500 15px/1.3 var(--text); letter-spacing: -0.01em; text-align: left; cursor: pointer;
+}
+.is-offline .activebar { top: calc(var(--appbar-h) + var(--safe-top) + 48px); }
+.activebar__dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--brand); animation: kk-pulse 1.8s ease-out infinite; }
+.activebar__text { flex: 1; min-width: 0; }
+.activebar__go { flex: none; display: grid; place-items: center; width: 32px; height: 32px; padding-bottom: 2px; border-radius: 50%; background: rgba(255, 255, 255, .16); font-size: 20px; line-height: 1; }
+.activebar:focus-visible { outline-color: #fff; outline-offset: -5px; box-shadow: var(--shadow-float); }
+@keyframes kk-pulse { from { box-shadow: 0 0 0 0 rgba(236, 75, 4, .7); } to { box-shadow: 0 0 0 10px rgba(236, 75, 4, 0); } }
+
+/* ---------- Страница и экраны: крупный белый заголовок на оранжевом, под ним — карточки ---------- */
+/* Своего слоя у страницы нет (не ставить ей z-index): шторка оформления внутри неё должна ложиться поверх шапки и вкладок */
+.page.app { display: block; padding-block: 0; }
+.app__menu { display: block; min-width: 0; }
+.screen { position: relative; }
+.screen:focus { outline: none; }
+.screen__cap { display: flex; align-items: center; min-height: 72px; padding: 6px 0 12px; }
+.screen__cap > * { flex: 1 1 auto; min-width: 0; }
+.screen__title { font: 700 34px/1.12 var(--text); letter-spacing: -0.028em; padding: 0 2px; color: #fff; }
+.screen__body { position: relative; display: grid; gap: 12px; align-content: start; min-width: 0; padding-bottom: calc(var(--dock) + 28px); }
+/* «Меню»: над панелью вкладок ещё кнопка корзины */
+.screen--menu .screen__body { padding-bottom: calc(var(--dock) + var(--cartbar-h) + 36px); }
+
+/* ---------- Главная: «Доставка / Самовывоз», сколько ждать, «Как в прошлый раз» ---------- */
+/* Переключатель из двух половинок: тёмная дорожка на оранжевом (белый текст на ней — 5:1), выбранная — белой плашкой */
+.homeseg { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 2px; border-radius: 14px; background: rgba(0, 0, 0, .2); }
+.homeseg__thumb { grid-row: 1; grid-column: 1; border-radius: 12px; background: #fff; box-shadow: 0 3px 8px rgba(0, 0, 0, .14), 0 1px 1px rgba(0, 0, 0, .05); }
+.homeseg[data-active="pickup"] .homeseg__thumb { grid-column: 2; }
+.homeseg__btn {
+  grid-row: 1; position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; min-height: 46px; padding: 0 10px;
+  border: 0; border-radius: 12px; background: none; color: #fff; font: 600 15px/1.15 var(--text); letter-spacing: -0.01em; cursor: pointer;
+}
+.homeseg__btn[data-home-mode-set="delivery"] { grid-column: 1; }
+.homeseg__btn[data-home-mode-set="pickup"] { grid-column: 2; }
+.homeseg__btn .ico { width: 20px; height: 20px; }
+.homeseg__btn[aria-pressed="true"] { color: var(--ink); }
+.homeseg__btn[aria-pressed="true"] .ico { color: var(--brand); }
+.homeseg__btn:disabled { cursor: default; opacity: .7; }
+.homeseg__btn:focus-visible { outline-color: #fff; outline-offset: -3px; box-shadow: none; }
+/* На белой плашке выбранной половины белое кольцо не видно — тёмное */
+.homeseg__btn[aria-pressed="true"]:focus-visible, .langswitch button[aria-pressed="true"]:focus-visible { outline-color: var(--ink); }
+
+/* Сколько ждать — светлая плашка поверх фона: читается и на оранжевом, и на кремовом (без размытия — дёшево для слабых телефонов) */
+.eta { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 10px 14px; border-radius: 16px; background: rgba(255, 255, 255, .92); font-size: 14px; line-height: 1.4; color: var(--ink); }
+.eta .ico { width: 18px; height: 18px; margin-top: 1px; color: var(--brand-ink); }
+
+.reorder { display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 10px 10px 10px 12px; border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-card); }
+html:not(.has-history) .reorder { display: none; }
+.reorder__icon { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--brand-tint); color: var(--brand); }
+.reorder__icon .ico { width: 22px; height: 22px; }
+.reorder__text { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.reorder__title { font: 600 16px/1.25 var(--text); letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Две строки, дальше — многоточие: адрес на узком экране не обрезается на полуслове */
+.reorder__what { font-size: 13px; line-height: 1.3; color: var(--ink-2); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+/* «Повторить» — тонированная кнопка: акцентный текст на светлой заливке */
+.reorder__btn { flex: none; padding-inline: 14px; --btn-bg: var(--brand-tint); --btn-fg: var(--brand-ink); --btn-hover: #FFE4D2; }
+
+/* ---------- Карточки меню ---------- */
+.product, .howto, .extras { background: var(--surface); border-radius: var(--r-card); box-shadow: var(--shadow-card); }
+
+/* Карточка «Комбо KOKORO»: фото во всю ширину карточки, название, цена и счётчик, состав плитками, часы */
+.product.combo { display: grid; gap: 0; padding: 0; overflow: hidden; }
+.combo__photo { position: relative; margin: 0; height: clamp(184px, 31svh, 290px); overflow: hidden; isolation: isolate; background: var(--brand); }
+.combo__zoom { display: block; width: 100%; height: 100%; padding: 0; border: 0; overflow: hidden; background: var(--brand); cursor: zoom-in; transform-origin: 50% 50%; }
+.combo__zoom img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; object-position: 50% 46%; }
+.combo__zoom:focus-visible { outline-color: #fff; outline-offset: -6px; box-shadow: none; }
+/* «Халал» и «подробнее» — светлые плашки поверх фото. Без размытия: фото под ними двигается при прокрутке, размытие
+   пересчитывалось бы каждый кадр */
+.combo__halal, .combo__more { position: absolute; z-index: 1; background: rgba(255, 255, 255, .9); color: var(--ink); pointer-events: none; }
+.combo__halal { left: 12px; top: 12px; margin: 0; padding: 6px 11px; border-radius: 999px; font: 600 13px/1.1 var(--text); }
+.combo__more { right: 12px; bottom: 12px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; }
+.combo__more .ico { width: 17px; height: 17px; }
+.combo__info { display: grid; gap: 14px; padding: 16px; min-width: 0; }
+.combo__title { font: 700 26px/1.15 var(--text); letter-spacing: -0.025em; color: var(--ink); }
+.combo__list { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.combo__list li { display: grid; gap: 2px; align-content: start; padding: 10px 12px; border-radius: var(--r-tile); background: var(--bg); font-size: 13px; line-height: 1.25; color: var(--ink-2); }
+.combo__list b { min-width: 0; font: 700 20px/1.15 var(--text); letter-spacing: -0.02em; color: var(--ink); }
+.combo__buy { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.combo__price { margin: 0; display: grid; gap: 1px; font-size: 13px; font-weight: 400; line-height: 1.2; color: var(--ink-2); }
+.combo__price b { font: 700 30px/1.05 var(--text); letter-spacing: -0.03em; color: var(--ink); }
+.combo__hours { position: relative; z-index: 1; display: block; margin: 0; font-size: 13px; font-weight: 400; line-height: 1.4; color: var(--ink-2); }
+.combo__hours b { color: var(--ink); font-weight: 600; white-space: nowrap; }
+
+/* Вход до анимации (motion.js снимает это классом motion-ready). Скрипт опоздал или не загрузился — фото, заголовок и состав
+   покажутся сами через 0,8 с, а motion.js тогда вход не играет (не прячет то, что уже видно) */
+@media (prefers-reduced-motion: no-preference) {
+  /* Фото не прячем — оно главная картинка первого экрана; стоит сразу там, где начинается сцена прокрутки (motion.js) */
+  .combo__zoom img { transform: scale(1.12); }
+  html.js:not(.motion-ready) .combo__title,
+  html.js:not(.motion-ready) .combo__list li,
+  html.js:not(.motion-ready) .screen--menu .eta,
+  html.js:not(.motion-ready) .screen--menu .reorder { opacity: 0; animation: kk-show 0s linear .5s forwards; }
+}
+@keyframes kk-show { to { opacity: 1; } }
+
+/* «Добавить к заказу» (появится, когда в data.js будут позиции) */
+.extras { padding: 16px; }
+.extras__title, .howto__title { font: 700 20px/1.2 var(--text); letter-spacing: -0.02em; margin-bottom: 14px; }
+.extras__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.extra { display: grid; gap: 6px; padding: 8px; border-radius: 16px; background: var(--bg); }
+.extra__photo { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; }
+.extra__name { font-size: 15px; font-weight: 600; }
+.extra__price { font: 700 15px/1 var(--text); }
+
+/* «Как это работает»: три шага в ряд */
+.howto { padding: 16px; }
+.howto__list { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.howto__list li { display: grid; justify-items: center; align-content: start; gap: 8px; text-align: center; font-size: 13px; font-weight: 400; line-height: 1.25; color: var(--ink); }
+.howto__icon { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: var(--bg); color: var(--brand); }
+.howto__num { position: absolute; right: -5px; top: -5px; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: #fff; font: 600 11px/1 var(--text); box-shadow: 0 0 0 2px var(--surface); }
+
+/* ---------- Экраны «Заказы» и «Профиль»: карточки заказов и адресов ---------- */
+.profile__pane { min-width: 0; }
+.profile__empty { color: var(--ink-2); font-size: 15px; text-align: center; }
+/* Текст без карточки на цветном фоне не читается — пустое состояние адресов лежит на белом */
+.profile__pane > .profile__empty { padding: 20px 16px; border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-card); }
+/* Примечания под карточками — тёмным с прозрачностью: читаются и на персиковом, и на кремовом (не ниже 4,5:1) */
+.profile__note { margin: 4px 16px 0; font-size: 13px; line-height: 1.35; color: rgba(29, 29, 31, .76); text-align: center; }
+.profile__legal { font-size: 13px; text-align: center; color: rgba(29, 29, 31, .76); }
+.empty { display: grid; justify-items: center; gap: 12px; padding: 40px 16px; border-radius: var(--r-card); background: var(--surface); box-shadow: var(--shadow-card); }
+.empty__icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; background: var(--bg); color: var(--ink-2); }
+.empty__icon .ico { width: 30px; height: 30px; }
+
+.hist, .places, .points { list-style: none; display: grid; gap: 10px; margin: 0; padding: 0; }
+.hist__item, .place, .pointcard { display: grid; gap: 4px; padding: 16px; border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-card); }
+.hist__item.is-active { box-shadow: inset 0 0 0 2px var(--brand); }
+.hist__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.hist__date { font-size: 13px; color: var(--ink-2); }
+.hist__title { font: 700 20px/1.2 var(--text); letter-spacing: -0.02em; }
+.hist__what { font-weight: 500; }
+.hist__where, .place__meta { font-size: 14px; color: var(--ink-2); overflow-wrap: anywhere; }
+.hist__actions, .place__row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.hist__actions .btn { flex: 1 1 120px; }
+.status { flex: none; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1.3; background: var(--surface-2); color: var(--ink); }
+.status--new, .status--confirmed, .status--cooking { background: var(--sun-tint); color: #7A5C00; }
+.status--delivering { background: var(--brand-tint); color: var(--brand-press); }
+.status--done { background: var(--good-tint); color: #17602F; }
+.status--canceled { background: var(--bad-tint); color: #B3000F; }
+
+/* Адрес: «Использовать» во всю ширину, под ним «Изменить» и «Удалить» поровну — на 375 px без рваного переноса */
+.place__row { display: grid; grid-template-columns: 1fr 1fr; }
+.place__row [data-address-use] { grid-column: 1 / -1; }
+.place__label { font: 600 17px/1.25 var(--text); letter-spacing: -0.015em; }
+.place__addr { overflow-wrap: anywhere; }
+.place__del { --btn-fg: var(--bad); }
+.place__yes { --btn-bg: var(--bad); --btn-fg: #fff; --btn-hover: #B3000F; }
+.place__rename { display: grid; gap: 8px; margin-top: 8px; }
+.place__confirm { margin-top: 8px; padding: 10px 12px; border-radius: 12px; background: var(--bad-tint); font-weight: 500; }
+.places__add { margin-top: 10px; --btn-bg: var(--surface); --btn-fg: var(--brand-ink); --btn-hover: var(--surface-2); }
+
+/* ---------- Экран «Точки» ---------- */
+.pointcard { gap: 12px; border-radius: var(--r-card); }
+.pointcard__head { display: flex; align-items: flex-start; gap: 12px; }
+.pointcard__pin { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--brand-tint); color: var(--brand); }
+.pointcard__where { min-width: 0; display: grid; gap: 2px; }
+.pointcard__name { margin: 0; font: 700 20px/1.2 var(--text); letter-spacing: -0.02em; }
+.pointcard__addr, .pointcard__phone { font-size: 14px; line-height: 1.35; color: var(--ink-2); }
+.pointcard__state { justify-self: start; padding: 4px 10px; border-radius: 999px; background: var(--bad-tint); color: #B3000F; font-size: 13px; font-weight: 600; }
+.pointcard__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.pointcard__actions .btn { min-width: 0; padding-inline: 10px; }
+.pointcard__actions .btn .ico { width: 18px; height: 18px; }
+.pointcard__actions .btn span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pointcard__pick { grid-column: 1 / -1; }
+
+/* Блок с заголовком и список строк-действий (как в настройках телефона) */
+.block { display: grid; gap: 8px; margin-top: 12px; min-width: 0; }
+.block__title { margin: 0 4px; font: 700 20px/1.2 var(--text); letter-spacing: -0.02em; }
+.block__text { padding: 14px 16px; border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-card); font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+.block__text b { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.rows { list-style: none; margin: 0; padding: 0; border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-card); overflow: hidden; }
+/* Разделитель строк — от текста, не от края (как в списках настроек) */
+.rows > li:not([hidden]) ~ li:not([hidden]) .row::before { content: ''; position: absolute; left: 52px; right: 0; top: 0; height: .5px; background: rgba(60, 60, 67, .3); }
+.row { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 10px 12px 10px 16px; border: 0; background: none; color: var(--ink); font: inherit; letter-spacing: inherit; text-align: left; text-decoration: none; cursor: pointer; }
+.row > .ico:first-child { color: var(--brand); }
+.row__text { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.row__text b { font-size: 17px; font-weight: 400; line-height: 1.3; }
+.row__text small { font-size: 13px; line-height: 1.3; color: var(--ink-2); }
+.row__go { width: 16px; height: 16px; color: #AEAEB2; stroke-width: 2.4; }
+.row:focus-visible { outline-offset: -4px; }
+.row--danger, .row--danger > .ico:first-child { color: var(--bad); }
+.forget { display: grid; gap: 10px; padding: 14px 16px; border-radius: 18px; background: var(--bad-tint); color: var(--ink); font-size: 15px; line-height: 1.4; }
+.forget__row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.forget__yes { --btn-bg: var(--bad); --btn-fg: #fff; --btn-hover: #B3000F; }
+.row:active { background: var(--surface-2); }
+@media (hover: hover) { .row:hover { background: var(--bg); } }
+
+/* ---------- Кнопка корзины: над панелью вкладок, только в «Меню» ---------- */
+.cartbar { position: fixed; left: 0; right: 0; bottom: calc(var(--dock) + 8px); z-index: var(--z-cart); padding: 0 12px; pointer-events: none; }
+.cartbar__btn {
+  pointer-events: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "qty go" "total go";
+  align-items: center; column-gap: 12px; width: 100%; max-width: 480px; min-height: var(--cartbar-h); margin: 0 auto; padding: 6px 6px 6px 22px;
+  border: 0; border-radius: 999px; background: var(--brand-strong); color: #fff; box-shadow: 0 1px 3px rgba(185, 54, 0, .3), 0 10px 28px rgba(216, 64, 0, .36);
+  text-align: left; cursor: pointer;
+}
+.cartbar__qty { grid-area: qty; align-self: end; font-size: 12px; font-weight: 500; line-height: 1.2; letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cartbar__total { grid-area: total; align-self: start; font: 700 17px/1.2 var(--text); letter-spacing: -0.02em; white-space: nowrap; }
+.cartbar__go {
+  grid-area: go; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 14px 0 18px;
+  border-radius: 999px; background: #fff; color: var(--brand-press); font-weight: 600; font-size: 16px; letter-spacing: -0.01em; white-space: nowrap;
+}
+.cartbar__go::after { content: '›'; font-size: 21px; line-height: 1; margin-top: -3px; }
+.cartbar__btn:focus-visible { outline-offset: 3px; border-radius: 999px; }
+
+/* ---------- Шторка «Комбо»: снизу на телефоне, окном по центру на компьютере ---------- */
+.sheet { position: fixed; inset: 0; z-index: var(--z-sheet); display: flex; align-items: flex-end; justify-content: center; }
+.sheet__backdrop, .ordersheet__backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .4); }
+.sheet__panel {
+  position: relative; display: flex; flex-direction: column; width: 100%; max-width: 720px; max-height: calc(100svh - var(--safe-top) - 12px); overflow: hidden;
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0; background: var(--surface); color: var(--ink); box-shadow: 0 -8px 40px rgba(0, 0, 0, .18);
+}
+.sheet__panel:focus { outline: none; }
+.sheet__top { position: relative; flex: none; height: 48px; touch-action: none; cursor: grab; }
+.sheet__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px calc(20px + var(--safe-bottom)); }
+/* Язычок: видна полоска, тянуть можно за всю верхнюю полосу */
+.sheet__handle { position: absolute; inset: 0; display: flex; justify-content: center; padding-top: 6px; }
+.sheet__handle::before { content: ''; width: 36px; height: 5px; border-radius: 3px; background: rgba(60, 60, 67, .3); }
+/* Крестик: серый кружок 30 px, цель нажатия — 44 px */
+.sheet__close {
+  position: absolute; right: 6px; top: 2px; z-index: 1; display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: 50%; background: radial-gradient(circle, var(--surface-2) 0 15px, transparent 15.5px); color: var(--ink-2); font: 500 21px/1 var(--text); cursor: pointer;
+}
+@media (hover: hover) { .sheet__close:hover { color: var(--ink); } }
+
+.product-sheet__media { position: relative; margin: 0; }
+.product-sheet__photo { width: 100%; height: auto; aspect-ratio: 5 / 4; max-height: 44svh; object-fit: cover; object-position: 50% 46%; border-radius: 18px; background: var(--brand); }
+.product-sheet__halal { position: absolute; left: 12px; top: 12px; margin: 0; padding: 6px 11px; border-radius: 999px; background: rgba(255, 255, 255, .9); color: var(--ink); font: 600 13px/1.1 var(--text); }
+.product-sheet__title { margin-top: 16px; font: 700 28px/1.15 var(--text); letter-spacing: -0.025em; }
+.product-sheet__lead { margin-top: 4px; color: var(--ink-2); }
+.product-sheet__list { list-style: none; display: grid; margin: 10px 0 0; padding: 0; }
+.product-sheet__list li { display: flex; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: .5px solid rgba(60, 60, 67, .3); }
+.product-sheet__list li:last-child { border-bottom: 0; }
+.product-sheet__list b { min-width: 3.2em; font: 700 20px/1 var(--text); letter-spacing: -0.02em; color: var(--ink); }
+/* Как у кнопки оформления: полоса вплотную к низу шторки (на нижний отступ шторки ниже), под ней не проезжает текст */
+.product-sheet__buy { position: sticky; bottom: calc(-20px - var(--safe-bottom)); padding-bottom: calc(22px + var(--safe-bottom)) !important; display: flex; align-items: center; gap: 10px; margin-top: 4px; padding: 12px 0 2px; background: var(--surface); }
+.product-sheet__add { flex: 1 1 auto; min-width: 0; padding-inline: 12px; font-size: 16px; line-height: 1.15; }
+
+/* Сообщение внизу экрана */
+/* Сверху, а не снизу: внизу — корзина, «Отправить чек» и кнопки под QR. Ширина — по тексту, но не шире экрана
+   (left 50 % + сдвиг оставлял блоку только половину экрана — фраза ломалась на три строки) */
+.toast {
+  position: fixed; left: 16px; right: 16px; top: calc(var(--safe-top) + 10px); z-index: var(--z-toast);
+  width: fit-content; max-width: calc(100% - 32px); margin: 0 auto; padding: 12px 18px; border-radius: 22px; background: var(--ink); color: #fff;
+  font-size: 14px; font-weight: 500; line-height: 1.3; text-align: center; box-shadow: var(--shadow-float);
+}
+
+/* Копия фото, которая летит в корзину (motion.js) */
+.flyer { position: fixed; z-index: var(--z-toast); width: 64px; height: 64px; border-radius: 50%; object-fit: cover; pointer-events: none; border: 3px solid #fff; box-shadow: var(--shadow-float); }
+
+/* ---------- Подвал — только на компьютере ---------- */
+.footer { display: none; }
+
+/* ---------- Узкий телефон (до 359 px): логотип и язык компактнее, адрес — шире ---------- */
+@media (max-width: 359.98px) {
+  .tabbar__tab { font-size: 10px; letter-spacing: -0.02em; }
+  /* Узкий экран: значок у «Как в прошлый раз» уступает место заголовку; кнопки «Точек» — уже; в шапке у переключателя языка
+     остаётся только кнопка другого языка — адрес «Укажите адрес» помещается целиком */
+  .reorder__icon { display: none; }
+  .reorder__title { font-size: 15px; }
+  .pointcard__actions .btn { padding-inline: 8px; gap: 6px; }
+  .langswitch button[aria-pressed="true"] { display: none; }
+  .appbar .topbar__logo .logo-mask { width: 52px; }
+  .langswitch button { min-width: 44px; }
+  .screen__title { font-size: 30px; }
+  .combo__title { font-size: 23px; }
+  .combo__price b { font-size: 27px; }
+}
+
+/* ---------- Телефон: цена и счётчик — на первом экране, сразу под названием; состав — ниже ---------- */
+@media (max-width: 599.98px) {
+  /* Порядок для фокуса тот же: фото, счётчик */
+  .combo__title { order: 1; }
+  .combo__buy { order: 2; }
+  .combo__list { order: 3; }
+  .combo__hours { order: 4; }
+  /* Сжатая шапка на узком экране: в одну строку помещается только адрес (способ — в подписи для диктора) */
+  .appbar.is-compact .modechip__mode { display: none; }
+}
+
+/* ---------- От 600 px: карточка комбо — фото слева, описание справа ---------- */
+@media (min-width: 600px) {
+  .product.combo { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: stretch; }
+  .combo__photo { height: auto; min-height: 360px; }
+  .combo__info { padding: 22px; align-content: center; gap: 16px; }
+  .combo__title { font-size: 32px; }
+  .howto__list { gap: 14px; }
+  .screen__body { gap: 14px; }
+}
+
+/* ---------- До 1023 px: оформление и экран заказа — шторка снизу ---------- */
+@media (max-width: 1023.98px) {
+  .ordersheet { position: fixed; inset: 0; z-index: var(--z-ordersheet); visibility: hidden; pointer-events: none; }
+  .ordersheet.is-open { visibility: visible; pointer-events: auto; }
+  .ordersheet:focus { outline: none; }
+  .ordersheet > .order {
+    position: absolute; left: 0; right: 0; top: auto; bottom: 0; width: 100%; max-width: 720px; max-height: calc(100svh - var(--safe-top) - 12px); margin: 0 auto;
+    overflow-y: auto; overscroll-behavior: contain; padding-top: 0; padding-bottom: calc(20px + var(--safe-bottom));
+    border-radius: var(--r-sheet) var(--r-sheet) 0 0; box-shadow: 0 -8px 40px rgba(0, 0, 0, .18);
+  }
+  /* Экран заказа — на весь экран */
+  .ordersheet.is-full > .order { max-width: none; height: 100svh; max-height: 100svh; border-radius: 0; box-shadow: none; padding-top: var(--safe-top); }
+  /* Полоса с язычком и крестиком не уезжает при прокрутке шторки */
+  .ordersheet__bar {
+    position: sticky; top: 0; z-index: 6; height: 48px; margin: 0 calc(-1 * var(--order-pad)) 2px;
+    background: var(--bg); touch-action: none; cursor: grab;
+  }
+  .ordersheet.is-full .ordersheet__bar { top: calc(-1 * var(--safe-top)); }
+  /* То же снизу: липкая полоса кнопки встаёт вплотную к краю шторки (иначе под ней просвет на нижний отступ шторки, в котором
+     проезжают поля), а отступ под полосу жестов у неё свой */
+  .ordersheet > .order .order__bar { bottom: calc(-20px - var(--safe-bottom)); }
+  .ordersheet__bar .sheet__close { right: 6px; top: 2px; background: radial-gradient(circle, var(--surface-3) 0 15px, transparent 15.5px); }
+}
+
+/* ---------- От 1024 px: вкладки строкой под шапкой, меню слева и колонка оформления справа (неподвижная, своя прокрутка) ---------- */
+@media (min-width: 1024px) {
+  :root { --tabbar-h: 48px; --hot: calc(var(--appbar-h) + var(--tabbar-h) + 96px); }
+  html.has-active-order { --hot: calc(var(--appbar-h) + var(--tabbar-h) + 158px); }
+  html.is-offline { --hot: calc(var(--appbar-h) + var(--tabbar-h) + 136px); }
+  html.has-active-order.is-offline { --hot: calc(var(--appbar-h) + var(--tabbar-h) + 198px); }
+  body::after { display: none; }
+  .appbar .topbar__inner { gap: 12px; }
+  .appbar .topbar__logo .logo-mask { width: 80px; }
+  .modechip { flex: 0 1 420px; margin-right: auto; }
+  /* Тёмный текст на оранжевом — чёрный: 5,6:1 (#1D1D1F давал только 4,47:1) */
+  .appbar .topbar__phone { display: block; margin-left: 8px; color: #000; font-size: 15px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .appbar .topbar__phone:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Вкладки — строкой под шапкой, на том же оранжевом стекле; выбранная — белой «капсулой» */
+  .tabbar {
+    position: sticky; top: var(--appbar-h); left: auto; right: auto; bottom: auto; z-index: calc(var(--z-appbar) - 1);
+    display: flex; gap: 4px; max-width: none; height: var(--tabbar-h); margin: 0; padding: 0 max(var(--gutter), calc((100% - 1180px) / 2 + var(--gutter))) 8px;
+    border-radius: 0; box-shadow: none; background: var(--brand);
+  }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .tabbar { background: rgba(236, 75, 4, .88); }
+  }
+  .tabbar__thumb { display: none; }
+  .tabbar__tab { flex: none; flex-direction: row; gap: 8px; padding: 0 14px; color: #000; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .tabbar__tab .ico { width: 20px; height: 20px; }
+  .tabbar__tab[aria-current="page"] { background: #fff; color: var(--ink); }
+  .tabbar__tab[aria-current="page"] .ico { color: var(--brand); }
+  .tabbar__tab:hover:not([aria-current="page"]) { background: rgba(0, 0, 0, .12); }
+  .tabbar__tab:focus-visible { outline-color: #fff; box-shadow: none; }
+  .tabbar__tab[aria-current="page"]:focus-visible { outline-color: var(--ink); }
+  .tabbar__dot { position: static; box-shadow: none; background: var(--ink); }
+  .tabbar__tab[aria-current="page"] .tabbar__dot { background: var(--brand); }
+  .netbar { top: calc(var(--appbar-h) + var(--tabbar-h)); }
+  .activebar { top: calc(var(--appbar-h) + var(--tabbar-h) + 8px); }
+  .is-offline .activebar { top: calc(var(--appbar-h) + var(--tabbar-h) + 48px); }
+
+  .page.app { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 32px; align-items: start; padding-block: 0 56px; }
+  .screen__cap { min-height: 84px; padding: 8px 0 14px; }
+  .screen__title { font-size: 40px; }
+  .homeseg { width: min(100%, 380px); }
+  .screen__body, .screen--menu .screen__body { padding-bottom: 0; }
+
+  .ordersheet {
+    position: sticky; top: calc(var(--appbar-h) + var(--tabbar-h) + 16px); max-height: calc(100svh - var(--appbar-h) - var(--tabbar-h) - 32px); overflow-y: auto; overscroll-behavior: contain;
+    margin: 16px -6px 0; padding: 0 6px 10px; scrollbar-width: thin; scrollbar-color: rgba(60, 60, 67, .3) transparent;
+  }
+  .has-active-order .ordersheet { top: calc(var(--appbar-h) + var(--tabbar-h) + 76px); max-height: calc(100svh - var(--appbar-h) - var(--tabbar-h) - 92px); }
+  .ordersheet:focus { outline: none; }
+  .ordersheet > .order { position: static; }
+  /* Липкая кнопка колонки — вплотную к низу (на нижний отступ колонки ниже), иначе под ней просвет, в котором видны поля */
+  .ordersheet > .order .order__bar { bottom: -10px; }
+  .ordersheet__backdrop, .ordersheet__bar, .ordersheet [data-order-back] { display: none; }
+  .cartbar { display: none; }
+  .toast { top: calc(var(--appbar-h) + var(--tabbar-h) + 12px); }
+
+  .footer { display: block; margin-top: 8px; padding: 24px 0 calc(28px + var(--safe-bottom)); border-top: .5px solid rgba(60, 60, 67, .3); color: var(--ink-2); }
+  .footer__inner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px; font-size: 13px; }
+  .footer__logo { width: 72px; color: var(--brand); }
+  .footer a { color: var(--ink); }
+  .footer a:hover { color: var(--brand-ink); }
+  .footer__legal { flex-basis: 100%; }
+  .footer__legal a { text-underline-offset: 3px; }
+  .profile__legal { display: none; }
+
+  .sheet { align-items: center; padding: 24px; }
+  .sheet__panel { max-width: 560px; max-height: min(86svh, 820px); border-radius: var(--r-sheet); box-shadow: var(--shadow-float); }
+  .sheet__top { cursor: default; }
+  .sheet__handle { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activebar__dot { animation: none; }
+}

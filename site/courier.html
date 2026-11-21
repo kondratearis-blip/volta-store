@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Курьер — KOKORO</title>
+  <meta name="description" content="Рабочая страница курьера KOKORO: заказы, маршрут, доход за день.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#1D1D1F">
+  <link rel="icon" href="assets/img/favicon-48.png" sizes="48x48" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/chat.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/courier.css">
+</head>
+<body class="admin courier">
+  <!-- Значки-линии (specs/026): карточки и нижние вкладки берут их через <use href="#i-…"> -->
+  <svg class="cr-icons" aria-hidden="true" focusable="false">
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1.2"/><circle cx="4" cy="12" r="1.2"/><circle cx="4" cy="18" r="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4Z"/><path d="M9 4v13.5M15 6.5V20"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M16 14.5h2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.4-3.6 4.4-5.5 8-5.5s6.6 1.9 8 5.5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2Z"/></symbol>
+    <symbol id="i-nav" viewBox="0 0 24 24"><path d="M20.5 3.5 3.5 10.5l7 2.8 2.8 7 7.2-16.8Z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v10H9.5L5 19.5v-4H4z"/></symbol>
+  </svg>
+
+  <!-- Шапка как в приложениях курьеров: кто вы и на какой точке, справа — «На линии» -->
+  <header class="admin__top cr-top">
+    <div class="wrap cr-top__bar">
+      <a class="admin__logo cr-top__logo" href="./" aria-label="KOKORO — открыть сайт"><span class="logo-mask" aria-hidden="true"></span></a>
+      <div class="cr-top__me">
+        <p class="cr-who" data-who></p>
+        <p class="cr-top__point" data-top-point></p>
+      </div>
+      <button class="cr-online" type="button" data-shift-toggle aria-pressed="false" hidden>
+        <span class="cr-online__dot" aria-hidden="true"></span><span data-shift-toggle-text>Не на линии</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap admin__main cr-main">
+    <!-- Вход (specs/018): код из 6 цифр от менеджера — один раз, дальше телефон помнит. Запасной путь — ссылка менеджера
+         (#XXXX-XXXX-XXXX), код из 12 знаков или его сообщение целиком в том же поле -->
+    <section class="card login" data-login hidden aria-labelledby="login-title">
+      <h1 class="card__title" id="login-title">Вход для курьера</h1>
+      <form data-login-form novalidate>
+        <label class="field cr-pin"><span>Код курьера</span>
+          <input name="code" inputmode="numeric" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false"
+            placeholder="000000" maxlength="500" aria-describedby="login-how" required></label>
+        <p class="cr-pin__how" id="login-how">6 цифр от менеджера. Вводится один раз — телефон запомнит</p>
+        <p class="error" data-login-error role="alert"></p>
+        <button class="btn btn--block" type="submit">Войти</button>
+      </form>
+      <p class="admin__hint">Код выдаёт менеджер KOKORO. Есть ссылка от него или код из 12 знаков — тоже подойдут: откройте ссылку или вставьте сюда его сообщение целиком.</p>
+    </section>
+
+    <section class="cr-app" data-app hidden>
+      <!-- Свой номер (specs/021, 024): без него заказы не приходят — поле видно на любой вкладке, пока номера нет.
+           «Изменить» в «Профиле» открывает это же поле -->
+      <form class="cr-gate" data-phone-form novalidate hidden>
+        <p class="cr-gate__title" data-phone-title>Впишите свой номер телефона</p>
+        <p class="cr-gate__text">Номер увидит покупатель, пока вы везёте его заказ, — чтобы позвонить вам. И менеджер — по работе.</p>
+        <label class="field"><span>Номер телефона</span>
+          <input name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0555 123 456" maxlength="30" required></label>
+        <div class="cr-gate__row">
+          <button class="btn" type="submit">Сохранить номер</button>
+          <button class="btn btn--ghost" type="button" data-phone-cancel hidden>Отмена</button>
+        </div>
+        <p class="cr-gate__error" data-phone-error role="alert"></p>
+      </form>
+      <!-- Точка курьера (specs/019): в начале смены — крупно «Вы на точке …» с «Понятно»; без точки — выбор один раз -->
+      <div class="cr-point" data-point-box hidden>
+        <p class="cr-point__title" data-point-title></p>
+        <p class="cr-point__text" data-point-text></p>
+        <div class="cr-point__choose" data-point-choose hidden>
+          <button class="btn cr-point__btn" type="button" data-point-pick="kulieva">Кулиева — запад</button>
+          <button class="btn cr-point__btn" type="button" data-point-pick="kokzhar">Кок-Жар — восток</button>
+        </div>
+        <button class="btn btn--small cr-point__ok" type="button" data-point-ok hidden>Понятно</button>
+        <p class="cr-point__error" data-point-error role="alert"></p>
+      </div>
+
+      <!-- Вкладка «Заказы» -->
+      <div class="cr-panel" data-panel="orders" id="panel-orders" role="tabpanel" aria-labelledby="tab-orders">
+        <!-- Смена (specs/015): не на линии — плашка с «Начать смену». База без смены — плашки нет -->
+        <div class="cr-shift" data-shift tabindex="-1" hidden>
+          <p class="cr-shift__state" data-shift-state>Вы не на линии</p>
+          <p class="cr-shift__how" data-shift-how></p>
+          <button class="btn btn--block cr-shift__on" type="button" data-shift-on>Начать смену</button>
+          <p class="cr-shift__error" data-shift-error role="alert"></p>
+        </div>
+        <!-- Доход за сегодня одной строкой — нажатие открывает «Доход» -->
+        <button class="cr-earn" type="button" data-earn hidden>
+          <span class="cr-earn__label">Сегодня</span>
+          <b class="cr-earn__sum" data-earn-sum></b>
+          <span class="cr-earn__count" data-earn-count></span>
+          <span class="cr-earn__go" aria-hidden="true">›</span>
+        </button>
+        <h1 class="cr-title" id="orders-title" tabindex="-1">Мои заказы <span class="tabs__count" data-count></span></h1>
+        <p class="admin__hint" data-status aria-live="polite"></p>
+        <!-- Заказ снят или отказ базы, когда карточки уже нет -->
+        <p class="cr-note" data-orders-note role="status"></p>
+        <div class="cr-orders" data-orders></div>
+
+        <!-- Свободные заказы своей точки: курьер забирает сам (specs/014) — только когда точка назначает сама (specs/026) -->
+        <section class="cr-free" data-free hidden aria-labelledby="free-title">
+          <h2 class="cr-title" id="free-title">Свободные заказы <span class="tabs__count" data-free-count></span></h2>
+          <p class="cr-free__limit" data-free-limit></p>
+          <p class="cr-free__error" data-free-error role="alert"></p>
+          <div class="cr-free__list" data-free-list></div>
+        </section>
+      </div>
+
+      <!-- Вкладка «Карта»: заказы пронумерованы в порядке объезда от того места, где вы сейчас -->
+      <div class="cr-panel" data-panel="map" id="panel-map" role="tabpanel" aria-labelledby="tab-map" hidden>
+        <h2 class="cr-title">Маршрут</h2>
+        <p class="cr-empty" data-map-empty>Заказов нет — маршрут появится, когда у вас будет заказ.</p>
+        <div class="cr-route" data-mapbox hidden>
+          <div class="map cr-map" data-cr-map role="region" aria-label="Карта ваших заказов"></div>
+          <p class="cr-route__title" data-route-title></p>
+          <ol class="cr-route__stops" data-route-stops></ol>
+          <div class="cr-route__actions">
+            <a class="btn" data-route-ya target="_blank" rel="noopener">Маршрут в Яндекс Картах</a>
+            <a class="btn btn--ghost" data-route-g target="_blank" rel="noopener">Google Карты</a>
+            <button class="btn btn--ghost" type="button" data-where-me>📍 Где я</button>
+          </div>
+          <p class="admin__hint" data-route-note></p>
+        </div>
+      </div>
+
+      <!-- Вкладка «Доход»: итог дня (specs/018, 024) — сколько заработано, из чего сумма и каждый заказ; «Вчера» — свериться утром -->
+      <div class="cr-panel" data-panel="money" id="panel-money" role="tabpanel" aria-labelledby="tab-money" hidden>
+        <h2 class="cr-title">Доход</h2>
+        <p class="cr-empty" data-money-empty>Итог дня появится здесь, когда страница получит данные.</p>
+        <section class="cr-today" data-today hidden aria-labelledby="today-title">
+          <div class="cr-today__head">
+            <h3 class="cr-today__title" id="today-title" data-today-title>Итог за сегодня</h3>
+            <div class="cr-today__days" role="group" aria-label="За какой день" data-today-days hidden>
+              <button class="cr-today__day" type="button" data-today-back="0" aria-pressed="true">Сегодня</button>
+              <button class="cr-today__day" type="button" data-today-back="1" aria-pressed="false">Вчера</button>
+            </div>
+          </div>
+          <p class="cr-today__sum" data-today-sum aria-live="polite"></p>
+          <p class="cr-today__parts" data-today-parts></p>
+          <p class="cr-today__note" data-today-note></p>
+          <details class="cr-today__more" data-today-more>
+            <summary>Каждый заказ <span data-today-count></span></summary>
+            <ol class="cr-today__list" data-today-list></ol>
+          </details>
+          <p class="cr-today__hint">День — с 06:00 до 06:00. В сумме — доставка, дождь и «до двери»: их вы берёте с клиента.</p>
+        </section>
+      </div>
+
+      <!-- Вкладка «Профиль»: связь с менеджером, свой номер, Telegram и место на карте, выход -->
+      <div class="cr-panel" data-panel="profile" id="panel-profile" role="tabpanel" aria-labelledby="tab-profile" hidden>
+        <h2 class="cr-title">Профиль</h2>
+        <div class="cr-contact" data-contact hidden>
+          <div class="cr-contact__bar">
+            <button class="btn cr-contact__chat" type="button" data-staff-chat>💬 Чат с менеджером<span class="chat-dot" data-staff-dot hidden></span></button>
+            <a class="btn btn--ghost" data-point-call hidden></a>
+          </div>
+          <p class="cr-contact__phone" data-phone-line hidden>Ваш номер: <b data-phone-value></b> — его видит покупатель заказа в пути · <button class="cr-contact__edit" type="button" data-phone-edit>Изменить</button></p>
+        </div>
+        <!-- Telegram: подключить и включить трансляцию места; «Закончить смену» -->
+        <div class="cr-tg" data-tg aria-live="polite"></div>
+        <button class="btn btn--ghost btn--block cr-signout" type="button" data-signout hidden>Выйти из аккаунта</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Нижние вкладки, как в приложении: под большой палец -->
+  <nav class="cr-nav" data-nav hidden aria-label="Разделы">
+    <div class="cr-nav__bar" role="tablist">
+      <button class="cr-nav__tab" type="button" role="tab" id="tab-orders" aria-controls="panel-orders" data-tab="orders" aria-selected="true">
+        <svg class="ico" aria-hidden="true"><use href="#i-list"/></svg><span>Заказы</span><span class="cr-nav__badge" data-nav-count></span>
+      </button>
+      <button class="cr-nav__tab" type="button" role="tab" id="tab-map" aria-controls="panel-map" data-tab="map" aria-selected="false" tabindex="-1">
+        <svg class="ico" aria-hidden="true"><use href="#i-map"/></svg><span>Карта</span>
+      </button>
+      <button class="cr-nav__tab" type="button" role="tab" id="tab-money" aria-controls="panel-money" data-tab="money" aria-selected="false" tabindex="-1">
+        <svg class="ico" aria-hidden="true"><use href="#i-wallet"/></svg><span>Доход</span>
+      </button>
+      <button class="cr-nav__tab" type="button" role="tab" id="tab-profile" aria-controls="panel-profile" data-tab="profile" aria-selected="false" tabindex="-1">
+        <svg class="ico" aria-hidden="true"><use href="#i-user"/></svg><span>Профиль</span><span class="cr-nav__dot" data-nav-dot hidden></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Новый заказ: шторка снизу со звуком, пока не нажмёте «Понятно» (specs/026) -->
+  <div class="cr-alert" data-alert hidden>
+    <div class="cr-alert__sheet" role="alertdialog" aria-labelledby="alert-title" aria-describedby="alert-list">
+      <p class="cr-alert__kicker">Новый заказ</p>
+      <h2 class="cr-alert__title" id="alert-title" data-alert-title></h2>
+      <ul class="cr-alert__list" id="alert-list" data-alert-list></ul>
+      <button class="btn btn--block cr-alert__ok" type="button" data-alert-ok>Понятно</button>
+    </div>
+  </div>
+
+  <script type="module" src="assets/js/courier.js"></script>
+</body>
+</html>

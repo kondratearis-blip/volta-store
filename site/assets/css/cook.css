@@ -1,0 +1,143 @@
+/* Экран кухни (specs/018, /cook): тёмный, «корочка» — виден издалека, крупно, одной рукой в перчатке. Токены — base.css */
+
+.cook {
+  --ck-bg: var(--crust);
+  --ck-top: #1C0B04;
+  --ck-tile: #43230F;
+  --ck-line: rgba(255, 246, 232, .16);
+  --ck-soft: rgba(255, 246, 232, .78);
+  background: var(--ck-bg);
+  color: var(--cream);
+  min-height: 100vh;
+}
+.cook :focus-visible { outline: 3px solid var(--tray); outline-offset: 3px; }
+
+/* Шапка: точка, часы, «Экран не гаснет», «Звук» */
+.ck-top { background: var(--ck-top); border-bottom: 1px solid var(--ck-line); }
+/* На телефоне шапка в две строки — не держим её над списком, место под плитки важнее */
+@media (min-width: 720px) { .ck-top { position: sticky; top: 0; z-index: 10; } }
+.ck-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px max(16px, env(safe-area-inset-left)); min-height: 64px; }
+.ck-logo { display: flex; color: var(--cream); }
+.ck-logo .logo-mask { width: 70px; }
+.ck-where { margin: 0 auto 0 0; font: 800 18px/1.2 var(--display); letter-spacing: -0.01em; }
+.ck-where span { color: var(--tray); }
+.ck-clock { font: 800 26px/1 var(--display); font-variant-numeric: tabular-nums; }
+.ck-tools { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+.ck-tools[hidden] { display: none; }
+.ck-tool {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 8px 14px;
+  border: 2px solid var(--ck-line); border-radius: 999px; background: transparent; color: var(--cream);
+  font-weight: 700; font-size: 15px; text-decoration: none; cursor: pointer; flex: 1 1 auto;
+}
+.ck-tool[aria-pressed="true"] { border-color: var(--tray); color: var(--tray); }
+.ck-tool--link { flex: 0 0 auto; }
+/* Телефон: шапка в две строки — точка и часы, под ними три кнопки в ряд */
+@media (max-width: 719px) {
+  .ck-logo .logo-mask { width: 54px; }
+  .ck-where { font-size: 16px; }
+  .ck-clock { font-size: 22px; }
+  .ck-tools { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; }
+  .ck-tool { padding: 6px 10px; font-size: 14px; line-height: 1.15; }
+}
+@media (min-width: 720px) {
+  .ck-tools { width: auto; }
+  .ck-tool { flex: 0 0 auto; }
+}
+
+.ck-main { padding: 16px max(16px, env(safe-area-inset-left)) 48px; }
+
+/* Нет входа / устройство шефа */
+.ck-gate { max-width: 560px; margin: 10vh auto 0; display: grid; gap: 16px; padding: 28px 24px; border-radius: 24px;
+  background: var(--ck-tile); border: 2px solid var(--ck-line); }
+.ck-gate__title { font: 800 26px/1.2 var(--display); letter-spacing: -0.02em; }
+.ck-gate__text { font-size: 17px; color: var(--ck-soft); }
+.ck-gate__text:empty { display: none; }
+.ck-gate__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.ck-gate .btn { min-height: 56px; }
+
+/* Переключатель точки у владельца */
+.ck-points { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.ck-points[hidden] { display: none; }
+.ck-chip { min-height: 48px; padding: 8px 18px; border-radius: 999px; border: 2px solid var(--ck-line); background: transparent;
+  color: var(--cream); font-weight: 700; font-size: 16px; cursor: pointer; }
+.ck-chip[aria-pressed="true"] { background: var(--cream); color: var(--crust); border-color: var(--cream); }
+
+.ck-unlock, .ck-hint, .ck-note { margin: 0 0 12px; padding: 12px 14px; border-radius: 14px; font-weight: 700; font-size: 16px; }
+.ck-unlock { background: var(--tray); color: var(--crust); }
+.ck-hint { background: rgba(255, 246, 232, .1); color: var(--cream); }
+.ck-hint:empty, .ck-note:empty { display: none; }
+.ck-note { background: rgba(255, 246, 232, .1); border-left: 5px solid var(--ok); }
+.ck-note--error { border-left-color: var(--chili); background: rgba(200, 30, 20, .22); }
+
+/* Телефон: колонки вкладками */
+.ck-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  padding: 6px; margin-bottom: 14px; border-radius: 18px; background: var(--ck-top); }
+.ck-tabs button { min-height: 56px; padding: 6px 4px; border: 0; border-radius: 14px; background: transparent; color: var(--cream);
+  font: 800 15px/1.15 var(--display); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.ck-tabs button[aria-pressed="true"] { background: var(--cream); color: var(--crust); }
+.ck-count { display: inline-block; min-width: 26px; padding: 2px 7px; border-radius: 999px; background: var(--bucket); color: #fff;
+  font: 800 14px/1.3 var(--display); text-align: center; }
+.ck-count:empty { display: none; }
+
+.ck-cols { display: grid; gap: 16px; }
+@media (max-width: 899px) {
+  .ck-cols[data-show="new"] .ck-col:not([data-col="new"]),
+  .ck-cols[data-show="cooking"] .ck-col:not([data-col="cooking"]),
+  .ck-cols[data-show="ready"] .ck-col:not([data-col="ready"]) { display: none; }
+}
+.ck-col { min-width: 0; }
+.ck-col__title { display: none; font: 800 24px/1.1 var(--display); letter-spacing: -0.02em; margin-bottom: 12px; align-items: center; gap: 10px; }
+.ck-list { display: grid; gap: 14px; }
+.ck-empty { margin: 0; padding: 22px 16px; border-radius: 18px; border: 2px dashed var(--ck-line); color: var(--ck-soft); font-size: 17px; text-align: center; }
+
+/* Планшет и компьютер: три колонки сразу, вкладки не нужны */
+@media (min-width: 900px) {
+  .ck-tabs { display: none; }
+  .ck-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .ck-col__title { display: flex; }
+}
+
+/* Плитка заказа */
+.ck-tile { background: var(--ck-tile); border: 3px solid transparent; border-radius: 22px; padding: 16px; display: grid; gap: 10px; }
+.ck-tile p { margin: 0; }
+.ck-tile--new { border-color: var(--tray); }
+@media (prefers-reduced-motion: no-preference) {
+  .ck-tile--new { animation: ck-pulse 1.4s ease-in-out 3; }
+}
+@keyframes ck-pulse { 50% { box-shadow: 0 0 0 6px rgba(255, 210, 63, .35); } }
+.ck-tile__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.ck-tile__num { font: 800 40px/1 var(--display); letter-spacing: -0.02em; }
+.ck-tile__qty { font: 800 22px/1.2 var(--display); }
+.ck-tile__marks { display: flex; flex-wrap: wrap; gap: 8px; }
+.ck-mark { padding: 6px 12px; border-radius: 12px; font-weight: 800; font-size: 17px; line-height: 1.25; }
+.ck-mark--pickup { background: var(--cream); color: var(--crust); }
+.ck-mark--door { background: var(--tray); color: var(--crust); }
+.ck-tile__due { font-size: 18px; font-weight: 600; color: var(--ck-soft); }
+.ck-tile__due b { font: 800 20px/1 var(--display); color: var(--cream); }
+.ck-tile__due--late { justify-self: start; padding: 4px 12px; border-radius: 12px; background: var(--tray); color: var(--crust); font-weight: 800; }
+.ck-tile__due--late b { color: var(--crust); }
+.ck-tile__comment { font-size: 17px; padding: 10px 12px; border-radius: 12px; background: rgba(255, 246, 232, .1); overflow-wrap: anywhere; }
+
+/* «Ко времени» — ярко-красная плитка, пока заказ не уехал */
+.ck-tile--timed { background: var(--chili); border-color: #FF7A6B; color: #fff; }
+.ck-tile--timed.ck-tile--new { border-color: var(--tray); }
+.ck-tile--timed .ck-tile__due { color: #fff; }
+.ck-tile--timed .ck-tile__due b { color: #fff; }
+.ck-tile--timed .ck-tile__due--late, .ck-tile--timed .ck-tile__due--late b { color: var(--crust); }
+.ck-tile--timed .ck-tile__comment { background: rgba(0, 0, 0, .2); }
+.ck-tile__timed { justify-self: start; padding: 6px 14px; border-radius: 12px; background: #fff; color: var(--chili); font: 800 22px/1.2 var(--display); }
+.ck-tile__day { display: inline-block; font: 700 16px/1.2 var(--text); color: var(--crust); }
+
+/* Одна большая кнопка действия */
+.ck-tile__btn { min-height: 64px; width: 100%; border-radius: 18px; border: 3px solid transparent; font: 800 20px/1.1 var(--display);
+  cursor: pointer; padding: 10px 14px; }
+.ck-tile__btn:disabled { opacity: .55; cursor: progress; }
+.ck-tile__btn--cook { background: var(--tray); color: var(--crust); }
+.ck-tile__btn--ready { background: var(--ok); color: #fff; border-color: #2FA35A; }
+.ck-tile__btn--back { background: transparent; color: var(--cream); border-color: var(--cream); }
+.ck-tile__btn--done { background: var(--cream); color: var(--crust); }
+.ck-tile__btn--done:focus-visible { outline-color: var(--tray); }
+.ck-tile--timed .ck-tile__btn--back { color: #fff; border-color: #fff; }
+.ck-tile__btn--cook:focus-visible { outline-color: var(--cream); }
+.ck-tile__error { color: #fff; background: rgba(0, 0, 0, .35); padding: 8px 12px; border-radius: 10px; font-weight: 700; font-size: 16px; }
+.ck-tile__error:empty { display: none; }

@@ -112,3 +112,32 @@ ul, ol { padding: 0; }
 .field input[aria-invalid="true"] { border-color: var(--chili); }
 .error { color: var(--chili); font-weight: 600; font-size: 15px; }
 .error:empty { display: none; }
+
+/* Карта (Leaflet, assets/js/map.js) и метки на ней — общие для сайта, панели и страницы курьера */
+.map { height: 280px; border-radius: var(--radius); overflow: hidden; position: relative; z-index: 0; background: var(--kraft); }
+.map[hidden] { display: none; }
+.mk { display: grid; place-items: center; }
+.mk span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--bucket); color: #fff;
+  font: 800 14px/1 var(--display); border: 3px solid #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .35); white-space: nowrap; }
+.mk--approx span { background: #fff; color: var(--bucket); border: 3px dashed var(--bucket); }
+.mk--courier span { width: 36px; height: 36px; background: var(--crust); font-size: 18px; }
+.mk--home span { background: var(--ok); font-size: 16px; }
+.mk--muted span { background: #8a7a6e; }
+.mk--kitchen span { background: var(--tray); color: var(--crust); border-radius: 8px; font-size: 16px; }
+.mk--wide span { width: auto; min-width: 32px; padding: 0 8px; border-radius: 16px; font-size: 13px; }
+.leaflet-container { font: 14px/1.4 var(--text); }
+
+/* Мини-приложение (specs/018): одна кривая движения (как CustomEase «kit» в motion.js), «печатная» тень карточек, высота шапки */
+:root {
+  --kit: cubic-bezier(.22, 1, .36, 1);
+  --print: 0 4px 0 rgba(43, 19, 8, .9);
+  --appbar-h: 60px;
+  --radius-card: 26px;
+}
+/* «Уменьшить движение» в настройках телефона: без анимаций и плавных прокруток — всё сразу на месте */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+}

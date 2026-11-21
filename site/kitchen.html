@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Продукты — KOKORO</title>
+  <!-- Служебная страница шефа (specs/011-kitchen-products): ссылок на неё нет ни на сайте, ни в панели, поиску закрыта -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#2B1308">
+  <link rel="icon" href="assets/img/favicon-48.png" sizes="48x48" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+  <!-- Значок «Продукты» на главном экране (specs/012): на Android в меню Chrome — «Установить приложение» -->
+  <link rel="manifest" href="kitchen.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="Продукты">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/kitchen.css">
+</head>
+<body class="admin kitchen">
+  <header class="admin__top">
+    <div class="wrap admin__bar">
+      <span class="admin__logo" role="img" aria-label="KOKORO"><span class="logo-mask" aria-hidden="true"></span></span>
+      <p class="kt-who" data-who></p>
+      <button class="btn btn--small btn--ghost-light" type="button" data-signout hidden>Выйти</button>
+    </div>
+  </header>
+
+  <main class="wrap admin__main">
+    <!-- Вход: код из ссылки владельца (#XXXX-XXXX-XXXX-XXXX) или вставить сообщение с ней -->
+    <section class="card login" data-login hidden aria-labelledby="login-title">
+      <h1 class="card__title" id="login-title">Продукты кухни</h1>
+      <form data-login-form novalidate>
+        <label class="field"><span>Код из ссылки</span>
+          <input name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="500" required></label>
+        <p class="error" data-login-error role="alert"></p>
+        <button class="btn btn--block" type="submit">Войти</button>
+      </form>
+      <p class="admin__hint">Ссылку для входа даёт владелец KOKORO. Проще всего — открыть её или вставить сюда сообщение с ней целиком.</p>
+    </section>
+
+    <section data-app hidden>
+      <div class="kt-head">
+        <h1 class="kt-title">Продукты <span data-count></span></h1>
+        <button class="btn btn--small" type="button" data-add>+ Добавить продукт</button>
+      </div>
+      <p class="admin__hint" data-status aria-live="polite"></p>
+      <div class="kt-tools">
+        <label class="kt-search">
+          <span class="visually-hidden">Найти продукт</span>
+          <input class="input" type="search" placeholder="Найти продукт" autocomplete="off" enterkeyhint="search" data-search>
+        </label>
+        <div class="chips kt-cats" role="group" aria-label="Категории" data-cats></div>
+      </div>
+      <div class="kt-list" data-list></div>
+      <p class="admin__hint kt-foot">Цена — за одну фасовку, в сомах. Сохраняется сама, как только вы вышли из поля или нажали Enter. Чтобы исправить название, фасовку или категорию, нажмите на продукт.</p>
+    </section>
+    <p class="visually-hidden" data-live aria-live="polite"></p>
+  </main>
+
+  <!-- Новый продукт и правка -->
+  <dialog class="kt-dialog" data-dialog aria-labelledby="kt-dialog-title">
+    <form data-form novalidate>
+      <h2 id="kt-dialog-title" data-dialog-title>Новый продукт</h2>
+      <label class="field"><span>Название</span>
+        <input name="name" maxlength="80" autocomplete="off" required></label>
+      <div class="kt-row2">
+        <label class="field"><span>Фасовка <i>1 кг, 5 л…</i></span>
+          <input name="pack" maxlength="40" autocomplete="off"></label>
+        <label class="field"><span>Цена, сом</span>
+          <input name="price" inputmode="decimal" autocomplete="off" placeholder="пока нет"></label>
+      </div>
+      <label class="field"><span>Категория</span>
+        <select name="category" data-category></select></label>
+      <label class="field" data-newcat hidden><span>Новая категория</span>
+        <input name="newCategory" maxlength="40" autocomplete="off"></label>
+      <label class="field"><span>Заметка <i>поставщик, где брать</i></span>
+        <input name="note" maxlength="200" autocomplete="off"></label>
+      <p class="error" data-form-error role="alert"></p>
+      <div class="kt-dialog__actions">
+        <button class="btn" type="submit">Сохранить</button>
+        <button class="btn btn--ghost" type="button" data-cancel>Отмена</button>
+      </div>
+      <button class="linkbtn kt-remove" type="button" data-remove hidden>Убрать из списка</button>
+    </form>
+  </dialog>
+
+  <div class="kt-toast" data-toast role="status" hidden></div>
+
+  <script type="module" src="assets/js/kitchen.js"></script>
+</body>
+</html>

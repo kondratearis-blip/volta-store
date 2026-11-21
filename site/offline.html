@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Нет интернета — KOKORO</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#EC4B04">
+  <link rel="icon" href="/assets/img/favicon-48.png" sizes="48x48" type="image/png">
+  <!-- Экран, который service worker (sw.js) показывает, когда приложение открыли без интернета. Всё внутри файла: сети нет,
+       подгрузить стили и шрифты неоткуда. Встроенные стили CSP сайта разрешает, встроенные скрипты — нет: кнопка — ссылка -->
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    html { height: 100%; background: #F7F3EF; }
+    body {
+      min-height: 100%; margin: 0; display: grid; place-items: center; padding: calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+      background: linear-gradient(#EC4B04 0, #EC4B04 140px, #FFBF8A 300px, #F7F3EF 460px) no-repeat, #F7F3EF;
+      font: 400 17px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+      color: #1D1D1F; -webkit-font-smoothing: antialiased;
+    }
+    main { width: 100%; max-width: 380px; padding: 28px 22px 24px; border-radius: 24px; background: #fff; text-align: center; box-shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 10px 34px rgba(0, 0, 0, .12); }
+    img { display: block; width: 72px; height: 72px; margin: 0 auto 16px; border-radius: 18px; }
+    h1 { margin: 0 0 8px; font-size: 24px; line-height: 1.2; letter-spacing: -0.02em; }
+    p { margin: 0 0 6px; color: #636366; }
+    p[lang="ky"] { margin-bottom: 22px; font-size: 15px; }
+    a {
+      display: flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 22px; border-radius: 999px;
+      background: #D84000; color: #fff; font-weight: 600; text-decoration: none;
+    }
+    a:focus-visible { outline: 3px solid #1D1D1F; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/assets/img/favicon-180.png" width="72" height="72" alt="">
+    <h1>Нет интернета</h1>
+    <p>Проверьте связь — меню, заказ и статус курьера откроются, как только интернет вернётся.</p>
+    <p lang="ky">Интернет жок. Байланышты текшериңиз — интернет келгенде меню жана буйрутма ачылат.</p>
+    <!-- Пустая ссылка — тот же адрес целиком: личная ссылка на заказ (?z=…) не теряется -->
+    <a href="">Попробовать снова</a>
+  </main>
+</body>
+</html>

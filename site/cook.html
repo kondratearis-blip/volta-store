@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Кухня — KOKORO</title>
+  <meta name="description" content="Экран кухни KOKORO: принятые заказы точки — готовим и отдаём курьеру или покупателю.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#2B1308">
+  <link rel="icon" href="assets/img/favicon-48.png" sizes="48x48" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/cook.css">
+</head>
+<body class="cook">
+  <!-- Экран кухни (specs/018): планшет или телефон точки. Вход — тот же, что у панели менеджера на этом устройстве -->
+  <header class="ck-top">
+    <div class="ck-bar">
+      <span class="ck-logo" aria-hidden="true"><span class="logo-mask"></span></span>
+      <p class="ck-where"><b>Кухня</b> <span data-point></span></p>
+      <p class="ck-clock" data-clock></p>
+      <div class="ck-tools" data-tools hidden>
+        <button class="ck-tool" type="button" data-awake aria-pressed="true">☀ Экран не гаснет</button>
+        <button class="ck-tool" type="button" data-sound aria-pressed="true">🔔 Звук</button>
+        <a class="ck-tool ck-tool--link" href="/admin">Панель</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="ck-main">
+    <!-- Нет входа менеджера, нет доступа или это устройство шефа — экран не открывается -->
+    <section class="ck-gate" data-gate hidden aria-labelledby="gate-title">
+      <h1 class="ck-gate__title" id="gate-title" data-gate-title>Войдите в панель на этом устройстве</h1>
+      <p class="ck-gate__text" data-gate-text></p>
+      <div class="ck-gate__actions">
+        <a class="btn btn--tray" href="/admin" data-gate-link>Открыть панель</a>
+        <button class="btn btn--ghost-light" type="button" data-gate-retry hidden>Проверить ещё раз</button>
+      </div>
+    </section>
+
+    <section class="ck-board" data-board hidden aria-labelledby="board-title">
+      <h1 class="visually-hidden" id="board-title">Заказы на кухне</h1>
+      <!-- Владелец видит обе точки — выбирает, какую кухню показать -->
+      <div class="ck-points" data-points hidden></div>
+      <p class="ck-unlock" data-unlock hidden>Коснитесь экрана — тогда новый заказ будет слышно</p>
+      <p class="ck-hint" data-awake-note></p>
+      <p class="ck-note" data-note role="status"></p>
+      <!-- Телефон: колонки — вкладками -->
+      <div class="ck-tabs" data-tabs>
+        <button type="button" data-tab="new" aria-pressed="true">Принят <span class="ck-count" data-tab-count="new"></span></button>
+        <button type="button" data-tab="cooking" aria-pressed="false">Готовим <span class="ck-count" data-tab-count="cooking"></span></button>
+        <button type="button" data-tab="ready" aria-pressed="false">Готово <span class="ck-count" data-tab-count="ready"></span></button>
+      </div>
+      <div class="ck-cols" data-cols data-show="new">
+        <section class="ck-col" data-col="new" aria-labelledby="col-new">
+          <h2 class="ck-col__title" id="col-new">Принят <span class="ck-count" data-col-count="new"></span></h2>
+          <div class="ck-list" data-list="new"></div>
+        </section>
+        <section class="ck-col" data-col="cooking" aria-labelledby="col-cooking">
+          <h2 class="ck-col__title" id="col-cooking">Готовим <span class="ck-count" data-col-count="cooking"></span></h2>
+          <div class="ck-list" data-list="cooking"></div>
+        </section>
+        <section class="ck-col" data-col="ready" aria-labelledby="col-ready">
+          <h2 class="ck-col__title" id="col-ready">Готово <span class="ck-count" data-col-count="ready"></span></h2>
+          <div class="ck-list" data-list="ready"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="assets/js/cook.js"></script>
+</body>
+</html>

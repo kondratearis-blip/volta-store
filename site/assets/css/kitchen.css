@@ -1,0 +1,91 @@
+/* Продукты кухни для шефа (specs/011): поверх стилей панели (admin.css) — крупно, под палец, цены вводятся подряд */
+
+.kt-who { margin: 0 auto 0 0; color: var(--cream); font-weight: 700; }
+.kt-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-bottom: 8px; }
+.kt-title { font: 800 clamp(24px, 4vw, 32px)/1.1 var(--display); letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 10px; margin: 0; }
+.kt-title span { font: 700 15px/1 var(--text); letter-spacing: 0; color: var(--muted); }
+.kt-head .btn { min-height: 44px; }
+
+.kt-tools { display: grid; gap: 10px; margin: 8px 0 16px; }
+.kt-search .input { min-height: 48px; }
+.kt-cats .chip { min-height: 40px; }
+.kt-chip--warn[aria-pressed="false"] { border-color: var(--chili); color: var(--chili); }
+.kt-chip--warn[aria-pressed="true"] { border-color: var(--chili); background: var(--chili); }
+.chip:focus-visible, .kt-item__main:focus-visible, .kt-toast button:focus-visible { outline: 3px solid var(--bucket); outline-offset: 2px; }
+
+/* Категории — карточками: на телефоне одна колонка, на компьютере две колонки без дыр (сверху вниз, потом вправо —
+   в том же порядке Enter переходит к следующей цене) */
+.kt-list { display: grid; gap: 14px; }
+@media (min-width: 960px) {
+  .kt-list { display: block; columns: 2; column-gap: 14px; }
+  .kt-list > * { break-inside: avoid; margin-bottom: 14px; }
+}
+.kt-cat { background: var(--cream); border-radius: var(--radius); padding: 14px 16px 6px; min-width: 0; }
+.kt-cat__title { font: 800 18px/1.2 var(--display); letter-spacing: -0.01em; margin: 0 0 4px; display: flex; align-items: baseline; gap: 8px; }
+.kt-cat__title span { font: 700 14px/1 var(--text); color: var(--muted); }
+.kt-items { list-style: none; margin: 0; padding: 0; }
+
+.kt-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 6px 4px;
+  margin-inline: -4px; border-top: 1px solid var(--line); border-radius: 10px; transition: background-color .4s; }
+.kt-item:first-child { border-top-color: transparent; }
+.kt-item.is-new { background: rgba(255, 210, 63, .45); }
+.kt-item__main { display: grid; gap: 2px; min-height: 44px; padding: 4px 0; border: 0; border-radius: 8px; background: none;
+  color: inherit; font: inherit; text-align: left; cursor: pointer; min-width: 0; }
+.kt-item__name { font-weight: 700; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
+.kt-item__main:hover .kt-item__name { text-decoration: underline; text-underline-offset: 3px; }
+.kt-item__meta { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+
+.kt-price { display: flex; align-items: center; gap: 6px; }
+.kt-price__input { width: 108px; min-height: 44px; padding: 8px 10px; border: 2px solid var(--line); border-radius: 10px; background: #fff;
+  font: 700 17px/1 var(--text); color: var(--crust); text-align: right; transition: border-color .2s; }
+.kt-price__input:placeholder-shown { border-style: dashed; border-color: rgba(43, 19, 8, .35); }
+.kt-price__input::placeholder { color: var(--muted); font-weight: 600; font-size: 15px; }
+.kt-price__input:focus { outline: none; border-style: solid; border-color: var(--crust); }
+.kt-price__input[aria-invalid="true"] { border-style: solid; border-color: var(--chili); }
+.kt-item.is-saved .kt-price__input { border-style: solid; border-color: var(--ok); }
+.kt-item.is-busy .kt-price__input { opacity: .6; }
+.kt-price__cur { font-size: 14px; font-weight: 600; color: var(--muted); }
+.kt-item__error { grid-column: 1 / -1; margin: 0 0 4px; color: var(--chili); font-weight: 600; font-size: 14px; }
+.kt-item__error:empty { display: none; }
+
+.kt-empty { background: var(--cream); border-radius: var(--radius); padding: 18px; display: grid; gap: 12px; justify-items: start; }
+.kt-empty p { margin: 0; }
+.kt-foot { margin-top: 16px; max-width: 760px; }
+
+/* Окно «Новый продукт» / «Изменить продукт» */
+.kt-dialog { width: min(520px, calc(100vw - 24px)); max-height: calc(100svh - 24px); padding: 0; border: 0;
+  border-radius: calc(var(--radius) + 4px); background: var(--cream); color: var(--crust); box-shadow: 0 24px 60px rgba(43, 19, 8, .35); }
+.kt-dialog:not([open]) { display: none; }
+.kt-dialog::backdrop { background: rgba(43, 19, 8, .55); }
+.kt-dialog form { display: grid; gap: 14px; padding: clamp(18px, 4vw, 26px); }
+.kt-dialog h2 { font: 800 22px/1.1 var(--display); letter-spacing: -0.02em; margin: 0; }
+.kt-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.kt-dialog__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.kt-dialog__actions .btn { flex: 1 1 140px; }
+.admin .kt-remove { justify-self: start; color: var(--chili); font-weight: 700; }
+.kt-dialog [hidden] { display: none; }
+
+/* «Сохранили», «Убрали · Вернуть» */
+.kt-toast { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 30; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px; width: max-content; max-width: calc(100vw - 32px); padding: 10px 10px 10px 16px;
+  border-radius: 14px; background: var(--crust); color: var(--cream); font-weight: 700; box-shadow: 0 12px 30px rgba(43, 19, 8, .35); }
+.kt-toast[hidden] { display: none; }
+.kt-toast span { overflow-wrap: anywhere; }
+.kt-toast button { flex: none; min-height: 40px; padding: 8px 14px; border: 0; border-radius: 999px; background: var(--tray); color: var(--crust);
+  font: inherit; font-weight: 800; cursor: pointer; }
+
+@media (max-width: 720px) {
+  /* Категории на телефоне — одной строкой с прокруткой, а не четыре строки чипов */
+  .kt-cats { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter); scrollbar-width: none; }
+  .kt-cats::-webkit-scrollbar { display: none; }
+  .kt-cats .chip { flex: none; }
+  /* Окно — сверху: снизу его закрыла бы клавиатура */
+  .kt-dialog { margin-top: 12px; margin-bottom: auto; }
+}
+@media (max-width: 420px) {
+  .kt-row2 { grid-template-columns: 1fr; }
+  .kt-price__input { width: 96px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kt-item, .kt-price__input { transition: none; }
+}

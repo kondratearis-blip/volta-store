@@ -13,6 +13,7 @@ body.admin { background: var(--kraft); min-height: 100vh; }
 .tabs { display: flex; gap: 4px; margin-right: auto; }
 .tabs button {
   border: 0; background: none; color: rgba(255, 246, 232, .7); font-weight: 700; padding: 8px 12px; border-radius: 999px; cursor: pointer;
+  white-space: nowrap;
 }
 .tabs button[aria-pressed="true"] { background: var(--cream); color: var(--crust); }
 .tabs__count { display: inline-block; min-width: 22px; padding: 0 6px; border-radius: 999px; background: var(--bucket); color: #fff; font-size: 13px; text-align: center; }
@@ -42,8 +43,9 @@ body.admin { background: var(--kraft); min-height: 100vh; }
 .ord { background: var(--cream); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; border: 3px solid transparent; }
 .ord--new { border-color: var(--bucket); }
 .ord--closed { opacity: .7; }
-.ord__head { display: flex; align-items: baseline; gap: 10px; }
+.ord__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
 .ord__num { font: 800 22px/1 var(--display); }
+.ord__num--none { font-size: 15px; color: var(--muted); }
 .ord__time { color: var(--muted); font-weight: 600; margin-right: auto; }
 .badge { font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: rgba(43, 19, 8, .08); white-space: nowrap; }
 .badge--new { background: var(--bucket); color: #fff; }
@@ -64,6 +66,92 @@ body.admin { background: var(--kraft); min-height: 100vh; }
   .orders { grid-template-columns: 1fr; }
   .settings__row { grid-template-columns: 1fr; }
 }
+
+/* Выручка за день на вкладке «Заказы» */
+.dayrev { font-size: 16px; margin: -4px 0 12px; }
+.dayrev b { font: 800 18px/1 var(--display); }
+
+/* Чеки и выручка */
+.moneysum { background: var(--crust); color: var(--cream); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 16px; max-width: 760px; }
+.moneysum:empty { display: none; }
+.moneysum__label { font-weight: 700; opacity: .8; }
+.moneysum__value { font: 800 clamp(30px, 6vw, 40px)/1.1 var(--display); letter-spacing: -0.02em; margin: 4px 0; }
+.moneysum__meta { font-size: 14px; opacity: .8; }
+.ledger { display: grid; gap: 14px; max-width: 760px; }
+.ledger__day { background: var(--cream); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; }
+.ledger__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.ledger__date { font: 800 20px/1.1 var(--display); }
+.ledger__date::first-letter { text-transform: uppercase; }
+.ledger__rev { margin-right: auto; }
+.ledger__rev b { font: 800 18px/1 var(--display); }
+.ledger__list { list-style: none; display: grid; gap: 8px; }
+.rcpt {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 6px 12px;
+  padding: 10px 12px; background: #fff; border: 2px solid var(--line); border-radius: 12px;
+}
+.rcpt__n { font-weight: 800; white-space: nowrap; }
+.rcpt__what { color: var(--crust-soft); font-size: 15px; min-width: 0; overflow-wrap: anywhere; }
+.rcpt__bad { font-size: 14px; font-weight: 700; color: var(--chili); }
+.ledger__day, .ledger__head { min-width: 0; }
+.ledger__warn, .moneysum__warn { font-size: 14px; font-weight: 700; color: var(--chili); }
+.moneysum__warn { color: #ffb38a; margin-top: 4px; }
+.moneysum__btn { margin-top: 8px; }
+.rcpt__sum { white-space: nowrap; }
+.rcpt__actions { grid-column: 1 / -1; display: flex; gap: 8px; }
+.rcpt__actions .btn { min-height: 40px; box-shadow: none; }
+/* Безопасность входа */
+.security { margin-top: 16px; display: grid; gap: 18px; }
+.sec__block { display: grid; gap: 8px; padding-top: 14px; border-top: 2px solid var(--line); }
+.sec__title { font-weight: 800; }
+.enroll { display: grid; gap: 10px; }
+.enroll__steps { padding-left: 20px; display: grid; gap: 4px; }
+.enroll__qr { width: 200px; height: 200px; background: #fff; padding: 8px; border-radius: 12px; border: 2px solid var(--line); }
+.enroll__secret { font-size: 15px; letter-spacing: .05em; word-break: break-all; background: #fff; padding: 2px 6px; border-radius: 6px; }
+.enroll__form { display: grid; gap: 10px; max-width: 320px; }
+.login form { margin-top: 0; }
+.login__who { margin-top: 12px; }
+.admin .linkbtn { border: 0; background: none; color: var(--crust-soft); text-decoration: underline; cursor: pointer; font: inherit; padding: 4px 0; min-height: 32px; }
+
+/* Сверка чека: ✓ сходится / ⚠ сверьте вручную / ✗ не сходится */
+.chk { font-size: 14px; border-radius: 10px; padding: 8px 10px; background: rgba(43, 19, 8, .05); }
+.rcpt .chk { grid-column: 1 / -1; }
+.chk summary { cursor: pointer; font-weight: 700; overflow-wrap: anywhere; }
+.chk summary:focus-visible { outline: 3px solid var(--bucket); outline-offset: 2px; }
+.chk--ok { background: rgba(31, 138, 76, .1); }
+.chk--ok summary { color: var(--ok); }
+.chk--check { background: rgba(214, 140, 0, .12); }
+.chk--check summary { color: #8a5a00; }
+.chk--bad { background: rgba(200, 40, 30, .1); border: 2px solid var(--chili); }
+.chk--bad summary { color: var(--chili); }
+.chk--wait { color: var(--muted); font-weight: 600; }
+.chk__rows { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0 6px; }
+.chk__rows dt { color: var(--muted); }
+.chk__rows dd { margin: 0; overflow-wrap: anywhere; }
+.chk__hint { color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+.chk .linkbtn { border: 0; background: none; color: var(--crust-soft); text-decoration: underline; cursor: pointer; font-size: 13px; padding: 4px 0; min-height: 32px; }
+
+.rcpt--out { opacity: .65; }
+.rcpt--out .rcpt__sum { text-decoration: line-through; }
+
+/* Чья панель (specs/013): точка или владелец — рядом с логотипом */
+.admin__who {
+  font-size: 14px; font-weight: 800; line-height: 1.2; padding: 5px 12px; border-radius: 999px;
+  background: rgba(255, 246, 232, .14); color: var(--cream); white-space: nowrap;
+}
+
+/* Телефон: логотип, точка и «Выйти» в одну строку, вкладки — второй строкой с прокруткой, без третьей строки */
+@media (max-width: 520px) {
+  .admin__bar { flex-wrap: wrap; row-gap: 4px; column-gap: 10px; }
+  .admin__bar [data-signout] { margin-left: auto; }
+  .admin__who { font-size: 13px; padding: 4px 10px; }
+  .tabs { order: 3; flex-basis: 100%; overflow-x: auto; margin-right: 0; }
+}
+
+.fixed { display: grid; gap: 12px; padding: 14px; border-radius: 14px; background: rgba(43, 19, 8, .05); }
+.fixed__lead { font-size: 14px; font-weight: 700; color: var(--crust-soft); }
+.fixed__item { display: grid; gap: 4px; }
+.fixed__label { font-size: 14px; font-weight: 700; }
+.fixed__text { font-size: 15px; white-space: pre-line; padding: 10px 12px; background: #fff; border-radius: 10px; border: 2px solid var(--line); }
 
 .qrset { display: flex; gap: 16px; align-items: center; padding: 14px; background: #fff; border-radius: 14px; border: 2px solid var(--line); }
 .qrset__img { width: 120px; height: 120px; object-fit: contain; border-radius: 8px; flex: none; }
@@ -89,4 +177,210 @@ body.admin { background: var(--kraft); min-height: 100vh; }
 .waquick .input { min-height: 42px; padding: 8px 12px; }
 .waquick .input[aria-invalid="true"] { border-color: var(--chili); }
 .waquick .btn { flex: none; }
+
+/* Приём заказов: зелёная полоса — принимаем, красная — остановлено, кнопка рядом */
+.intake { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px;
+  padding: 12px 14px; margin-bottom: 14px; border-radius: 14px; border: 2px solid var(--ok); background: #fff; }
+.intake[hidden] { display: none; }
+.intake__state { margin: 0; font-weight: 700; color: var(--ok); }
+.intake__state::before { content: '● '; }
+.intake.is-off { border-color: var(--chili); background: var(--chili); }
+.intake.is-off .intake__state { color: #fff; }
+.intake.is-off .intake__btn { background: #fff; color: var(--crust); }
+.intake__btn { flex: none; }
+/* Время доставки — вторая строка той же полосы */
+.intake__wait { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.intake__wait[hidden] { display: none; }
+.intake__wait label { font-weight: 700; }
+.intake__wait .input { width: auto; min-height: 44px; padding: 8px 12px; }
+.intake__saved { font-size: 14px; color: var(--muted); }
+.intake.is-off .intake__wait { border-top-color: rgba(255, 255, 255, .45); color: #fff; }
+.intake.is-off .intake__wait .input { color: var(--crust); }
+.intake.is-off .intake__saved { color: #fff; }
 .ord__actions .btn { white-space: nowrap; gap: 6px; padding-inline: 10px; }
+
+/* Полосы приёма: у владельца — по точке, рядом на компьютере и друг под другом на телефоне */
+.intakes { display: grid; gap: 10px; margin-bottom: 14px; }
+.intakes:empty { display: none; }
+.intakes .intake { margin-bottom: 0; }
+.intakes--two { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); align-items: start; }
+.intake--compact { padding: 10px 12px; gap: 8px 10px; }
+.intake--compact .intake__wait { padding-top: 8px; }
+/* «Курьер берёт до N заказов» (specs/014) — строка полосы точки под временем доставки, так же устроена */
+.intake__limit { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.intake__limit[hidden] { display: none; }
+.intake__limit label { font-weight: 700; }
+.intake__limit .input { width: auto; min-height: 44px; padding: 8px 12px; }
+.intake--compact .intake__limit { padding-top: 8px; }
+.intake.is-off .intake__limit { border-top-color: rgba(255, 255, 255, .45); color: #fff; }
+/* Дождь +100 сом (rain.sql): включено — кнопка синяя, видно издалека */
+.intake__rain { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.intake__rain[hidden] { display: none; }
+.intake__rain-btn { min-height: 44px; }
+.intake__rain.is-on .intake__rain-btn { background: #1d5fbf; border-color: #1d5fbf; color: #fff; }
+.intake.is-off .intake__rain { border-top-color: rgba(255, 255, 255, .45); color: #fff; }
+.intake.is-off .intake__limit .input { color: var(--crust); }
+
+/* Точка заказа (specs/013): метка у номера, предупреждение «проверьте адрес», «Передать на …» */
+.pt { font-size: 13px; font-weight: 800; padding: 3px 10px; border-radius: 999px; white-space: nowrap; align-self: center; }
+.pt--kulieva { background: var(--crust); color: var(--cream); }
+.pt--kokzhar { background: var(--tray); color: var(--crust); }
+.pt--none { border: 2px dashed var(--muted); color: var(--crust-soft); padding-block: 1px; }
+.ord__pt-warn { font-size: 14px; font-weight: 700; color: #7a4f00; background: rgba(214, 140, 0, .14); padding: 8px 10px; border-radius: 10px; }
+.ord__move { display: flex; flex-wrap: wrap; gap: 8px; }
+.ord__move .btn { min-height: 40px; font-size: 14px; padding: 6px 12px; }
+.moved { margin: 0 0 8px; }
+.moved:empty { display: none; }
+/* Заказ до разделения (без точки): его видят обе точки, берёт первая — «Взять на …» */
+.ord__pt-none { font-size: 14px; color: var(--crust-soft); padding: 7px 10px; border: 2px dashed var(--muted); border-radius: 10px; }
+.ord__pt-none b { font-weight: 800; color: var(--crust); }
+/* Заказ передали на эту точку: метка и рамка, пока менеджер не нажмёт в карточке (или 15 минут) */
+.pt--handed { background: var(--chili); color: #fff; }
+.ord--handed { border-color: var(--chili); }
+/* Заказ ждёт курьера дольше обычного или давно в пути (specs/014): рамка и строка «⏱ …», без звука */
+.ord--late { border-color: var(--chili); }
+.ord__late { font-size: 14px; font-weight: 800; color: #fff; background: var(--chili); padding: 7px 10px; border-radius: 10px; }
+/* Заказ назначила база сама (specs/015) — над списком «Курьер»: менеджеру ничего делать не нужно */
+.ord__auto { margin: 0 0 -4px; justify-self: start; font-size: 14px; font-weight: 700; color: var(--ok); background: rgba(30, 122, 62, .1); padding: 4px 10px; border-radius: 999px; }
+
+/* Сайт закрыт общей настройкой — над полосами точек */
+.siteoff { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px;
+  padding: 12px 14px; margin-bottom: 14px; border-radius: 14px; background: var(--chili); color: #fff; }
+.siteoff[hidden] { display: none; }
+.siteoff__text { margin: 0; }
+.siteoff__text b { font-weight: 800; }
+.siteoff__btn { --btn-bg: #fff; --btn-fg: var(--crust); flex: none; }
+.siteoff__error { flex-basis: 100%; margin: 0; font-weight: 700; }
+
+/* Касса владельца: выручка по точкам */
+.moneysum__split { list-style: none; display: grid; gap: 2px; margin: 2px 0 8px; font-size: 15px; }
+.moneysum__split b { font-weight: 800; }
+.ledger__split { flex-basis: 100%; font-size: 14px; color: var(--muted); font-weight: 600; }
+/* Касса менеджера точки: оплаты до разделения — у владельца */
+.ledger__presplit { padding: 0 4px; }
+
+/* Настройки у двух точек: цену видит менеджер точки, меняет владелец */
+.settings__note { font-size: 14px; font-weight: 700; color: var(--crust-soft); padding: 10px 12px; border-radius: 12px; background: rgba(43, 19, 8, .05); }
+.settings input[readonly] { background: transparent; border-style: dashed; color: var(--crust-soft); }
+
+/* Сигнал о заказах (specs/010): оплаченные с другой даты ждут принятия; браузер выключил звук */
+.waiting { display: grid; gap: 8px; padding: 12px 14px; margin-bottom: 14px; border-radius: 14px; background: var(--chili); color: #fff; font-weight: 700; }
+.waiting[hidden] { display: none; }
+.waiting__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 0; }
+.waiting .btn { flex: none; background: #fff; color: var(--crust); }
+.unlock { display: block; width: 100%; padding: 12px 14px; margin-bottom: 14px; border: 0; border-radius: 14px;
+  background: var(--crust); color: var(--cream); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
+.unlock[hidden] { display: none; }
+.awake-note { margin: 0 0 14px; padding: 10px 14px; border-radius: 14px; background: var(--cream); color: var(--crust); font-weight: 600; }
+
+/* Курьеры: полоса на «Заказах» и раздел в «Настройках» */
+.crs { display: grid; gap: 4px; padding: 10px 14px; margin-bottom: 14px; border-radius: 14px; background: var(--cream); font-size: 15px; }
+.crs[hidden] { display: none; }
+.crs__title { font-weight: 800; }
+.crs__item { margin: 0; }
+.crs__item a { font-weight: 700; }
+.crs__off { color: var(--muted); }
+/* Смена курьера (specs/015): на смене — зелёным; «на смене», но страница больше часа не открыта — красным */
+.crs__shift { color: var(--ok); font-weight: 700; }
+.crs__lost { color: var(--chili); font-weight: 700; }
+.ord select[data-courier] { border-color: var(--crust-soft); }
+.crs-list { display: grid; gap: 10px; margin-bottom: 14px; }
+.crs-row { display: grid; gap: 4px; padding: 12px 14px; border: 2px solid var(--line); border-radius: 12px; background: #fff; }
+.crs-row--off { opacity: .65; }
+.crs-row__name { margin: 0; }
+/* Точка курьера (specs/014): у владельца — список прямо в строке */
+.crs-row__point { font-weight: 700; color: var(--crust); white-space: nowrap; }
+.crs-row__point select { margin-left: 4px; min-height: 36px; padding: 4px 8px; border: 2px solid var(--line); border-radius: 8px; background: #fff; color: var(--crust); font: inherit; }
+.crs-row__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.crs-code { display: grid; gap: 8px; padding: 14px; margin-bottom: 14px; border: 2px solid var(--ok); border-radius: 12px; background: #fff; }
+.crs-code[hidden] { display: none; }
+.crs-code__code { font-size: 20px; letter-spacing: .04em; }
+.crs-code__link { word-break: break-all; font-size: 14px; }
+.settings .crs-add { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; }
+.crs-add .field { flex: 1 1 220px; }
+
+/* Карта на «Заказах»: курьеры и незакрытые заказы */
+.ops-map { display: grid; gap: 6px; margin-bottom: 14px; }
+.ops-map[hidden] { display: none; }
+.ops-map__el { height: 380px; }
+@media (max-width: 520px) { .ops-map__el { height: 320px; } }
+
+/* ---------- Мини-приложение (specs/018) ---------- */
+/* Чипы — цель нажатия не меньше 44 px (фильтры, период отчёта, «Экран кухни») */
+.chip { min-height: 44px; display: inline-flex; align-items: center; }
+.chip--link { text-decoration: none; }
+/* «⏰ Ко времени»: есть заказы с назначенным часом — чип красный, пока его не выбрали */
+.chip--hot:not([aria-pressed="true"]) { border-color: var(--chili); color: var(--chili); }
+
+/* Заказ «ко времени», который ещё не уехал: ярко-красная карточка — фон, рамка и полоса слева, строка «⏰ …» */
+.ord--timed { background: #FFE3DE; border-color: var(--chili); box-shadow: inset 8px 0 0 var(--chili); padding-left: 22px; }
+.ord__timed { font-size: 15px; font-weight: 800; color: #fff; background: var(--chili); padding: 8px 12px; border-radius: 10px; }
+/* Самовывоз и «до двери» — сразу под составом заказа */
+.ord__mode { justify-self: start; font-size: 15px; font-weight: 800; padding: 5px 12px; border-radius: 999px; background: var(--tray); color: var(--crust); }
+.ord__mode--pickup { background: var(--crust); color: var(--cream); }
+/* Готово к выдаче (экран кухни) и оценка покупателя */
+.ord__ready { font-size: 15px; font-weight: 800; color: var(--ok); background: rgba(30, 122, 62, .1); padding: 7px 10px; border-radius: 10px; }
+.ord__rate { font-size: 15px; font-weight: 700; color: var(--crust); background: rgba(255, 210, 63, .35); padding: 7px 10px; border-radius: 10px; overflow-wrap: anywhere; }
+/* Кнопки с «💬 Чат»: две колонки, нечётная последняя — во всю ширину */
+.ord__actions--chat { grid-template-columns: 1fr 1fr; }
+.ord__actions--chat > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+.ord__chat .chat-dot { margin-left: 2px; }
+/* «Ждать: 60 мин» и «Готово» — одной строкой под статусом */
+.ord__prep { display: flex; gap: 8px; align-items: stretch; }
+.ord__prep select { flex: 1 1 auto; min-width: 0; min-height: 44px; }
+.ord__prep .btn { flex: none; min-height: 44px; box-shadow: none; }
+.btn--ok { --btn-bg: var(--ok); --btn-fg: #fff; }
+
+/* Курьеры: код из 6 цифр крупно, «код выдан — ждёт входа», «Удалить» */
+.crs-code__pin { font: 800 clamp(36px, 10vw, 48px)/1 var(--display); letter-spacing: .12em; color: var(--crust); margin: 2px 0 4px; }
+.crs-row__pinwait { display: inline-block; font-size: 13px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: rgba(214, 140, 0, .16); color: #7a4f00; }
+.crs-row__actions .btn { min-height: 44px; }
+.crs-code__once { font-size: 14px; font-weight: 700; color: #7a4f00; background: rgba(214, 140, 0, .14); padding: 8px 10px; border-radius: 10px; }
+.crs-row__delete { --btn-fg: var(--chili); border-color: var(--chili); }
+
+/* Отчёты */
+.report__bar { align-items: flex-end; }
+.report__custom { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; }
+.report__custom[hidden] { display: none; }
+.report__date { display: grid; gap: 4px; font-size: 14px; font-weight: 700; }
+.report__date .input { width: auto; min-height: 44px; padding: 8px 10px; }
+.report__custom .btn { min-height: 44px; }
+.report { display: grid; gap: 14px; max-width: 1100px; }
+.report:empty { display: none; }
+.report__period { font-weight: 700; color: var(--crust-soft); }
+.report__tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.report__tile { background: var(--crust); color: var(--cream); border-radius: var(--radius); padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.report__label { font-size: 14px; font-weight: 700; opacity: .8; }
+.report__value { font: 800 clamp(22px, 5vw, 30px)/1.1 var(--display); letter-spacing: -0.02em; }
+.report__block { background: var(--cream); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; min-width: 0; }
+.report__title { font: 800 20px/1.1 var(--display); }
+.report__scroll { overflow-x: auto; border-radius: 10px; }
+.report__scroll:focus-visible { outline-offset: 0; }
+.report__table { width: 100%; border-collapse: collapse; font-size: 15px; background: #fff; }
+.report__table th, .report__table td { padding: 9px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.report__table thead th { font-size: 13px; font-weight: 800; color: var(--crust-soft); background: rgba(43, 19, 8, .05); }
+.report__table th:first-child { text-align: left; }
+.report__table tbody th { font-weight: 800; }
+.report__block[data-report-table="Опоздания"] :is(th, td):nth-child(2) { text-align: left; } /* точка — текстом, слева */
+.report__table tbody tr:last-child > * { border-bottom: 0; }
+.report__deleted { font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: rgba(43, 19, 8, .1); color: var(--crust-soft); margin-left: 4px; }
+@media (max-width: 520px) {
+  .report__tiles { grid-template-columns: 1fr 1fr; }
+  .report__tile { padding: 12px; }
+  /* Четыре вкладки (с «Отчётами») помещаются в строку на 375 px */
+  .tabs { gap: 2px; }
+  .tabs button { padding-inline: 9px; font-size: 15px; }
+}
+@media (max-width: 390px) {
+  .tabs button { padding-inline: 8px; font-size: 14px; }
+}
+
+/* Связь с курьером (specs/021): «💬 Чат» в полосе курьеров, номер в «Настройках», звонок курьеру в карточке заказа */
+.crs__chat { display: inline-flex; align-items: center; min-height: 36px; margin-left: 2px; padding: 4px 10px; border: 2px solid var(--crust);
+  border-radius: 999px; background: #fff; color: var(--crust); font: 700 14px/1.2 var(--text); cursor: pointer; vertical-align: middle; }
+.crs__chat:hover { background: var(--cream); }
+.crs__chat:focus-visible { outline: 3px solid var(--crust); outline-offset: 2px; }
+.crs-row__phone { margin-top: 2px; }
+.crs-row__phone a { font-weight: 700; }
+.ord__courier-call { margin: -4px 0 0; font-size: 15px; }
+.ord__courier-call a { font-weight: 700; }

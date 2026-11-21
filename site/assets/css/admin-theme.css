@@ -1,0 +1,588 @@
+/* Панель менеджера — вид «как приложение покупателя» и новая раскладка (16.11.2026). Подключается только в admin.html,
+   последним: base.css → admin.css → chat.css → theme.css (токены, кнопки, поля покупателя) → этот файл. admin.css и base.css
+   общие с курьером и кухней и не меняются: всё, что панель перекрашивает и переставляет, — здесь.
+   Правило вида: оранжевый — шапка и «новый оплаченный заказ», красный — только то, что требует действия (ко времени, опоздание,
+   приём остановлен, сайт закрыт, ждут принятия), синий — дождь; остальное — белые карточки на кремовом фоне.
+   Содержание: основа → шапка и вкладки → карточки и вход → вкладка «Заказы» (плашки, переключатель, две зоны, фильтры) →
+   карточка заказа → «Смена» (приём, курьеры, карта, инструменты) → «Касса» → «Отчёты» → «Настройки» → окно чата */
+
+/* ---------- Основа ---------- */
+:root {
+  --appbar-h: 56px;
+  --tabbar-h: 60px;
+  --tabbar-bottom: max(var(--tabbar-gap), calc(var(--safe-bottom) - 8px));
+  --dock: calc(var(--tabbar-bottom) + var(--tabbar-h));
+  /* Панель шире сайта покупателя: на большом экране — три колонки заказов и колонка «Смены» */
+  --wrap: 1480px;
+  --shift-w: 384px;
+  /* Текст на тонированных плашках: каждая пара «текст / фон» панели посчитана при переделке — не ниже 4,5:1 */
+  --good-ink: #17602F;
+  --bad-ink: #B3000F;
+  --warn-ink: #7A5C00;
+  --rain: #1D5FBF;
+  --timed-bg: #FFE3DE;
+  --sep: rgba(60, 60, 67, .22);
+  --track: rgba(120, 120, 128, .16);
+}
+
+/* Прокрутка к элементу (фокус с клавиатуры, «Открыть день») не прячет его под шапкой и под панелью вкладок */
+html { scroll-padding: calc(var(--appbar-h) + 12px) 0 calc(var(--dock) + 16px); }
+body.admin { min-height: 100svh; overflow-x: clip; background: var(--bg); font-size: 15px; line-height: 1.4; }
+.admin .wrap { max-width: var(--wrap); }
+.admin b, .admin strong { font-weight: 600; }
+.admin__main { padding-block: 12px calc(var(--dock) + 30px); }
+.admin__hint { font-size: 14px; line-height: 1.4; color: var(--ink-2); }
+.admin__saved { margin-left: 12px; font-weight: 600; color: var(--good-ink); }
+.admin .linkbtn { color: var(--brand-press); text-decoration: underline; text-underline-offset: 3px; }
+.admin .error { font-weight: 500; }
+.admin .error:empty { display: none; }
+/* Низ экрана под парящей панелью вкладок мягко растворяется в фон — карточки не «упираются» в панель. Только пока панель
+   вкладок на экране: на экране входа её нет, и дымка закрывала бы кнопку «Войти» */
+body.admin:has([data-tabs]:not([hidden]))::after {
+  content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: calc(var(--z-tabbar) - 1); height: calc(var(--dock) + 30px); pointer-events: none;
+  background: linear-gradient(to top, var(--bg) 22%, rgba(247, 243, 239, 0));
+}
+
+/* Фокус с клавиатуры (кольцо — из theme.css) не срезает «капсулы» до 8 px */
+.admin .btn:focus-visible, .admin .chip:focus-visible, .admin .phone-wa:focus-visible, .admin .crs__chat:focus-visible { border-radius: 999px; }
+.admin .input:focus-visible, .admin select:focus-visible, .admin textarea:focus-visible, .admin .tool:focus-visible, .admin .halves__btn:focus-visible { border-radius: var(--r-field); }
+
+/* Все списки панели: своя стрелка вместо системной (theme.css рисует её только спискам внутри .field) */
+.admin select, .admin select:focus {
+  -webkit-appearance: none; appearance: none; padding-right: 36px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-2) 50%), linear-gradient(135deg, var(--ink-2) 50%, transparent 50%);
+  background-position: calc(100% - 19px) 55%, calc(100% - 13px) 55%; background-size: 6px 6px; background-repeat: no-repeat;
+}
+.admin select option { background: #fff; color: var(--ink); }
+
+/* Кнопки: в панели пониже, чем у покупателя, — плотность важнее. Главная — оранжевая, вторая — серая, WhatsApp — зелёная */
+.admin .btn { min-height: 48px; font-size: 16px; }
+.admin .btn--small { min-height: 44px; font-size: 15px; }
+/* Белый текст на прежнем зелёном WhatsApp (#25D366) — 2:1; здесь — на тёмно-зелёном, 5,4:1 */
+.admin .btn--wa { --btn-bg: var(--good); --btn-fg: #fff; --btn-hover: var(--good-ink); }
+.admin .btn--ok { --btn-bg: var(--good); --btn-fg: #fff; --btn-hover: var(--good-ink); }
+.check { font-weight: 500; }
+.check input { accent-color: var(--brand-strong); }
+
+/* ---------- Шапка: белый логотип на оранжевом «матовом стекле», чья панель и «Выйти» ---------- */
+.admin__top { z-index: var(--z-appbar); padding-top: var(--safe-top); background: var(--brand); color: #fff; }
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .admin__top { background: rgba(236, 75, 4, .9); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+}
+.admin__bar { flex-wrap: nowrap; gap: 10px; height: var(--appbar-h); min-height: 0; padding-block: 0; }
+.admin__logo { flex: none; align-items: center; min-height: 44px; color: #fff; }
+.admin__logo .logo-mask { width: 62px; }
+.admin__top :focus-visible { outline-color: #fff; box-shadow: 0 0 0 5px rgba(0, 0, 0, .45); }
+.admin__who {
+  min-width: 0; padding: 6px 12px; overflow: hidden; text-overflow: ellipsis;
+  background: rgba(255, 255, 255, .96); color: var(--ink); font: 600 13px/1.25 var(--text); letter-spacing: -0.01em;
+}
+/* «Выйти» — тёмная полупрозрачная «капсула»: белый текст на ней — 5,5:1 */
+.admin .btn--ghost-light { --btn-bg: rgba(0, 0, 0, .2); --btn-fg: #fff; --btn-hover: rgba(0, 0, 0, .34); border: 0; }
+.admin__bar [data-signout] { flex: none; margin-left: auto; }
+
+/* ---------- Вкладки: на телефоне — парящая «капсула» внизу, под большим пальцем; от 1100 px — в шапке, за логотипом ---------- */
+.tabs {
+  position: fixed; left: 12px; right: 12px; bottom: var(--tabbar-bottom); z-index: var(--z-tabbar);
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; order: 0; overflow: visible;
+  max-width: 480px; height: var(--tabbar-h); margin: 0 auto; padding: 4px; border-radius: 999px;
+  background: var(--glass-solid); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .08), var(--shadow-float);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  /* Плотнее, чем у покупателя: под панелью проезжают красные и розовые карточки, подписи вкладок должны читаться */
+  .tabs { background: rgba(255, 255, 255, .88); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+}
+.tabs button {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-width: 0; padding: 4px 2px 3px; border: 0; border-radius: 999px; background: none; color: var(--ink-2);
+  font: 500 11px/1.15 var(--text); letter-spacing: 0; white-space: nowrap; cursor: pointer;
+}
+.tabs button[aria-pressed="true"] { background: rgba(120, 120, 128, .14); color: var(--brand-press); font-weight: 600; }
+.tabs button:focus-visible { outline-offset: -3px; border-radius: 999px; }
+.tabs .ico { width: 24px; height: 24px; }
+.tabs__label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+/* Сколько оплаченных заказов ждут принятия — красный кружок у значка «Заказов», виден с любой вкладки */
+.tabs__count {
+  position: absolute; top: 2px; left: calc(50% + 5px); min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+  background: var(--bad); color: #fff; font: 700 12px/20px var(--text); text-align: center; box-shadow: 0 0 0 2px #fff;
+}
+
+/* ---------- Карточки, вход ---------- */
+.card { padding: clamp(16px, 3vw, 22px); border-radius: var(--r-card); background: var(--surface); box-shadow: var(--shadow-card); }
+.card__title { margin-bottom: 14px; font: 700 22px/1.15 var(--text); letter-spacing: -0.025em; }
+.login { max-width: 420px; margin-top: 6vh; }
+.login .card__title { font-size: 28px; }
+.login__who { margin-top: 14px; }
+.enroll__steps { padding-left: 22px; }
+.enroll__qr { padding: 8px; border: 0; border-radius: var(--r-tile); background: #fff; box-shadow: inset 0 0 0 1px var(--sep); }
+.enroll__secret { padding: 2px 6px; border-radius: 6px; background: var(--surface-2); }
+
+/* ---------- Вкладка «Заказы»: срочные плашки — над обеими зонами, видны и на «Заказах», и на «Смене» ---------- */
+.siteoff, .waiting, .unlock, .awake-note { margin: 0 0 10px; border-radius: 16px; }
+.siteoff, .waiting { padding: 12px 14px; background: var(--bad); color: #fff; font-weight: 500; line-height: 1.35; }
+.siteoff__text b, .waiting { font-weight: 600; }
+.siteoff__btn, .waiting .btn { --btn-bg: #fff; --btn-fg: var(--ink); --btn-hover: var(--surface-2); background: var(--btn-bg); color: var(--btn-fg); }
+.siteoff__btn:hover, .waiting .btn:hover { background: var(--btn-hover); }
+.siteoff__error { font-weight: 600; }
+.siteoff :focus-visible, .waiting :focus-visible, .intake.is-off :focus-visible { outline-color: #fff; box-shadow: 0 0 0 5px rgba(0, 0, 0, .45); }
+.unlock { padding: 12px 14px; background: var(--ink); color: #fff; font: 600 15px/1.35 var(--text); }
+.awake-note { padding: 10px 14px; background: var(--sun-tint); color: var(--ink); font-weight: 500; box-shadow: inset 0 0 0 1px rgba(122, 92, 0, .25); }
+
+/* Переключатель «Заказы | Смена» (до 1100 px): серая дорожка, выбранная половинка — белой плашкой */
+.halves { display: grid; grid-template-columns: 1fr 1fr; margin: 0 0 10px; padding: 2px; border-radius: 14px; background: var(--track); }
+.halves__btn {
+  display: grid; align-content: center; justify-items: center; gap: 1px; min-width: 0; min-height: 46px; padding: 4px 8px;
+  border: 0; border-radius: 12px; background: none; color: var(--ink); font: 500 15px/1.15 var(--text); letter-spacing: -0.01em; cursor: pointer;
+}
+.halves__btn[aria-pressed="true"] { background: var(--surface); font-weight: 600; box-shadow: 0 3px 8px rgba(0, 0, 0, .1), 0 1px 1px rgba(0, 0, 0, .04); }
+.halves__btn:focus-visible { outline-offset: -3px; }
+.halves__name { display: inline-flex; align-items: center; gap: 6px; }
+.halves__dot { display: none; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--bad); }
+.halves__flags { display: flex; justify-content: center; gap: 6px; max-width: 100%; font: 600 11px/1.2 var(--text); letter-spacing: 0; }
+.halves__flag { display: none; white-space: nowrap; }
+.halves__flag--off { color: var(--bad-ink); }
+.halves__flag--rain { color: var(--rain); }
+/* Приём какой-то точки остановлен или сайт закрыт — красная точка; остановлен приём — ещё и подпись; идёт дождь — «дождь».
+   Скрытые полосы и строки не в счёт: класс на них мог остаться от прошлого состояния */
+.ordpane:has(.intake.is-off:not([hidden])) .halves__dot,
+.ordpane:has([data-site-closed]:not([hidden])) .halves__dot { display: block; }
+.ordpane:has(.intake.is-off:not([hidden])) .halves__flag--off { display: block; }
+.ordpane:has(.intake__rain.is-on:not([hidden])) .halves__flag--rain { display: block; }
+/* Обе подписи в половинку не помещаются — от дождя остаётся значок */
+.ordpane:has(.intake.is-off:not([hidden])) .halves__rainword { display: none; }
+
+/* Звук или «Экран не гаснет» выключены — плашка над переключателем, видна с обеих половинок и на компьютере */
+.quiet { display: none; gap: 8px; margin: 0 0 12px; }
+.quiet__row { display: none; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 0;
+  padding: 10px 12px 10px 14px; border-radius: 16px; background: var(--bad-tint); color: var(--ink); font-weight: 600; font-size: 15px; line-height: 1.35; }
+.quiet__on { flex: none; --btn-bg: var(--bad); --btn-fg: #fff; --btn-hover: #B3000F; }
+.ordpane:has([data-sound][aria-pressed="false"]) .quiet,
+.ordpane:has([data-awake][aria-pressed="false"]) .quiet { display: grid; }
+.ordpane:has([data-sound][aria-pressed="false"]) .quiet__row--sound,
+.ordpane:has([data-awake][aria-pressed="false"]) .quiet__row--awake { display: flex; }
+/* Красная точка на «Смене» — и когда звук выключен */
+.ordpane:has([data-sound][aria-pressed="false"]) .halves__dot { display: block; }
+
+/* Две зоны. До 1100 px на экране одна — какая, говорит data-half вкладки (admin.js) */
+.ordmain, .shift { min-width: 0; }
+.shift { display: grid; gap: 12px; align-content: start; }
+@media (max-width: 1099.98px) {
+  .ordpane[data-half="orders"] .shift, .ordpane[data-half="shift"] .ordmain { display: none; }
+}
+
+/* Точка у владельца — над обеими зонами; главная зона: дата и выручка дня, фильтры */
+.ordgrid > [data-branch-pick] { margin-bottom: 10px; }
+.ordbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
+.ordbar > .filters { flex: 1 1 100%; }
+.toolbar__date {
+  flex: none; width: auto; min-height: 44px; padding: 6px 12px; border-radius: var(--r-field); background: var(--surface);
+  font: 500 15px/1.2 var(--text); box-shadow: 0 0 0 .5px rgba(0, 0, 0, .06), var(--shadow-card);
+}
+.dayrev { flex: 1 1 0; min-width: 0; margin: 0; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.dayrev b { font: 700 15px/1 var(--text); letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; }
+.ordmain > [data-orders-status] { margin: 0 0 10px; color: var(--bad-ink); font-weight: 600; }
+.moved { margin: 0 0 10px; padding: 9px 12px; border-radius: 12px; background: var(--good-tint); color: var(--good-ink); font-weight: 600; }
+
+/* Чипы: белые «капсулы» на кремовом фоне, выбранный — тёмный. Внутри белых карточек — серые */
+.chips { gap: 6px; }
+.chip {
+  min-height: 44px; padding: 6px 14px; border: 0; background: var(--surface); color: var(--ink);
+  font: 500 14px/1.2 var(--text); letter-spacing: -0.01em; white-space: nowrap; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .06), var(--shadow-card);
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: #fff; font-weight: 600; }
+.chip b { margin-left: 6px; font-weight: 600; opacity: 1; color: var(--ink-2); }
+.chip[aria-pressed="true"] b { color: rgba(255, 255, 255, .78); }
+.chip:disabled { opacity: .5; cursor: default; }
+/* «⏰ Ко времени»: есть такие заказы — чип в красной рамке, пока его не выбрали */
+.chip--hot:not([aria-pressed="true"]) { color: var(--bad-ink); box-shadow: inset 0 0 0 2px var(--bad); }
+.chip--hot:not([aria-pressed="true"]) b { color: var(--bad-ink); }
+.moneysum .chip, .ledger__day .chip { background: var(--surface-2); box-shadow: none; }
+@media (hover: hover) {
+  .chip:not([aria-pressed="true"]):not(:disabled):hover { background: var(--surface-3); }
+}
+/* Точка у владельца — переключатель из трёх частей, как «Заказы | Смена» */
+.chips[data-branch-pick] { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 0; padding: 2px; border-radius: 14px; background: var(--track); }
+[data-branch-pick] .chip { justify-content: center; min-width: 0; padding-inline: 8px; border-radius: 12px; background: none; box-shadow: none; }
+[data-branch-pick] .chip[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 3px 8px rgba(0, 0, 0, .1), 0 1px 1px rgba(0, 0, 0, .04); }
+/* Фильтры статусов на телефоне — одна строка, листается вбок (десять чипов в четыре ряда съедали первый экран) */
+@media (max-width: 599.98px) {
+  .filters {
+    flex-wrap: nowrap; margin-inline: calc(-1 * var(--gutter)); padding: 2px var(--gutter); overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-padding-inline: var(--gutter); scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .filters .chip { flex: none; }
+}
+
+/* ---------- Заказы: карточка ---------- */
+.orders { grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); align-items: start; gap: 12px; margin-top: 0; }
+.orders > p { grid-column: 1 / -1; padding: 28px 16px; border-radius: var(--r-card); background: var(--surface); color: var(--ink-2); text-align: center; box-shadow: var(--shadow-card); }
+/* Рамка 3 px есть всегда (у спокойной карточки — прозрачная): сигнальная рамка не сдвигает содержимое */
+.ord { gap: 8px; padding: 13px; border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-card); }
+/* Новый оплаченный заказ — оранжевая рамка, оранжевая метка статуса и оранжевый список «Статус» */
+.ord--new { border-color: var(--brand); }
+.ord--awaiting { border: 3px dashed rgba(60, 60, 67, .3); box-shadow: none; }
+/* Закрытый заказ — плоская карточка без заливки: не спорит с заказами в работе, а текст остаётся контрастным */
+.ord--closed { opacity: 1; background: none; box-shadow: inset 0 0 0 1px var(--sep); }
+.ord--handed, .ord--late { border-color: var(--bad); }
+/* «Ко времени» и ещё не уехал — розовая карточка в красной рамке с полосой слева */
+.ord--timed { padding-left: 21px; background: var(--timed-bg); border-color: var(--bad); box-shadow: inset 8px 0 0 var(--bad); }
+
+/* Шапка карточки: номер крупно, точка, время, справа — статус */
+.ord__head { align-items: center; gap: 6px; }
+.ord__num { font: 700 24px/1 var(--text); letter-spacing: -0.03em; }
+.ord__num--none { font-size: 15px; font-weight: 600; letter-spacing: 0; color: var(--ink-2); }
+.ord__time { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.badge { padding: 5px 9px; background: var(--surface-2); color: var(--ink); font: 600 13px/1.2 var(--text); letter-spacing: 0; }
+.badge--awaiting_payment { padding: 3.5px 9px; background: none; border: 1.5px dashed var(--ink-2); color: var(--ink-2); }
+.badge--new { background: var(--brand-strong); color: #fff; }
+.badge--cooking { background: var(--sun-tint); color: var(--warn-ink); }
+.badge--delivering { background: var(--brand-tint); color: var(--brand-press); }
+.badge--done { background: var(--good-tint); color: var(--good-ink); }
+.badge--canceled { background: var(--bad-tint); color: var(--bad-ink); }
+.ord--timed .badge--confirmed { background: rgba(255, 255, 255, .7); }
+.pt { padding: 4px 8px; font: 600 12px/1.2 var(--text); letter-spacing: 0; }
+.pt--kulieva { background: var(--ink); color: #fff; }
+.pt--kokzhar { background: var(--sun); color: var(--ink); }
+.pt--none { padding-block: 2.5px; border: 1.5px dashed var(--ink-2); color: var(--ink-2); }
+.pt--handed { background: var(--bad); color: #fff; }
+
+/* Строки-сигналы под шапкой */
+.ord__timed, .ord__late { padding: 8px 12px; border-radius: 10px; background: var(--bad); color: #fff; font-size: 15px; font-weight: 700; }
+.ord__pt-warn { padding: 8px 10px; border-radius: 10px; background: var(--sun-tint); color: var(--warn-ink); font-size: 14px; font-weight: 600; }
+.ord__pt-none { padding: 7px 10px; border: 1.5px dashed var(--ink-2); border-radius: 10px; font-size: 14px; color: var(--ink-2); }
+.ord__pt-none b { color: var(--ink); }
+
+/* Состав и сумма, способ получения, клиент и адрес */
+.ord__what { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; }
+.ord__what span { font-weight: 600; color: var(--ink); }
+.ord__mode { padding: 5px 12px; background: var(--sun); color: var(--ink); font-size: 14px; font-weight: 600; }
+.ord__mode--pickup { background: var(--ink); color: #fff; }
+.ord__info { font-size: 15px; line-height: 1.4; }
+.ord__info a { font-weight: 600; }
+.ord__muted { color: var(--ink-2); }
+/* Номер покупателя — зелёная тонированная «капсула» WhatsApp; цель нажатия шире видимой — 44 px */
+.phone-wa { position: relative; min-height: 32px; padding: 5px 12px 5px 8px; background: var(--good-tint); color: var(--good-ink); font-weight: 600; }
+.phone-wa::after { content: ''; position: absolute; inset: -6px 0; }
+.phone-wa:hover { background: #D5EFDC; }
+.ord__paid { font-size: 14px; font-weight: 600; color: var(--good-ink); }
+.ord__unpaid { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.ord__ready { padding: 7px 10px; border-radius: 10px; background: var(--good-tint); color: var(--good-ink); font-size: 14px; font-weight: 600; }
+.ord__rate { padding: 7px 10px; border-radius: 10px; background: var(--sun-tint); color: var(--ink); font-size: 14px; font-weight: 500; }
+
+/* Сверка чека */
+.chk { padding: 8px 10px; border-radius: 10px; background: var(--surface-2); font-size: 14px; }
+.chk summary { font-weight: 600; }
+.chk summary:focus-visible { outline: 3px solid var(--ink); }
+.chk--ok { background: var(--good-tint); }
+.chk--ok summary { color: var(--good-ink); }
+.chk--check { background: var(--sun-tint); }
+.chk--check summary { color: var(--warn-ink); }
+.chk--bad { border: 0; background: var(--bad-tint); box-shadow: inset 0 0 0 1.5px var(--bad); }
+.chk--bad summary { color: var(--bad-ink); }
+.chk--wait { color: var(--ink-2); font-weight: 500; }
+.chk__rows dt, .chk__hint { color: var(--ink-2); }
+.chk .linkbtn { color: var(--brand-press); }
+.ord--timed .chk--wait { background: rgba(255, 255, 255, .7); }
+
+/* Кнопки связи — второстепенные: «Чек» — тонированная оранжевая, «О заказе» — тонированная зелёная, остальные — серые */
+.ord__actions { gap: 6px; }
+.ord__actions .btn { min-height: 44px; padding: 8px 10px; font-size: 15px; font-weight: 600; }
+.ord__actions .btn--tray { --btn-bg: var(--brand-tint); --btn-fg: var(--brand-press); --btn-hover: #FFE4D2; }
+.ord__actions .btn--wa { --btn-bg: var(--good-tint); --btn-fg: var(--good-ink); --btn-hover: #D5EFDC; }
+.ord--timed .ord__actions .btn--ghost, .ord--timed .ord__move .btn--ghost, .ord--timed .ord__prep .btn--ghost { --btn-bg: rgba(255, 255, 255, .7); --btn-hover: #fff; }
+
+/* Управление заказом: списки и заметка — поля с серой заливкой, без рамок */
+.ord select, .ord textarea {
+  min-height: 44px; padding: 10px 12px; border: 0; border-radius: var(--r-field); background-color: var(--surface-2);
+  color: var(--ink); font: 400 15px/1.3 var(--text); letter-spacing: -0.01em;
+}
+.ord select { padding-right: 36px; }
+.ord select:focus, .ord textarea:focus { outline: none; background-color: var(--surface); box-shadow: inset 0 0 0 2px var(--brand); }
+.ord textarea::placeholder { color: var(--ink-2); opacity: 1; }
+.ord--timed select, .ord--timed textarea, .ord--closed select, .ord--closed textarea { background-color: var(--surface); }
+/* Следующий шаг заказа — список «Статус»: он заметнее соседних списков, а у нового оплаченного заказа — оранжевый,
+   как главная кнопка (его надо принять: пока он «Оплачен — новый», курьеры его не видят) */
+.ord select[data-status] { font-weight: 600; box-shadow: inset 0 0 0 1.5px rgba(60, 60, 67, .28); }
+.ord--new select[data-status] {
+  background-color: var(--brand-strong); color: #fff; box-shadow: none;
+  background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
+}
+.ord--new select[data-status]:focus { background-color: var(--brand-press); box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px var(--ink); }
+.ord__auto { margin: 0 0 -2px; padding: 4px 10px; background: var(--good-tint); color: var(--good); font-size: 13px; font-weight: 600; }
+.ord__courier-call { margin: -2px 0 0; font-size: 15px; }
+.ord__courier-call a { color: var(--brand-press); font-weight: 600; text-decoration: none; }
+.ord__prep { gap: 6px; }
+.ord__move { gap: 6px; }
+.ord__move .btn { min-height: 44px; padding: 6px 14px; font-size: 14px; }
+
+/* ---------- «Смена»: приём заказов, курьеры и карта, инструменты ---------- */
+.panel { display: grid; gap: 10px; min-width: 0; padding: 14px; border-radius: var(--r-card); background: var(--surface); box-shadow: var(--shadow-card); }
+.panel__title { font: 700 18px/1.2 var(--text); letter-spacing: -0.02em; }
+
+/* Приём: зелёная плитка — принимаем; сплошная красная — остановлено (видно издалека) */
+.intakes { gap: 10px; margin: 0; }
+.intake { gap: 10px 12px; margin: 0; padding: 12px; border: 0; border-radius: var(--r-tile); background: var(--good-tint); }
+.intake--compact { padding: 12px; gap: 10px 12px; }
+.intake__state { font-weight: 600; line-height: 1.35; color: var(--good-ink); }
+.intake.is-off { background: var(--bad); }
+.intake__btn { --btn-bg: var(--ink); --btn-fg: #fff; --btn-hover: #000; }
+.intake.is-off .intake__btn { --btn-bg: #fff; --btn-fg: var(--ink); --btn-hover: var(--surface-2); background: var(--btn-bg); color: var(--btn-fg); }
+.intake.is-off .intake__btn:hover { background: var(--btn-hover); }
+.intake__wait, .intake__limit, .intake__rain, .intake--compact .intake__wait, .intake--compact .intake__limit { padding-top: 10px; border-top: .5px solid var(--sep); }
+.intake__wait label, .intake__limit label { font-size: 14px; font-weight: 500; }
+.intake__wait .input, .intake__limit .input { flex: 1 1 auto; min-height: 44px; padding: 8px 36px 8px 12px; background-color: var(--surface); font-size: 15px; font-weight: 500; }
+.intake__saved { flex-basis: 100%; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.intake__saved:empty { display: none; }
+.intake.is-off .intake__wait .input, .intake.is-off .intake__limit .input { color: var(--ink); }
+/* Дождь: выключен — белая кнопка во всю ширину, включён — сплошная синяя (белый текст на ней — 6:1) */
+.intake__rain-btn { flex: 1 1 100%; --btn-bg: var(--surface); --btn-fg: var(--ink); --btn-hover: var(--surface-2); padding: 8px 14px; line-height: 1.25; }
+.intake__rain.is-on .intake__rain-btn { --btn-bg: var(--rain); --btn-fg: #fff; --btn-hover: #174E9E; background: var(--btn-bg); color: var(--btn-fg); }
+.intake__rain.is-on .intake__rain-btn:hover { background: var(--btn-hover); }
+
+/* Курьеры: строки с тонкими разделителями; заголовок полосы прячем — он у панели */
+.crs { gap: 0; margin: 0; padding: 0; border-radius: 0; background: none; font-size: 14px; }
+.crs__title { display: none; }
+.crs__item { padding: 9px 0; line-height: 1.5; border-top: .5px solid var(--sep); }
+.crs__title + .crs__item { padding-top: 0; border-top: 0; }
+.crs__item b { font-size: 15px; }
+.crs__item a { color: var(--brand-press); font-weight: 600; text-decoration: none; }
+.crs__off { color: var(--ink-2); }
+.crs__shift { color: var(--good); font-weight: 600; }
+.crs__lost { color: var(--bad); font-weight: 600; }
+.crs__chat { min-height: 44px; margin: 2px 0 2px 4px; padding: 6px 14px; border: 0; background: var(--surface-2); color: var(--ink); font: 600 14px/1.2 var(--text); }
+.crs__chat:hover { background: var(--surface-3); }
+.ops-map { gap: 6px; margin: 0; }
+.ops-map__el { height: 320px; border-radius: var(--r-tile); }
+
+/* Инструменты и «Карта» — строки с выключателем, как в настройках телефона */
+.tool {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 8px 2px;
+  border: 0; border-top: .5px solid var(--sep); border-radius: 0; background: none; color: var(--ink);
+  font: 500 16px/1.25 var(--text); letter-spacing: -0.01em; text-align: left; text-decoration: none; cursor: pointer;
+}
+.tools { display: grid; }
+.tools .tool:first-child { border-top: 0; }
+.tool[aria-pressed]::after {
+  content: ''; flex: none; width: 46px; height: 28px; border-radius: 999px;
+  background: radial-gradient(circle at 14px 50%, #fff 0 11px, transparent 11.5px) #AEAEB2; transition: background-color .18s ease;
+}
+.tool[aria-pressed="true"]::after { background: radial-gradient(circle at calc(100% - 14px) 50%, #fff 0 11px, transparent 11.5px) var(--good); }
+.tool--link::after { content: ''; flex: none; width: 8px; height: 8px; margin-right: 8px; border: solid var(--ink-2); border-width: 2px 2px 0 0; transform: rotate(45deg); }
+.tool:focus-visible { outline-offset: 0; }
+@media (hover: hover) { .tool:hover { background: var(--bg); } }
+
+/* Быстрый WhatsApp по любому номеру */
+.waquick { flex-wrap: wrap; gap: 8px; max-width: none; margin: 2px 0 0; padding-top: 12px; border-top: .5px solid var(--sep); }
+.waquick .input { flex: 1 1 190px; min-height: 44px; padding: 8px 12px; font-size: 16px; }
+.waquick .input[aria-invalid="true"] { background: var(--bad-tint); box-shadow: inset 0 0 0 2px var(--bad); }
+.waquick .btn { flex: 1 1 auto; }
+
+/* ---------- Касса ---------- */
+.toolbar { gap: 8px; margin-bottom: 12px; }
+@media (max-width: 599.98px) {
+  .toolbar > [data-branch-pick] { flex: 1 1 100%; }
+}
+.moneysum { max-width: none; margin-bottom: 12px; padding: 18px 20px; border-radius: var(--r-card); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+.moneysum__label { font-size: 14px; font-weight: 500; opacity: 1; color: var(--ink-2); }
+.moneysum__value { margin: 2px 0 6px; font: 700 clamp(32px, 8vw, 40px)/1.1 var(--text); letter-spacing: -0.035em; }
+.moneysum__meta { font-size: 13px; line-height: 1.45; opacity: 1; color: var(--ink-2); }
+.moneysum__split { font-size: 14px; }
+.moneysum__warn, .ledger__warn { font-size: 14px; font-weight: 600; color: var(--bad-ink); }
+.ledger { max-width: none; gap: 12px; }
+.ledger__day { padding: 16px; border-radius: var(--r-card); box-shadow: var(--shadow-card); }
+.ledger__date { font: 700 20px/1.15 var(--text); letter-spacing: -0.02em; }
+.ledger__rev b { font: 700 17px/1 var(--text); }
+.ledger__split { color: var(--ink-2); font-weight: 500; }
+.rcpt { padding: 10px 12px; border: 0; border-radius: var(--r-tile); background: var(--bg); }
+.rcpt__n { font-weight: 700; }
+.rcpt__what { color: var(--ink-2); font-size: 14px; }
+.rcpt__sum { font-weight: 600; }
+.rcpt__bad { font-weight: 600; color: var(--bad-ink); }
+.rcpt__actions .btn { min-height: 44px; --btn-bg: var(--surface); --btn-hover: var(--surface-3); }
+/* Чек вне выручки: приглушён цветом текста, а не прозрачностью (прозрачность роняла контраст ниже 4,5:1) */
+.rcpt--out { opacity: 1; }
+.rcpt--out .rcpt__n, .rcpt--out .rcpt__sum { color: var(--ink-2); }
+
+/* ---------- Отчёты ---------- */
+.report__date { font-size: 13px; font-weight: 500; color: var(--ink-2); }
+.report__date .input { min-height: 44px; padding: 8px 10px; background: var(--surface); font-size: 15px; box-shadow: 0 0 0 .5px rgba(0, 0, 0, .06), var(--shadow-card); }
+.report { max-width: none; gap: 12px; }
+.report__period { font-weight: 600; color: var(--ink-2); }
+.report__tile { padding: 14px 16px; border-radius: 18px; background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+.report__label { font-size: 13px; font-weight: 500; opacity: 1; color: var(--ink-2); }
+.report__value { font: 700 clamp(22px, 5.5vw, 30px)/1.1 var(--text); letter-spacing: -0.03em; }
+.report__block { padding: 16px; border-radius: var(--r-card); box-shadow: var(--shadow-card); }
+.report__title { font: 700 20px/1.15 var(--text); letter-spacing: -0.02em; }
+.report__scroll { border-radius: var(--r-field); }
+.report__table { background: none; font-size: 14px; }
+.report__table td { font-variant-numeric: tabular-nums; }
+.report__table th, .report__table td { border-bottom: .5px solid var(--sep); }
+.report__table thead th { background: var(--surface-2); color: var(--ink-2); font-size: 12px; font-weight: 600; }
+.report__table tbody th { font-weight: 600; }
+.report__deleted { background: var(--surface-2); color: var(--ink-2); font-weight: 600; }
+
+/* ---------- Настройки: три карточки — заказы, курьеры, безопасность ---------- */
+.setgrid { display: grid; gap: 12px; align-items: start; }
+.setgrid > .settings { max-width: none; min-width: 0; margin: 0; }
+.settings__row { align-items: end; }
+.settings__note { padding: 10px 12px; border-radius: 12px; background: var(--surface-2); color: var(--ink); font-size: 14px; font-weight: 500; }
+.settings input[readonly] { background: none; border: 1.5px dashed rgba(60, 60, 67, .36); color: var(--ink-2); }
+.fixed { padding: 14px; border-radius: var(--r-tile); background: var(--bg); }
+.fixed__lead { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.fixed__label { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.fixed__text { padding: 10px 12px; border: 0; border-radius: 10px; background: var(--surface); font-size: 15px; }
+.qrset { padding: 12px; border: 0; border-radius: var(--r-tile); background: var(--surface); }
+.qrset__title { font-weight: 600; }
+/* Длинные подсказки о курьерах — под «Как это работает»: список курьеров и кнопки сразу на экране */
+.how { border-radius: var(--r-tile); background: var(--bg); margin-bottom: 14px; }
+.how > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 8px 14px;
+  font-weight: 600; list-style: none; cursor: pointer;
+}
+.how > summary::-webkit-details-marker { display: none; }
+.how > summary::after { content: ''; flex: none; width: 8px; height: 8px; margin: -4px 4px 0 0; border: solid var(--ink-2); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.how[open] > summary::after { margin-top: 4px; transform: rotate(-135deg); }
+.how > summary:focus-visible { border-radius: var(--r-tile); }
+.how__body { display: grid; gap: 10px; padding: 0 14px 14px; }
+.crs-list { gap: 8px; }
+.crs-row { padding: 12px 14px; border: 0; border-radius: var(--r-tile); background: var(--bg); }
+.crs-row--off { opacity: 1; }
+.crs-row--off .crs-row__name { color: var(--ink-2); }
+.crs-row__name b { font-size: 16px; }
+.crs-row__point { color: var(--ink); font-weight: 500; }
+.crs-row__point select { min-height: 44px; margin-left: 6px; padding: 6px 34px 6px 10px; border: 0; border-radius: 10px; background-color: var(--surface); color: var(--ink); }
+.crs-row__phone a { color: var(--brand-press); font-weight: 600; text-decoration: none; }
+.crs-row__actions .btn--ghost { --btn-bg: var(--surface); --btn-hover: var(--surface-3); }
+/* «Код для входа» и «Скопировать» — тонированные: сплошная оранжевая кнопка у каждого курьера спорила бы с «Добавить» */
+.crs-row__actions .btn:not(.btn--ghost):not(.btn--wa) { --btn-bg: var(--brand-tint); --btn-fg: var(--brand-press); --btn-hover: #FFE4D2; }
+.crs-row__delete { --btn-fg: var(--bad-ink); }
+.crs-row__pinwait { padding: 3px 8px; background: var(--sun-tint); color: var(--warn-ink); font-size: 12px; font-weight: 600; }
+.crs-code { padding: 14px; border: 0; border-radius: var(--r-tile); background: var(--surface); box-shadow: inset 0 0 0 2px var(--good); }
+.crs-code .btn--ghost { --btn-bg: var(--surface-2); }
+.crs-code__pin { font: 700 clamp(36px, 10vw, 48px)/1 var(--text); letter-spacing: .12em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.crs-code__once { padding: 8px 10px; border-radius: 10px; background: var(--sun-tint); color: var(--warn-ink); font-size: 14px; font-weight: 600; }
+.security { margin-top: 0; gap: 16px; }
+.sec__block { padding-top: 14px; border-top: .5px solid var(--sep); }
+.sec__title { font-size: 16px; font-weight: 600; }
+
+/* ---------- Окно чата (chat.css общий с покупателем и курьером — здесь только вид в панели) ---------- */
+.admin .chat { border: 0; border-radius: var(--r-sheet); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-float); }
+.admin .chat::backdrop { background: rgba(0, 0, 0, .4); }
+.admin .chat__head { background: var(--surface); color: var(--ink); border-bottom: .5px solid var(--sep); }
+.admin .chat__title { font: 700 17px/1.25 var(--text); letter-spacing: -0.015em; }
+.admin .chat__close { background: var(--surface-2); color: var(--ink-2); }
+.admin .chat__who { font-weight: 500; color: var(--ink-2); }
+.admin .chat__body { border: 0; background: var(--surface-2); }
+/* Свои сообщения — белым по тёмно-оранжевому (4,5:1; на фирменном оранжевом было 3,8:1) */
+.admin .chat__msg--mine .chat__body { background: var(--brand-strong); color: #fff; }
+.admin .chat__msg--manager .chat__body { background: var(--sun-tint); }
+.admin .chat__form { border-top: .5px solid var(--sep); }
+.admin .chat__form textarea { border: 0; border-radius: var(--r-field); background: var(--surface-2); }
+.admin .chat__form textarea:focus { outline: none; background: var(--surface); box-shadow: inset 0 0 0 2px var(--brand); }
+.admin .chat__count { color: var(--ink-2); }
+@media (max-width: 600px) {
+  .admin .chat { border-radius: var(--r-sheet) var(--r-sheet) 0 0; }
+}
+
+/* ---------- Узкий телефон (до 359 px) ---------- */
+@media (max-width: 359.98px) {
+  .admin__logo .logo-mask { width: 52px; }
+  .admin__who { padding-inline: 9px; font-size: 12px; }
+}
+
+/* ---------- От 700 px: «Касса» и «Отчёты» — колонкой по центру, «Настройки» — карточки рядом ---------- */
+@media (min-width: 700px) {
+  [data-pane="money"] { max-width: 820px; margin-inline: auto; }
+  [data-pane="reports"] { max-width: 1100px; margin-inline: auto; }
+}
+@media (min-width: 900px) {
+  .setgrid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px; }
+}
+
+/* ---------- От 1100 px: вкладки в шапке, заказы слева, «Смена» — липкой колонкой справа ---------- */
+@media (min-width: 1100px) {
+  html { scroll-padding-bottom: 16px; }
+  body.admin:has([data-tabs]:not([hidden]))::after { display: none; }
+  .admin__main { padding-block: 18px 48px; }
+  .admin__bar { gap: 12px; }
+  .admin__logo .logo-mask { width: 80px; }
+  /* Точка — справа, рядом с «Выйти»: слева за логотипом место вкладок */
+  .admin__who { margin-left: auto; font-size: 14px; }
+  .admin__who:not([hidden]) + [data-signout] { margin-left: 0; }
+
+  /* Вкладки лежат поверх шапки (та всегда у верхнего края): начало — за логотипом, по сетке страницы */
+  .tabs {
+    top: 0; bottom: auto; right: auto; left: calc(max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)) + 104px);
+    z-index: calc(var(--z-appbar) + 1); display: flex; align-items: center; gap: 4px; max-width: none; height: var(--appbar-h);
+    margin: 0; padding: 0; border-radius: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  /* Чёрный текст на оранжевом — 5,6:1 (тёмно-серый --ink на сплошном оранжевом дал бы 4,47:1); выбранная вкладка — белой
+     «капсулой»; под мышью вкладка светлеет, а не темнеет — контраст подписи только растёт */
+  .tabs button { flex: none; flex-direction: row; gap: 8px; height: 44px; padding: 0 14px; color: #000; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .tabs button[aria-pressed="true"] { background: #fff; color: var(--ink); }
+  .tabs button[aria-pressed="true"] .ico { color: var(--brand); }
+  .tabs button:hover:not([aria-pressed="true"]) { background: rgba(255, 255, 255, .24); }
+  .tabs button:focus-visible { outline-color: #fff; outline-offset: 2px; box-shadow: none; }
+  .tabs .ico { width: 20px; height: 20px; }
+  .tabs__count { position: static; min-width: 22px; height: 22px; margin-left: -2px; font-size: 13px; line-height: 22px; box-shadow: none; }
+
+  .halves { display: none; }
+  /* Точка (у владельца) и заказы — в левой колонке друг под другом, «Смена» — справа на всю высоту. Колонка задана
+     каждому явно: иначе «Смена» с явной строкой заняла бы место раньше остальных и сдвинула их */
+  .ordgrid { display: grid; grid-template-columns: minmax(0, 1fr) var(--shift-w); column-gap: 24px; align-items: start; }
+  .ordgrid > [data-branch-pick] { grid-column: 1; justify-self: start; }
+  .ordmain { grid-column: 1; }
+  /* «Смена» не уезжает с прокруткой заказов; выше экрана (карта открыта) — листается сама */
+  .shift {
+    grid-column: 2; grid-row: 1 / span 2; position: sticky; top: calc(var(--appbar-h) + 18px); overflow-y: auto; overscroll-behavior: contain;
+    /* svh — где браузер его знает; старым — vh */
+    max-height: calc(100vh - var(--appbar-h) - 36px); max-height: calc(100svh - var(--appbar-h) - 36px);
+    margin: -2px; padding: 2px; scrollbar-width: thin; scrollbar-color: rgba(60, 60, 67, .3) transparent;
+  }
+  .dayrev { font-size: 14px; }
+  .dayrev b { font-size: 17px; }
+}
+
+/* ---------- Курьеров назначает менеджер (specs/026, 21.11.2026) ---------- */
+
+/* Полоса точки: «Курьеров назначает: Менеджер | Автоматически» */
+.intake__dispatch { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 10px; border-top: .5px solid var(--sep); }
+.intake__dispatch[hidden] { display: none; }
+.intake__dispatch-label { font-size: 14px; font-weight: 500; }
+.intake.is-off .intake__dispatch { border-top-color: rgba(255, 255, 255, .45); color: #fff; }
+.seg { display: inline-flex; flex: 1 1 auto; padding: 3px; border-radius: 999px; background: var(--track); }
+.seg__btn { flex: 1 1 0; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--ink); font: 600 14px/1 var(--text); cursor: pointer; white-space: nowrap; }
+.seg__btn[aria-pressed="true"] { background: var(--surface); box-shadow: 0 1px 3px rgba(0, 0, 0, .14); }
+.seg__btn:disabled { cursor: progress; opacity: .7; }
+.seg__btn:focus-visible { border-radius: 999px; }
+.intake.is-off .seg { background: rgba(255, 255, 255, .25); }
+.intake.is-off .seg__btn { color: #fff; }
+.intake.is-off .seg__btn[aria-pressed="true"] { color: var(--ink); }
+
+/* Карточка: кнопки с именами курьеров — одно нажатие назначает */
+.pick { display: grid; gap: 8px; padding: 12px; border-radius: var(--r-tile); background: var(--brand-tint); }
+.pick__title { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--brand-press); }
+.pick__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
+.pick__btn { display: grid; align-content: center; gap: 2px; min-height: 56px; padding: 8px 12px; border: 0; border-radius: 14px; background: var(--surface);
+  box-shadow: inset 0 0 0 1.5px var(--sep); color: var(--ink); font: 400 13px/1.25 var(--text); text-align: left; cursor: pointer;
+  transition: transform .15s var(--kit), box-shadow .15s ease, background-color .15s ease; }
+.pick__btn b { font-size: 16px; font-weight: 650; overflow-wrap: anywhere; }
+.pick__btn span { color: var(--ink-2); }
+.pick__btn.is-on { box-shadow: inset 0 0 0 2px var(--good-bright); }
+.pick__btn.is-on span:first-of-type { color: var(--good-ink); }
+.pick__btn:hover { background: #fff; box-shadow: inset 0 0 0 2px var(--brand); }
+.pick__btn:active { transform: scale(.97); }
+.pick__btn:disabled { cursor: progress; opacity: .55; }
+.pick__btn.is-busy { opacity: 1; box-shadow: inset 0 0 0 2px var(--brand); }
+.pick__btn:focus-visible { border-radius: 14px; }
+.pick__warn { color: var(--bad-ink) !important; font-weight: 600; }
+.pick__none { margin: 0; font-size: 14px; color: var(--ink-2); }
+.ord__courier { margin: 0; padding: 10px 12px; border-radius: var(--r-tile); background: var(--good-tint); color: var(--good-ink); font-size: 15px; }
+.ord__courier b { color: var(--ink); font-size: 16px; }
+@media (prefers-reduced-motion: reduce) { .pick__btn { transition: none; } }
+.pick__more summary { display: inline-flex; align-items: center; min-height: 40px; font-size: 14px; font-weight: 600; color: var(--ink-2); cursor: pointer; list-style: none; }
+.pick__more summary::-webkit-details-marker { display: none; }
+.pick__more summary::before { content: "▸"; width: 1.1em; }
+.pick__more[open] summary::before { content: "▾"; }
+.pick__more .pick__list { margin-top: 4px; }
