@@ -1,0 +1,313 @@
+From 2838c8506b9abf59d4cc27dbb55101ce61e20abf Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 26 Nov 2026 09:19:01 +0000
+Subject: [PATCH] =?UTF-8?q?=D0=A7=D0=B5=D0=BA=D0=B8:=20=D0=BE=D0=BA=D0=BD?=
+ =?UTF-8?q?=D0=BE=20=D0=B2=D1=80=D0=B5=D0=BC=D0=B5=D0=BD=D0=B8=202=20?=
+ =?UTF-8?q?=D0=BC=D0=B8=D0=BD=D1=83=D1=82=D1=8B=20=D0=B2=D0=BC=D0=B5=D1=81?=
+ =?UTF-8?q?=D1=82=D0=BE=2015=20=D0=B8=20=D0=B2=D0=BE=D0=BF=D1=80=D0=BE?=
+ =?UTF-8?q?=D1=81=20=D0=BF=D0=B5=D1=80=D0=B5=D0=B4=20=D0=BF=D1=80=D0=B8?=
+ =?UTF-8?q?=D1=91=D0=BC=D0=BE=D0=BC=20=D0=B7=D0=B0=D0=BA=D0=B0=D0=B7=D0=B0?=
+ =?UTF-8?q?=20=D1=81=20=C2=AB=E2=9C=97=C2=BB?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+25.11.2026 владелец проверил сайт подставным чеком с неверным временем — заказ
+приняли. Причины: автосверка давала «✓» чеку со временем до 15 минут раньше
+заказа или позже прикрепления, а приём «Нового» заказа её никак не учитывал.
+
+- receipt-check.js: запас 2 минуты до оформления и 2 минуты после прикрепления
+  (время в чеке ставит сервер банка, а не телефон).
+- admin.js: «Новый» заказ с чеком «✗» или ещё не сверенным принимается
+  (статус или назначение курьера) только после вопроса с причиной; «Отмена» —
+  в базу ничего. «⚠» и «Отменён» — без вопроса.
+- В карточке «Чек приложен в …» без «✓», в подробностях сверки рядом время
+  из чека и время прикрепления. Подсказки — про приложение банка, не О!Деньги.
+- Тесты: test-receipt-check.mjs +8 случаев времени (на старом коде 5 падают),
+  check-admin.mjs — блок «сверка: …»; README и specs/002 обновлены.
+
+База не меняется, миграций нет.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01LFvZpHzkbtKYVkguXAVWGf
+---
+ README.md                       |  6 ++-
+ scripts/check-admin.mjs         | 75 ++++++++++++++++++++++++++++++++-
+ scripts/test-receipt-check.mjs  | 10 +++++
+ site/assets/js/admin.js         | 41 +++++++++++++++++-
+ site/assets/js/receipt-check.js | 11 +++--
+ specs/002-receipt-check/spec.md |  7 ++-
+ 6 files changed, 141 insertions(+), 9 deletions(-)
+
+diff --git a/README.md b/README.md
+index 0202524..2630e73 100644
+--- a/README.md
++++ b/README.md
+@@ -92,8 +92,10 @@ node scripts/deploy-cloudflare.mjs --check
+ - Сами чеки хранятся в Supabase (закрытое хранилище `receipts`), панель только показывает и скачивает их.
+ 
+ ## Автопроверка чеков
+-Админка сама читает текст со скриншота чека (Tesseract.js прямо в браузере менеджера — картинки никуда не уходят) и сверяет с заказом: сумму, получателя (Карен А., +996 703 266 323 — `data.js → payment.recipient`), дату и время оплаты (между оформлением заказа и прикреплением чека), статус операции, повторы (тот же файл или тот же номер операции у другого заказа). Отметка у чека в «Заказах» и «Кассе»: **✓ сходится**, **⚠ сверьте вручную** (что-то не распознано, PDF, HEIC), **✗ не сходится** с причиной. По нажатию — подробности и «Сверить заново».
+-- Это проверка картинки, а не денег: подделанный скриншот пройдёт. Спорные и крупные оплаты сверяйте в приложении О!Деньги.
++Админка сама читает текст со скриншота чека (Tesseract.js прямо в браузере менеджера — картинки никуда не уходят) и сверяет с заказом: сумму, получателя (Карен А., +996 703 266 323 — `data.js → payment.recipient`), дату и время оплаты (между оформлением заказа и прикреплением чека, запас 2 минуты в каждую сторону), статус операции, повторы (тот же файл или тот же номер операции у другого заказа). Отметка у чека в «Заказах» и «Кассе»: **✓ сходится**, **⚠ сверьте вручную** (что-то не распознано, PDF, HEIC), **✗ не сходится** с причиной. По нажатию — подробности и «Сверить заново».
++- **Приём заказа (с 26.11.2026).** Заказ «Оплачен — новый» с чеком «✗ не сходится» или с чеком, который ещё не сверен, панель принимает (статус «Принят» и дальше или назначение курьера) только после вопроса «Деньги пришли — принять заказ?» с причиной и подсказкой проверить поступление в приложении банка. «Отмена» — заказ остаётся «Новым», в базу ничего не уходит. «⚠ сверьте вручную» и «Отменён» — без вопроса. Кухня и курьеры видят заказ только после приёма, поэтому это последний рубеж.
++- **Время (с 26.11.2026).** Время в чеке ставит сервер банка, поэтому запас — 2 минуты до оформления заказа (в чеке часто нет секунд) и 2 минуты после прикрепления. До 26.11 запас был 15 минут: чек со временем на 14 минут раньше заказа получал «✓» — владелец проверил это подставным чеком. В карточке «Чек приложен в 21:41» — время загрузки чека, не оплаты; время из самого чека — в подробностях сверки, рядом.
++- Это проверка картинки, а не денег: аккуратно подделанный скриншот (правильные сумма, получатель и время) пройдёт. Спорные и крупные оплаты сверяйте в приложении банка, куда приходят деньги (сейчас — Компаньон). Надёжно — только подтверждение оплаты самим банком (бизнес-счёт с уведомлениями об оплате), см. specs/002-receipt-check/spec.md → «Дальше».
+ - Первый раз модуль и словари грузятся ~10 МБ, дальше из кеша. Результаты хранятся на устройстве менеджера.
+ - Сменили QR на другого получателя — поменяйте и `payment.recipient` в `data.js`.
+ - Правила проверены на макетах (`tests/receipts`, `node scripts/make-test-receipts.mjs`) и типичных текстах: настоящих чеков на 31.10 не было. После первых оплат — донастроить по реальным скриншотам.
+diff --git a/scripts/check-admin.mjs b/scripts/check-admin.mjs
+index 2ad9810..85b01b1 100644
+--- a/scripts/check-admin.mjs
++++ b/scripts/check-admin.mjs
+@@ -488,7 +488,10 @@ for (const [w, h] of [[375, 812], [1440, 900]]) {
+   check(cr.wa2.includes(`Где ваш заказ сейчас: ${base.replace(/\/$/, '')}/?z=ABCDEFGH2345`), `${w}: в «О заказе» — личная ссылка на статус`);
+   check(/Азамат · 📍 на карте · 2 мин назад · заказов: 1/.test(cr.strip) && /Бек · не на карте · заказов: 0/.test(cr.strip) && !cr.strip.includes('Старый')
+     && cr.map === 'https://www.google.com/maps/search/?api=1&query=42.874600,74.569800', `${w}: полоса курьеров — «${cr.strip}»`);
+-  await browser.eval(`window.__updates = []; (() => { const s = document.querySelector('.ord[data-id="7"] [data-courier]'); s.value = '2'; s.dispatchEvent(new Event('change', { bubbles: true })); })()`);
++  // № 4 «Новый»: с 26.11.2026 приём (и назначение курьера) спрашивает, если чек ещё не сверен или «✗» — менеджер отвечает «ОК».
++  // Сам вопрос и отказ проверяются в конце файла («сверка: …»)
++  await browser.eval(`window.__updates = []; window.__asked = []; window.confirm = (m) => { window.__asked.push(m); return true; };
++    (() => { const s = document.querySelector('.ord[data-id="7"] [data-courier]'); s.value = '2'; s.dispatchEvent(new Event('change', { bubbles: true })); })()`);
+   await sleep(300);
+   const upd = await json(browser, `window.__updates`);
+   check(JSON.stringify(upd) === '[[7,{"courier_id":2}]]', `${w}: назначили Бека на № 4 — отправлено ${JSON.stringify(upd)}`);
+@@ -2755,6 +2758,76 @@ await browser.send('Page.addScriptToEvaluateOnNewDocument', { source: `
+   const errs = browser.logs.filter((l) => /^(EXCEPTION|error)/.test(l));
+   check(errs.length === 0, `${w}: консоль без ошибок ${errs.join(' | ')}`);
+ }
++
++// Сверка чека перед приёмом «Нового» заказа (26.11.2026: подставной чек с неверным временем приняли). «✗ не сходится» —
++// и статусом, и назначением курьера — только после вопроса; «Отмена» — в базу ничего; «⚠ сверьте вручную» — без вопроса.
++// Распознанные тексты кладём в хранилище распознавания, как будто чеки уже прочитаны на этом устройстве: № 1 (id 2, заказ
++// 19:31, чек приложен 19:35) — время в чеке 19:17, на 14 минут раньше заказа (до 26.11 это было «✓»); № 6 (id 9) — 1 000 сом
++{
++  await browser.size(1440, 900);
++  browser.logs.length = 0;
++  const seeded = {
++    'tok1/a.jpg': { hash: 'seed-1', text: 'Перевод выполнен\n1 400 KGS\nПолучатель\nКАРЕН А.\n+996 703 *** 323\nДата и время\n31.10.2026 19:17', txn: null, order: 2, at: Date.now() },
++    'tok5/d.jpg': { hash: 'seed-5', text: 'Перевод выполнен\nСумма 1 000 сом\nПолучатель\nКАРЕН А.\n31.10.2026 23:58', txn: null, order: 9, at: Date.now() },
++  };
++  await browser.goto(base + 'admin.html', 300);
++  await browser.eval(`sessionStorage.clear(); localStorage.setItem('kokoro.receiptOcr.v2', ${JSON.stringify(JSON.stringify(seeded))}); location.reload()`);
++  await sleep(500);
++  await waitForEval(browser, `!document.querySelector('[data-tabs]').hidden && document.querySelector('.ord')`, 75);
++  await browser.eval(`(() => { const d = document.querySelector('[data-day]'); d.value = '2026-10-31'; d.dispatchEvent(new Event('change')); })()`);
++  const verdicts = await waitForEval(browser, `document.querySelector('.ord[data-id="2"] .chk--bad') && document.querySelector('.ord[data-id="9"] .chk--bad')
++    && document.querySelector('.ord[data-id="7"] .chk--check')`, 100);
++  const shown = await json(browser, `({ paid: document.querySelector('.ord[data-id="2"] .ord__paid')?.textContent || '',
++    summary: document.querySelector('.ord[data-id="2"] .chk summary')?.textContent.trim() || '',
++    rows: [...document.querySelectorAll('.ord[data-id="2"] .chk__rows dt')].map((dt) => dt.textContent + ': ' + dt.nextElementSibling.textContent) })`);
++  check(verdicts && shown.paid === 'Чек приложен в 19:35' && /раньше заказа \(31\.10\.2026 19:31\)/.test(shown.summary)
++    && shown.rows.includes('Дата и время: 31.10.2026 19:17 — раньше заказа') && shown.rows.includes('Чек приложен: 31.10.2026 19:35'),
++    `сверка: чек на 14 минут раньше заказа — «✗», в карточке «${shown.paid}» без «✓», рядом время в чеке и время, когда приложен (${shown.rows.join('; ')})`);
++  if (out) {
++    await browser.eval(`document.querySelector('.ord[data-id="2"] details.chk').open = true; document.querySelector('.ord[data-id="2"]').scrollIntoView({ block: 'start' }); scrollBy(0, -20)`);
++    await sleep(300);
++    await browser.screenshot(`${out}/admin-receipt-gate-1440.jpg`);
++  }
++  const setStatus = (id, value) => `(() => { const s = document.querySelector('.ord[data-id="${id}"] [data-status]'); s.value = '${value}'; s.dispatchEvent(new Event('change', { bubbles: true })); })()`;
++  const after = (id) => json(browser, `({ asked: window.__asked, updates: (window.__updates || []).filter(([x]) => x === ${id}),
++    status: document.querySelector('.ord[data-id="${id}"] [data-status]').value, courier: document.querySelector('.ord[data-id="${id}"] [data-courier]')?.value ?? null })`);
++
++  // «✗», статус «Принят», «Отмена» — заказ остаётся «Новым», в базу ничего; вопрос называет причину и куда смотреть
++  await browser.eval(`window.__updates = []; ${asking(false)} ${setStatus(2, 'confirmed')}`);
++  await sleep(300);
++  let r = await after(2);
++  check(r.asked.length === 1 && /№ 1: чек НЕ сходится/.test(r.asked[0]) && /раньше заказа/.test(r.asked[0]) && /приложение банка/.test(r.asked[0])
++    && /Деньги пришли — принять заказ\?/.test(r.asked[0]) && r.updates.length === 0 && r.status === 'new',
++    `сверка: «✗» → «Принят», отказ — спросил один раз, статус «${r.status}», в базу ${r.updates.length} правок («${(r.asked[0] || '').replace(/\n+/g, ' / ')}»)`);
++  // Менеджер сверил деньги в банке и нажал «ОК» — правка уходит
++  await browser.eval(`window.__updates = []; ${asking(true)} ${setStatus(2, 'confirmed')}`);
++  await sleep(300);
++  r = await after(2);
++  check(r.asked.length === 1 && JSON.stringify(r.updates) === '[[2,{"status":"confirmed"}]]', `сверка: «✗» → «Принят», «ОК» — правка ушла: ${JSON.stringify(r.updates)}`);
++
++  // «✗», сразу курьеру (список «Курьер»): то же — назначение не уходит, список возвращается к «без курьера»
++  const courierPick = await browser.eval(`(() => { const s = document.querySelector('.ord[data-id="9"] [data-courier]'); if (!s) return '';
++    const op = [...s.options].find((x) => x.value && !x.disabled); if (!op) return ''; s.value = op.value; return op.value; })()`);
++  await browser.eval(`window.__updates = []; ${asking(false)} document.querySelector('.ord[data-id="9"] [data-courier]')?.dispatchEvent(new Event('change', { bubbles: true }))`);
++  await sleep(300);
++  r = await after(9);
++  check(courierPick && r.asked.length === 1 && /сумма 1\s000 сом вместо 1\s400 сом/.test(r.asked[0]) && r.updates.length === 0 && r.courier === '',
++    `сверка: «✗» → курьеру ${courierPick}, отказ — спросил, курьер «${r.courier}», в базу ${r.updates.length} правок («${(r.asked[0] || '').replace(/\n+/g, ' / ')}»)`);
++
++  // «⚠ сверьте вручную» (файл чека — не картинка) — не спрашиваем, правка уходит сразу
++  await browser.eval(`window.__updates = []; ${asking(false)} ${setStatus(7, 'confirmed')}`);
++  await sleep(300);
++  r = await after(7);
++  check(r.asked.length === 0 && JSON.stringify(r.updates) === '[[7,{"status":"confirmed"}]]', `сверка: «⚠» → «Принят» без вопроса: ${JSON.stringify(r.updates)}`);
++  // «Отменён» у «✗» — тоже без вопроса: отменить подозрительный заказ можно всегда
++  await browser.eval(`window.__updates = []; ${asking(false)} ${setStatus(9, 'canceled')}`);
++  await sleep(300);
++  r = await after(9);
++  check(r.asked.length === 0 && JSON.stringify(r.updates) === '[[9,{"status":"canceled"}]]', `сверка: «✗» → «Отменён» без вопроса: ${JSON.stringify(r.updates)}`);
++  await browser.eval(`localStorage.removeItem('kokoro.receiptOcr.v2')`);
++  const errs = browser.logs.filter((l) => /^(EXCEPTION|error)/.test(l));
++  check(errs.length === 0, `сверка: консоль без ошибок ${errs.join(' | ')}`);
++}
+ await browser.close();
+ server.close();
+ fs.rmSync(root, { recursive: true, force: true });
+diff --git a/scripts/test-receipt-check.mjs b/scripts/test-receipt-check.mjs
+index a7d8b0a..8598df5 100644
+--- a/scripts/test-receipt-check.mjs
++++ b/scripts/test-receipt-check.mjs
+@@ -59,6 +59,16 @@ const CASES = [
+   ['«сформирован сейчас» не перебивает дату операции', 'ok', `Успешно\n1 400 с\nКАРЕН А.\nДата операции 31.10.2026 19:35\nСформирован 02.11.2026 10:00`],
+   ['старая дата операции + новая дата формирования', 'bad', `Успешно\n1 400 с\nКАРЕН А.\nСформирован 31.10.2026 19:40\nДата операции 29.10.2026 18:00`],
+   ['время из статус-бара первой строки не берётся', 'check', `9:41\nУспешно\n1 400 с\nКАРЕН А.`],
++  // Окно времени (26.11.2026): заказ в 19:31, чек приложен в 19:40. Раньше был запас 15 минут, и чек на 14 минут раньше
++  // заказа получал «✓» — владелец проверил это подставным чеком. Теперь 2 минуты до заказа и 2 минуты после прикрепления
++  ['чек на 14 минут раньше заказа — не сходится', 'bad', `Перевод выполнен\n1 400 KGS\nКАРЕН А.\n31.10.2026 19:17`, {}, /раньше заказа \(31\.10\.2026 19:31\)/],
++  ['чек на 6 минут раньше заказа — не сходится', 'bad', `Перевод выполнен\n1 400 KGS\nКАРЕН А.\n31.10.2026 19:25`],
++  ['чек на 3 минуты раньше заказа — не сходится', 'bad', `Перевод выполнен\n1 400 KGS\nКАРЕН А.\n31.10.2026 19:28`],
++  ['в чеке минута до заказа (секунд нет) — сходится', 'ok', `Перевод выполнен\n1 400 KGS\nКАРЕН А.\n31.10.2026 19:30`],
++  ['ровно 2 минуты до заказа — ещё сходится', 'ok', `Перевод выполнен\n1 400 KGS\nКАРЕН А.\n31.10.2026 19:29`],
++  ['через 2 минуты после прикрепления — ещё сходится', 'ok', `Перевод выполнен\n1 400 KGS\nКАРЕН А.\n31.10.2026 19:42`],
++  ['через 3 минуты после прикрепления — не сходится', 'bad', `Перевод выполнен\n1 400 KGS\nКАРЕН А.\n31.10.2026 19:43`, {}, /позже, чем приложен чек \(31\.10\.2026 19:40\)/],
++  ['через 14 минут после прикрепления — не сходится', 'bad', `Перевод выполнен\n1 400 KGS\nКАРЕН А.\n31.10.2026 19:54`],
+   ['12-часовой формат «7:35 PM»', 'ok', `Success\n1 400.00 KGS\nKAREN A.\n31.10.2026 7:35 PM`],
+ ];
+ 
+diff --git a/site/assets/js/admin.js b/site/assets/js/admin.js
+index 3ecf75d..fe93858 100644
+--- a/site/assets/js/admin.js
++++ b/site/assets/js/admin.js
+@@ -963,7 +963,7 @@ function orderHtml(o) {
+       <p class="ord__muted">${esc(o.delivery_time)} · ${esc(PAYMENTS[o.payment] || o.payment)}${Date.parse(o.created_at) < DAY_NUMBERS_SINCE ? ` · раньше № ${o.id}` : ''}</p>
+       ${o.comment ? `<p>💬 ${esc(o.comment)}</p>` : ''}
+     </div>
+-    ${o.receipt_path ? `<p class="ord__paid">✓ Чек приложен в ${paidAt}</p>${checkHtml(o)}` : o.payment === 'qr' ? '<p class="ord__unpaid">Чека пока нет — клиент ещё не оплатил</p>' : ''}
++    ${o.receipt_path ? `<p class="ord__paid">Чек приложен в ${paidAt}</p>${checkHtml(o)}` : o.payment === 'qr' ? '<p class="ord__unpaid">Чека пока нет — клиент ещё не оплатил</p>' : ''}
+     ${readyHtml(o)}
+     ${rateHtml(o)}
+     <div class="ord__actions ${actions}">
+@@ -1845,7 +1845,7 @@ $('[data-couriers-admin]').addEventListener('change', async (e) => {
+ /* ---------- Сверка чеков ---------- */
+ 
+ const CHECK_ICON = { ok: '✓', check: '⚠', bad: '✗' };
+-const CHECK_HINT = 'Это проверка картинки чека, а не денег: подделанный скриншот она не отличит. Спорные и крупные оплаты сверяйте в приложении О!Деньги.';
++const CHECK_HINT = 'Это проверка картинки чека, а не денег: аккуратно подделанный скриншот она не отличит. Спорные и крупные оплаты сверяйте в приложении банка, куда приходят деньги.';
+ 
+ /** Отметка сверки чека: ✓ сходится / ⚠ сверьте вручную / ✗ не сходится; по нажатию — подробности */
+ function checkHtml(o) {
+@@ -1861,6 +1861,8 @@ function checkHtml(o) {
+     f.amount && ['Сумма', f.amount.state === 'ok' ? `${money(o.total)} ✓` : f.amount.state === 'bad' ? `${money(f.amount.value)} — ждали ${money(o.total)}` : 'не нашли'],
+     f.recipient && ['Получатель', f.recipient.state === 'ok' ? `${f.recipient.how} ✓` : f.recipient.state === 'other' ? `${f.recipient.other} — не наш` : 'не нашли'],
+     f.date && ['Дата и время', f.date.text ? `${f.date.text}${f.date.state === 'ok' ? ' ✓' : f.date.why ? ` — ${f.date.why}` : ''}` : 'не нашли'],
++    // Рядом — когда покупатель приложил чек: это время загрузки, а не оплаты (его и видно в строке «Чек приложен в …»)
++    f.date && o.paid_at && ['Чек приложен', fmtBishkek(o.paid_at)],
+     f.txn && ['Номер операции', f.txn],
+     f.status && f.status.state !== 'missing' && ['Статус', f.status.state === 'ok' ? 'успешно ✓' : f.status.word],
+   ].filter(Boolean);
+@@ -1872,6 +1874,33 @@ function checkHtml(o) {
+   </details>`;
+ }
+ 
++const fmtBishkek = (iso) => new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bishkek' }).replace(',', '');
++
++// Принять заказ — вывести его из «Новый»: в работу, «В пути», «Доставлен» или сразу курьеру. Кухня и курьеры видят заказ
++// только после этого, поэтому здесь последний рубеж против поддельного чека (26.11.2026 владелец проверил: подставной чек
++// с неверным временем приняли, автосверка была лишь строкой в карточке)
++const ACCEPTED = ['confirmed', 'cooking', 'delivering', 'done'];
++
++/**
++ * Можно ли принимать заказ по его чеку. ✓ «сходится» и ⚠ «сверьте вручную» — без вопросов (⚠ и так видно в карточке);
++ * ✗ «не сходится» и чек, который ещё не сверен (модуль грузится, распознавание не удалось), — только после «ОК» менеджера
++ * и с подсказкой проверить поступление в приложении банка. Заказ не «Новый» или без чека — не наше дело (там свои вопросы).
++ */
++function receiptAllowsAccept(order) {
++  if (!order || order.status !== 'new' || !order.receipt_path || !RECEIPT_PATH.test(order.receipt_path)) return true;
++  const v = receiptVerdict(order);
++  if (v && v.level !== 'bad') return true;
++  const no = orderNo(order, undefined, false);
++  const bank = `Откройте приложение банка и проверьте, что ${money(order.total)} действительно пришли. Получатель: ${payment.recipient.label}.`;
++  if (v) {
++    const why = v.problems.length ? v.problems.map((p) => `— ${p}`).join('\n') : v.summary.replace(/^Не сходится:\s*/, '— ');
++    return confirm(`${no}: чек НЕ сходится\n${why}\n\nВозможно, чек поддельный. ${bank}\n\nДеньги пришли — принять заказ?`);
++  }
++  const reason = pendingReason(order.receipt_path);
++  const state = isQueued(order.receipt_path) ? 'чек ещё сверяется' : reason ? `чек не сверился: ${reason}` : 'чек ещё не сверен';
++  return confirm(`${no}: ${state}.\n\nОткройте чек (кнопка «Чек») и сверьте сумму, получателя и время. ${bank}\n\nДеньги пришли — принять заказ?`);
++}
++
+ /** Чеки — в очередь распознавания; urgent — с вкладки «Заказы», вне очереди */
+ function queueChecks(list, urgent = false) {
+   queueReceipts(list.filter((o) => o.receipt_path && RECEIPT_PATH.test(o.receipt_path)), fetchReceipt, { urgent });
+@@ -1997,6 +2026,14 @@ $('[data-orders]').addEventListener('change', async (e) => {
+     e.target.blur();
+     return;
+   }
++  // Приём «Нового» заказа (статусом или назначением курьера) — только если чек не «✗ не сходится» или менеджер проверил оплату
++  const accepting = order?.status === 'new' && ((patch.status && ACCEPTED.includes(patch.status)) || patch.courier_id != null);
++  if (accepting && !receiptAllowsAccept(order)) {
++    e.target.value = was ?? '';
++    e.target.blur();
++    renderOrders(); // вернуть кнопки курьеров (при назначении они уже выключены)
++    return;
++  }
+   try {
+     const row = await api.admin.updateOrder(card.dataset.id, patch, expect);
+     if (row) orders = orders.map((o) => (o.id === row.id ? row : o));
+diff --git a/site/assets/js/receipt-check.js b/site/assets/js/receipt-check.js
+index 115af29..8d42e44 100644
+--- a/site/assets/js/receipt-check.js
++++ b/site/assets/js/receipt-check.js
+@@ -5,7 +5,12 @@
+ import { money } from './data.js';
+ 
+ const BISHKEK_MS = 6 * 3600_000;
+-const WINDOW_MS = 15 * 60_000; // запас на расхождение часов телефона и сервера
++// Время в чеке ставит сервер банка, а не телефон покупателя (часы статус-бара мы не берём), поэтому большой запас не нужен.
++// До 26.11.2026 запас был 15 минут в обе стороны: чек со временем на 14 минут раньше заказа получал «✓ сходится» —
++// владелец проверил это подставным чеком. Теперь: 2 минуты до оформления (в чеке часто только часы и минуты, без секунд,
++// и часы банка с нашими могут разойтись на десятки секунд) и 2 минуты после того, как чек приложен.
++const BEFORE_ORDER_MS = 2 * 60_000;
++const AFTER_ATTACH_MS = 2 * 60_000;
+ // Номера квитанций, зашитые в известные генераторы поддельных чеков (найдено 31.10.2026: «копия чека MBank»)
+ const FAKE_TXN_IDS = ['P0812322343636'];
+ 
+@@ -347,8 +352,8 @@ export function checkReceiptText(text, order, ctx) {
+   const dt = parseDateTime(lines, year);
+   let date;
+   if (dt?.hasDate && dt.hasTime) {
+-    if (dt.at < created - WINDOW_MS) date = { state: 'bad', text: dt.text, why: 'раньше заказа' };
+-    else if (dt.at > until + WINDOW_MS) date = { state: 'bad', text: dt.text, why: order.paid_at ? 'позже, чем приложен чек' : 'в будущем' };
++    if (dt.at < created - BEFORE_ORDER_MS) date = { state: 'bad', text: dt.text, why: 'раньше заказа' };
++    else if (dt.at > until + AFTER_ATTACH_MS) date = { state: 'bad', text: dt.text, why: order.paid_at ? 'позже, чем приложен чек' : 'в будущем' };
+     else date = { state: dt.several ? 'partial' : 'ok', text: dt.text };
+   } else if (dt?.hasDate) {
+     const day = (ms) => Math.floor((ms + BISHKEK_MS) / 86_400_000);
+diff --git a/specs/002-receipt-check/spec.md b/specs/002-receipt-check/spec.md
+index 8e344e1..39bcf3b 100644
+--- a/specs/002-receipt-check/spec.md
++++ b/specs/002-receipt-check/spec.md
+@@ -5,11 +5,13 @@
+ ## Что проверяем по каждому чеку
+ - **ТР-01 Сумма** — равна сумме заказа (с доставкой). Баланс, остаток, комиссия, кэшбэк — не сумма оплаты.
+ - **ТР-02 Получатель** — Карен А. / +996 703 266 323 (`data.js → payment.recipient`), в т. ч. маски «703 *** 323» и имя латиницей. Чужой номер в строке «Получатель» — не сходится.
+-- **ТР-03 Дата и время** — не раньше оформления заказа и не позже, чем приложен чек (запас 15 минут на часы телефона).
++- **ТР-03 Дата и время** — не раньше оформления заказа и не позже, чем приложен чек. Запас 2 минуты в каждую сторону (с 26.11.2026; было 15 минут «на часы телефона», но время в чеке ставит сервер банка, а не телефон: чек на 14 минут раньше заказа проходил как «✓» — владелец проверил подставным чеком).
+ - **ТР-04 Статус** — «ошибка», «отклонено», «в обработке» — не сходится.
+ - **ТР-05 Повторы** — тот же файл (SHA-256) или тот же номер операции у другого заказа — не сходится.
+ - **ТР-06 Итог** — ✓ «Чек сходится», ⚠ «Сверьте вручную» (что-то не распознано, PDF, HEIC), ✗ «Не сходится» (с причиной). Подробности — по нажатию, «Сверить заново».
+ 
++- **ТР-07 Приём заказа** (26.11.2026) — «Новый» заказ с чеком «✗» или ещё не сверенным панель принимает (статус «Принят», «Готовится», «В пути», «Доставлен» или назначение курьера) только после вопроса с причиной и подсказкой проверить поступление в приложении банка. «⚠» и «Отменён» — без вопроса. Тесты: `test-receipt-check.mjs` (окно времени), `check-admin.mjs` («сверка: …»).
++
+ ## Где видно
+ - Карточка заказа на вкладке «Заказы» — под «Чек приложен».
+ - «Касса» — у каждого чека и итог месяца: «✓ сходятся N · ⚠ вручную N · ✗ не сходятся N».
+@@ -20,6 +22,9 @@
+ - Результаты распознавания хранятся на устройстве менеджера; на другом устройстве чеки распознаются заново.
+ - Настоящих чеков KOKORO на 31.10 нет: правила проверены на макетах и типичных текстах. После первых реальных оплат — донастроить.
+ 
++## Дальше: подтверждение оплаты банком (26.11.2026, решает владелец)
++Сверка картинки не отличит аккуратную подделку. Надёжно — когда оплату подтверждает сам банк: бизнес-счёт или эквайринг (QR с суммой и номером заказа, банк присылает сайту уведомление об оплате), и заказ уходит на кухню только после этого уведомления. Нужны договор с банком (ИП/ОсОО), ключи доступа и описание API банка. Деньги сейчас идут на личный кошелёк в «Компаньоне» — у него API нет.
++
+ ## Вне рамок
+ - Подтверждение оплаты банком (у личного кошелька нет API).
+ - Распознавание PDF и HEIC.
+-- 
+2.43.0
+
