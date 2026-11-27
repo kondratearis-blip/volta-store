@@ -1,0 +1,8 @@
+# служебные папки инструментов и локальные файлы — не публикуются
+.claude/
+.specify/
+node_modules/
+.env*
+.dev.vars
+.wrangler/
+.DS_Store
